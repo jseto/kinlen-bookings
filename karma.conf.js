@@ -12,7 +12,7 @@ module.exports = function(config) {
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
       'test/**/*.spec.ts': ['webpack'],
-      'src/**/*.ts': ['webpack']
+      'src/**/*.ts': ['webpack'],
     },
     // test results reporter to use
     // possible values: 'dots', 'progress'
