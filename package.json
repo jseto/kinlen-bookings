@@ -1,0 +1,22 @@
+{
+  "name": "test",
+  "version": "1.0.0",
+  "description": "based on this article https://rutlib5.com/book/27706/p/86",
+  "main": "index.js",
+  "scripts": {
+    "tsc": "tsc",
+    "tsc:w": "tsc -w"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/jasmine": "^2.8.8",
+    "jasmine-core": "^3.2.1",
+    "karma": "^3.0.0",
+    "karma-jasmine": "^1.1.2",
+    "karma-phantomjs-launcher": "^1.0.4",
+    "karma-webpack": "^4.0.0-rc.2",
+    "typescript": "^3.0.3",
+    "webpack": "^4.19.1"
+  }
+}

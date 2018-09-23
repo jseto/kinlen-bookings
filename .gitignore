@@ -1,0 +1,11 @@
+logs/*
+!.gitkeep
+node_modules/
+client/out/
+test/out/
+tmp
+.DS_Store
+.idea
+/npm-debug.log
+npm-debug.log
+coverage/
