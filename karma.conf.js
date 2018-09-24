@@ -1,34 +1,36 @@
-module.exports = function(config) {
+//var webpackConfig = require('./test-webpack.config.js');
+
+module.exports = function( config ) {
   config.set({
     basePath: '',
     frameworks: [
       'jasmine'
     ],
     files: [
-      'test/*.spec.ts',
-      'test/**/*.spec.ts'
+      'out/test/*.spec.js'
+//      { pattern: 'out/test/**/*.spec.js', watched: false }
     ],
-    // preprocess matching files before serving them to the browser
-    // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     preprocessors: {
-      'test/**/*.spec.ts': ['webpack'],
-      'src/**/*.ts': ['webpack'],
+      'out/test/*.spec.js': ['webpack']
+//      'out/test/**/*.spec.js': ['webpack']
     },
     // test results reporter to use
     // possible values: 'dots', 'progress'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    //reporters: ['progress'],
+    reporters: ['progress'],
 
     plugins: [
       'karma-webpack',
       'karma-jasmine',
-      'karma-phantomjs-launcher'
+      'karma-phantomjs-launcher',
+      'karma-chrome-launcher'
     ],
     browsers: [
       'PhantomJS'
+//      'Chrome'
     ],
     mime: {
-      'text/x-typescript': ['ts','tsx']
+      'text/x-typescript': ['ts', 'tsx']
     },
     autoWatch: true,
     // Continuous Integration mode
@@ -36,5 +38,8 @@ module.exports = function(config) {
     singleRun: false,
     // how many browser should be started simultaneous
     concurrency: Infinity,
+    webpack: {
+      mode: 'development',
+    }
   })
 }

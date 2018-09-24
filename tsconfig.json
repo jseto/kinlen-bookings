@@ -1,8 +1,11 @@
 {
+  "compileOnSave": true,
   "compilerOptions": {
     "target": "es5",
     "module": "commonjs",
     "moduleResolution": "node",
-    "sourceMap": true
+    "sourceMap": true,
+    "outDir": "./out",
+
   }
 }
