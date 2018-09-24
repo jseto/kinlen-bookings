@@ -1,4 +1,4 @@
-module.exports = function( config ) {
+module.exports = function (config) {
   config.set({
     basePath: '',
     frameworks: [
@@ -6,7 +6,6 @@ module.exports = function( config ) {
     ],
     files: [
       'test/*.spec.ts'
-//      { pattern: 'out/test/**/*.spec.js', watched: false }
     ],
     preprocessors: {
       'test/**/*.spec.ts': ['webpack'],
@@ -16,7 +15,7 @@ module.exports = function( config ) {
     autoWatch: true,
     browsers: [
       'PhantomJS'
-//      'Chrome'
+      // 'Chrome'
     ],
     singleRun: false,
     concurrency: Infinity,
