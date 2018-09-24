@@ -1,5 +1,3 @@
-//var webpackConfig = require('./test-webpack.config.js');
-
 module.exports = function( config ) {
   config.set({
     basePath: '',
@@ -7,39 +5,45 @@ module.exports = function( config ) {
       'jasmine'
     ],
     files: [
-      'out/test/*.spec.js'
+      'test/*.spec.ts'
 //      { pattern: 'out/test/**/*.spec.js', watched: false }
     ],
     preprocessors: {
-      'out/test/*.spec.js': ['webpack']
-//      'out/test/**/*.spec.js': ['webpack']
+      'test/**/*.spec.ts': ['webpack'],
+      'src/**/*.ts': ['webpack']
     },
-    // test results reporter to use
-    // possible values: 'dots', 'progress'
-    // available reporters: https://npmjs.org/browse/keyword/karma-reporter
     reporters: ['progress'],
-
+    autoWatch: true,
+    browsers: [
+      'PhantomJS'
+//      'Chrome'
+    ],
+    singleRun: false,
+    concurrency: Infinity,
+    mime: {
+      'text/x-typescript': ['ts', 'tsx']
+    },
     plugins: [
       'karma-webpack',
       'karma-jasmine',
       'karma-phantomjs-launcher',
       'karma-chrome-launcher'
     ],
-    browsers: [
-      'PhantomJS'
-//      'Chrome'
-    ],
-    mime: {
-      'text/x-typescript': ['ts', 'tsx']
-    },
-    autoWatch: true,
-    // Continuous Integration mode
-    // if true, Karma captures browsers, runs the tests and exits
-    singleRun: false,
-    // how many browser should be started simultaneous
-    concurrency: Infinity,
     webpack: {
       mode: 'development',
+      module: {
+        rules: [
+          {
+            test: /\.ts$/,
+            use: [{
+              loader: 'ts-loader'
+            }]
+          }
+        ]
+      },
+      resolve: {
+        extensions: ['.ts', '.js', '.tsx']
+      }
     }
   })
 }
