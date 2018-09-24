@@ -1,14 +1,12 @@
 {
   "name": "kinlen-bookings",
   "version": "0.1.0",
-  "description": "based on this article https://rutlib5.com/book/27706/p/86",
-  "main": "index.js",
+  "description": "Kinlen booking engine",
+  "repository": "https://github.com/jseto/kinlen-bookings",
   "scripts": {
-    "tsc": "tsc",
-    "tsc:w": "tsc -w",
     "test": "karma start karma.conf.js"
   },
-  "author": "",
+  "author": "Josep Seto",
   "license": "MIT",
   "devDependencies": {
     "@types/jasmine": "^2.8.8",
