@@ -10,14 +10,22 @@
   "license": "MIT",
   "devDependencies": {
     "@types/jasmine": "^2.8.8",
+    "@types/jasmine-ajax": "^3.1.37",
+    "@types/jquery": "^3.3.9",
+    "jasmine-ajax": "^3.4.0",
     "jasmine-core": "^3.2.1",
     "karma": "^3.0.0",
     "karma-chrome-launcher": "^2.2.0",
     "karma-jasmine": "^1.1.2",
+    "karma-jasmine-ajax": "^0.1.13",
+    "karma-jquery": "^0.2.3",
     "karma-phantomjs-launcher": "^1.0.4",
     "karma-webpack": "^4.0.0-rc.2",
     "ts-loader": "^5.2.0",
     "typescript": "^3.0.3",
     "webpack": "^4.19.1"
+  },
+  "dependencies": {
+    "jquery": "^3.3.1"
   }
 }

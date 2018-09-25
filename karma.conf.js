@@ -2,7 +2,9 @@ module.exports = function (config) {
   config.set({
     basePath: '',
     frameworks: [
-      'jasmine'
+      'jasmine-ajax',
+      'jasmine',
+      'jquery-3.3.1'
     ],
     files: [
       'test/*.spec.ts'
@@ -14,8 +16,8 @@ module.exports = function (config) {
     reporters: ['progress'],
     autoWatch: true,
     browsers: [
-      'PhantomJS'
-      // 'Chrome'
+      // 'PhantomJS'
+      'Chrome'
     ],
     singleRun: false,
     concurrency: Infinity,
@@ -25,6 +27,8 @@ module.exports = function (config) {
     plugins: [
       'karma-webpack',
       'karma-jasmine',
+      'karma-jasmine-ajax',
+      'karma-jquery',
       'karma-phantomjs-launcher',
       'karma-chrome-launcher'
     ],
