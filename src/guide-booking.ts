@@ -1,11 +1,11 @@
 import { DatabaseObject } from "./database-object"
 import { RestaurantBooking } from "./restaurant-booking";
 import { Guide } from "./guide";
-import { TimeSlot } from "./time-slot";
 
 export class GuideBooking extends DatabaseObject {
   private _date: string;
-  private _timeSlot: TimeSlot;
+  private _time: string;
+  private _timeLength: number;
   private _restaurantBooking: RestaurantBooking;
   private _assignedGuide: Guide;
   private _bookedSeats: number;
@@ -13,7 +13,8 @@ export class GuideBooking extends DatabaseObject {
   fromObject( obj: any ){
     this._id = Number(obj.id);
     this._date = obj.date;
-    this._timeSlot = new TimeSlot( obj.time, Number( obj.time_length ) );
+    this._time = obj.time;
+    this._timeLength = Number( obj.time_length );
     this._restaurantBooking = new RestaurantBooking( Number( obj.restaurant_booking_id ) );
     this._assignedGuide = new Guide( Number( obj.guide_id ) );
     this._bookedSeats = Number( obj.booked_seats );
@@ -23,16 +24,18 @@ export class GuideBooking extends DatabaseObject {
     return{
       id: this._id,
       date: this.date,
-      time_slot: this.timeSlot.toObject(),
+      time: this.time,
+      time_length: this.timeLength,
       restautant_booking: this.restautantBooking.toObject(),
       assigned_guide: this.assignedGuide.toObject(),
       booked_seats: this.bookedSeats
     };
   }
 
-  fillFields( date: string, timeSlot: TimeSlot, restaurantBooking: RestaurantBooking, assignedGuide: Guide, bookedSeats: number ) {
+  fillFields( date: string, time: string, timeLength: number, restaurantBooking: RestaurantBooking, assignedGuide: Guide, bookedSeats: number ) {
     this._date = date;
-    this._timeSlot = timeSlot;
+    this._time = time;
+    this._timeLength = timeLength;
     this._restaurantBooking = restaurantBooking;
     this._assignedGuide = assignedGuide;
     this._bookedSeats = bookedSeats;
@@ -47,13 +50,22 @@ export class GuideBooking extends DatabaseObject {
     return this._date;
   }
 
-  setTimeSlot( timeSlot: TimeSlot ){
-    this._timeSlot = timeSlot;
+  setTime( time: string ){
+    this._time = time;
     return this;
   }
 
-  get timeSlot() {
-    return this._timeSlot;
+  get time() {
+    return this._time;
+  }
+
+  setTimeLength( time: number ){
+    this._timeLength = time;
+    return this;
+  }
+
+  get timeLength() {
+    return this._timeLength;
   }
 
   setRestaurantBooking( restaurantBooking: RestaurantBooking ) {

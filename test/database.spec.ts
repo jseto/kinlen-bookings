@@ -28,8 +28,8 @@ describe( 'Database', function() {
 
 //    expect( guideBooking.id ).toBe( 3 );
     expect( guideBooking.date ).toEqual( '2018-09-25' );
-    expect( guideBooking.timeSlot.startTime ).toEqual( "19:00:00" );
-    expect( guideBooking.timeSlot.lenght ).toBe( 3600 );
+    expect( guideBooking.time ).toEqual( "19:00:00" );
+    expect( guideBooking.timeLength ).toBe( 3600 );
   });
 
   it( 'Should return an availability', function() {
