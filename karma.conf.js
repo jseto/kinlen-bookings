@@ -1,3 +1,5 @@
+// var webpack = require('webpack')
+
 module.exports = function (config) {
   config.set({
     basePath: '',
@@ -46,7 +48,15 @@ module.exports = function (config) {
       },
       resolve: {
         extensions: ['.ts', '.js', '.tsx']
-      }
+      },
+      plugins: [
+        // existing plugins go here
+        // new webpack.SourceMapDevToolPlugin({
+        //   filename: null, // if no value is provided the sourcemap is inlined
+        //   test: /\.(ts|js)($|\?)/i // process .js and .ts files only
+        // })
+      ]
+
     }
   })
 }

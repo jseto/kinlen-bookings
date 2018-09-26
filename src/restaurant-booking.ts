@@ -1,7 +1,7 @@
-export class RestaurantBooking {
-  private _id: number;
+import {DatabaseObject} from "./database-object";
 
-  constructor( id: number ) {
-    this._id = id;
+export class RestaurantBooking extends DatabaseObject {
+  clone() {
+    throw('not implemented')
   }
 }

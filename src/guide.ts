@@ -1,14 +1,13 @@
-class GuideBase {
+import {DatabaseObject} from "./database-object";
+
+export class Guide extends DatabaseObject{
+
+  clone() {
+    throw('not implemented')
+  }
+
   maxOfferedSeats(): number{
     return 6;
   };
-}
 
-export class Guide extends GuideBase {
-  private _id: number;
-
-  constructor( id: number ) {
-    super();
-    this._id = id;
-  }
 }
