@@ -1,18 +1,24 @@
+import * as fetchMock from 'fetch-mock';
 import { Database } from "../src/database";
-import {GuideBooking} from "../src/guide-booking";
+import { GuideBooking } from "../src/guide-booking";
 
-describe( 'Database', function() {
+describe( 'Database helpers', ()=>{
+  describe( 'objectToQueryString method', ()=>{
+    it( 'Should work for unitary objects', ()=>{
+      let db = new Database();
+      let obj = {
+        date: '2018-09-25'
+      }
 
-  beforeEach(function() {
-    jasmine.Ajax.install();
-    jasmine.Ajax.stubRequest( '/wp-json/kinlen/guide_booking/?date=2018-9-25' ).andReturn({
-      status: 200,
-      responseText: '[{"id":"3","date":"2018-09-25","time":"19:00:00","time_length":"0","restaurant_booking_id":"-1","guide_id":"1","booked_seats":"2"}]'
+      let query = db.objectToQueryString( obj );
+      expect( query ).toEqual( '?date=2018-09-25' );
     });
   });
+});
 
-  afterEach(function() {
-    jasmine.Ajax.uninstall();
+describe( 'Database', function() {
+  beforeAll( ()=>{
+    fetchMock.mock('/wp-json/kinlen/guide_booking/?date=2018-9-25','[{"id":"3","date":"2018-09-25","time":"19:00:00","time_length":"3600","restaurant_booking_id":"-1","guide_id":"1","booked_seats":"2"}]');
   });
 
   it( 'Should return a GuideBooking', async function() {
@@ -20,8 +26,10 @@ describe( 'Database', function() {
     let db = new Database();
     let guideBooking: GuideBooking = await db.getGuideBooking( '2018-9-25' );
 
-    expect( jasmine.Ajax.requests.mostRecent().url ).toBe( '/wp-json/kinlen/guide_booking/?date=2018-9-25' );
-    expect( guideBooking.getId() ).toBe( 3 );
+//    expect( guideBooking.id ).toBe( 3 );
+    expect( guideBooking.date ).toEqual( '2018-09-25' );
+    expect( guideBooking.timeSlot.getStart() ).toEqual( "19:00:00" );
+    expect( guideBooking.timeSlot.getLenght() ).toBe( 3600 );
   });
 
   it( 'Should return an availability', function() {

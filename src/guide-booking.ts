@@ -32,7 +32,7 @@ export class GuideBooking extends DatabaseObject {
     return this;
   }
 
-  getDate() {
+  get date() {
     return this._date;
   }
 
@@ -41,7 +41,7 @@ export class GuideBooking extends DatabaseObject {
     return this;
   }
 
-  getTimeSlot() {
+  get timeSlot() {
     return this._timeSlot;
   }
 
@@ -50,7 +50,7 @@ export class GuideBooking extends DatabaseObject {
     return this;
   }
 
-  getRestautantBooking() {
+  get restautantBooking() {
     return this._restaurantBooking;
   }
 
@@ -59,7 +59,7 @@ export class GuideBooking extends DatabaseObject {
     return this;
   }
 
-  getAssignedGuide(){
+  get assignedGuide(){
     return this._assignedGuide;
   }
 
@@ -68,7 +68,7 @@ export class GuideBooking extends DatabaseObject {
     return this;
   }
 
-  getBookedSeats() {
+  get bookedSeats() {
     return this._bookedSeats;
   }
 

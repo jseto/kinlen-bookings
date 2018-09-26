@@ -4,9 +4,7 @@ module.exports = function (config) {
   config.set({
     basePath: '',
     frameworks: [
-      'jasmine-ajax',
-      'jasmine',
-      'jquery-3.3.1'
+      'jasmine'
     ],
     files: [
       'test/*.spec.ts'
@@ -29,8 +27,6 @@ module.exports = function (config) {
     plugins: [
       'karma-webpack',
       'karma-jasmine',
-      'karma-jasmine-ajax',
-      'karma-jquery',
       'karma-phantomjs-launcher',
       'karma-chrome-launcher'
     ],
@@ -49,6 +45,7 @@ module.exports = function (config) {
       resolve: {
         extensions: ['.ts', '.js', '.tsx']
       },
+      devtool: 'inline-source-map',
       plugins: [
         // existing plugins go here
         // new webpack.SourceMapDevToolPlugin({

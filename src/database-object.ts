@@ -7,7 +7,7 @@ export abstract class DatabaseObject {
 
   abstract clone( p: any );
 
-  getId() {
+  protected get id() {
     return this._id;
   }
 }

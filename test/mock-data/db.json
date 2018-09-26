@@ -1,0 +1,26 @@
+
+{
+  "employees": [
+    {
+      "id": 1,
+      "name": "Pankaj",
+      "salary": "10000"
+    },
+    {
+      "name": "David",
+      "salary": "5000",
+      "id": 2
+    }
+  ],
+  "guide_booking": [
+    {
+      "id":"3",
+      "date":"2018-09-25",
+      "time":"19:00:00",
+      "time_length":"0",
+      "restaurant_booking_id":"-1",
+      "guide_id":"1",
+      "booked_seats":"2"
+    }
+  ]
+}
