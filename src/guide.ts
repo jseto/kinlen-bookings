@@ -7,10 +7,12 @@ export class Guide extends DatabaseObject{
   };
 
   toObject(){
-    return {};
+    return {
+      id: this._id
+    };
   }
 
   fromObject( p: any ) {
-    throw('not implemented')
+    throw('not implemented'+p)
   }
 }

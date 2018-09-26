@@ -3,10 +3,12 @@ import {DatabaseObject} from "./database-object";
 export class RestaurantBooking extends DatabaseObject {
 
   fromObject( p: any ) {
-    throw('not implemented')
+    throw('not implemented'+p)
   }
 
   toObject() {
-    return {};
+    return {
+      id: this._id
+    };
   }
 }

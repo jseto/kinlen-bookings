@@ -18,7 +18,8 @@ describe( 'DatabaseObject', function() {
     expect( obj.time ).toEqual( "19:00:00" );
     expect( obj.booked_seats ).toBe( 5 );
     expect( obj.time_length ).toBe( 1800 );
-//    expect( obj.assigned_guide.id ).toBe( 2 );
+    expect( obj.assigned_guide.id ).toBe( 2 );
+    expect( obj.restautant_booking.id ).toBe( 34 );
   });
 
 });
