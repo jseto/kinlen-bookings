@@ -35,7 +35,7 @@ export class Database {
       fetch( fullURL ).then((resp)=>{
         return resp.json();
       }).then((data)=>{
-        retrievedObject.clone( data[0] );
+        retrievedObject.fromObject( data[0] );
         resolve( retrievedObject );
       });
     });

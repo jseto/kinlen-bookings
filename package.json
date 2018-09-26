@@ -9,6 +9,7 @@
   "author": "Josep Seto",
   "license": "MIT",
   "devDependencies": {
+    "@types/fetch-mock": "^6.0.3",
     "@types/jasmine": "^2.8.8",
     "fetch-mock": "^7.0.5",
     "jasmine-core": "^3.2.1",

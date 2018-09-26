@@ -1,7 +1,12 @@
 import {DatabaseObject} from "./database-object";
 
 export class RestaurantBooking extends DatabaseObject {
-  clone() {
+
+  fromObject( p: any ) {
     throw('not implemented')
+  }
+
+  toObject() {
+    return {};
   }
 }

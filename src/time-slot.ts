@@ -8,11 +8,18 @@ export class TimeSlot {
       this._length = length;
     }
 
-    getStart() {
+    get startTime() {
       return this._startTime;
     }
 
-    getLenght() {
+    get lenght() {
       return this._length;
+    }
+
+    toObject() {
+      return {
+        start_time: this.startTime,
+        length: this.lenght
+      }
     }
 }

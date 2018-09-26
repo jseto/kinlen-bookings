@@ -10,13 +10,24 @@ export class GuideBooking extends DatabaseObject {
   private _assignedGuide: Guide;
   private _bookedSeats: number;
 
-  clone( obj: any ){
+  fromObject( obj: any ){
     this._id = Number(obj.id);
     this._date = obj.date;
     this._timeSlot = new TimeSlot( obj.time, Number( obj.time_length ) );
     this._restaurantBooking = new RestaurantBooking( Number( obj.restaurant_booking_id ) );
     this._assignedGuide = new Guide( Number( obj.guide_id ) );
     this._bookedSeats = Number( obj.booked_seats );
+  }
+
+  toObject() {
+    return{
+      id: this._id,
+      date: this.date,
+      time_slot: this.timeSlot.toObject(),
+      restautant_booking: this.restautantBooking.toObject(),
+      assigned_guide: this.assignedGuide.toObject(),
+      booked_seats: this.bookedSeats
+    };
   }
 
   fillFields( date: string, timeSlot: TimeSlot, restaurantBooking: RestaurantBooking, assignedGuide: Guide, bookedSeats: number ) {
