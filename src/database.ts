@@ -1,11 +1,11 @@
-import {GuideBooking} from "./guide-booking";
+import {Booking} from "./guide-booking";
 import {Utils} from "./utils";
 export class Database {
   private static _url = '/wp-json/kinlen/';
 
-  getGuideBooking( date: string ):Promise<GuideBooking> {
+  getGuideBooking( date: string ):Promise<Booking> {
     Utils.checkValidDate( date );
-    let guideBooking = new GuideBooking(-1);
+    let guideBooking = new Booking(-1);
     return new Promise( ( resolve ) => {
       this.getREST( 'guide_booking/', { date: date } ).then( ( data ) => {
         guideBooking.fromObject( data[0] );
@@ -14,17 +14,17 @@ export class Database {
     });
   }
 
-  getAvailabilityMap( restaurantId: number, date: string ):Promise<GuideBooking[]> {
+  getAvailabilityMap( restaurantId: number, date: string ):Promise<Booking[]> {
     Utils.checkValidDate( date );
     return new Promise( ( resolve ) => {
       this.getREST( 'avail_map/', {
           date: date,
           restaurant_booking_id: restaurantId
         }).then( ( data ) => {
-        let guideBookings: GuideBooking[] = [];
+        let guideBookings: Booking[] = [];
         let i = 0;
         while ( data[i] ) {
-          let gb = new GuideBooking(-1);
+          let gb = new Booking(-1);
           gb.fromObject( data[i] );
           guideBookings.push( gb );
           i++;

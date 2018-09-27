@@ -1,4 +1,7 @@
+import {GuideBookings} from "../src/bookings";
+
 describe( 'Booking system', function() {
+	let bookings = new GuideBookings(1);
 
   describe( 'when require free slots', function() {
 

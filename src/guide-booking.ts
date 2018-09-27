@@ -2,7 +2,7 @@ import { DatabaseObject } from "./database-object"
 import { RestaurantBooking } from "./restaurant-booking";
 import { Guide } from "./guide";
 
-export class GuideBooking extends DatabaseObject {
+export class Booking extends DatabaseObject {
   private _date: string;
   private _time: string;
   private _timeLength: number;

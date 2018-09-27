@@ -1,7 +1,7 @@
 import * as fetchMock from 'fetch-mock';
 import * as mockData from './mock-data/db.js';
 import { Database } from "../src/database";
-import { GuideBooking } from "../src/guide-booking";
+import { Booking } from "../src/guide-booking";
 
 const bookingsCount = 4;
 
@@ -34,7 +34,7 @@ describe( 'Database', function() {
     fetchMock.mock('/wp-json/kinlen/guide_booking/?date=2018-09-25','[{"id":"3","date":"2018-09-25","time":"19:00:00","time_length":"3600","restaurant_booking_id":"-1","guide_id":"1","booked_seats":"2"}]')
 
     let db = new Database();
-    let guideBooking: GuideBooking = await db.getGuideBooking( '2018-09-25' );
+    let guideBooking: Booking = await db.getGuideBooking( '2018-09-25' );
 
     expect( guideBooking.date ).toEqual( '2018-09-25' );
     expect( guideBooking.time ).toEqual( "19:00:00" );
@@ -45,7 +45,7 @@ describe( 'Database', function() {
     fetchMock.mock('/wp-json/kinlen/avail_map/?date=2018-09-25&restaurant_booking_id=1', JSON.stringify( mockData().avail_map( '2018-09-25', 1 ) ) );
 
     let db = new Database();
-    let guideBookings: GuideBooking[] = await db.getAvailabilityMap( 1, '2018-09-25' );
+    let guideBookings: Booking[] = await db.getAvailabilityMap( 1, '2018-09-25' );
 
     expect( guideBookings.length ).toBe( bookingsCount );
   });

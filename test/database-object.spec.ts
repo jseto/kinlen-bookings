@@ -1,11 +1,11 @@
-import { GuideBooking } from "../src/guide-booking";
+import { Booking } from "../src/guide-booking";
 import { RestaurantBooking } from "../src/restaurant-booking";
 import { Guide } from "../src/guide";
 
 describe( 'DatabaseObject', function() {
 
   it( 'toObject method should work for every descendant', ()=> {
-    let guideBooking = new GuideBooking(3)
+    let guideBooking = new Booking(3)
                               .setDate('2018-05-23')
                               .setTime( "19:00:00" )
                               .setTimeLength( 1800 )
