@@ -1,7 +1,7 @@
 import * as fetchMock from 'fetch-mock';
 import * as mockData from './mock-data/db.js';
 import { Database } from "../src/database";
-import { Booking } from "../src/guide-booking";
+import { Booking } from "../src/booking";
 
 const bookingsCount = 4;
 

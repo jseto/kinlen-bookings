@@ -1,5 +1,5 @@
 import {Database} from "./database";
-import {Booking} from "./guide-booking"
+import {Booking} from "./booking"
 import {Guide} from "./guide"
 import {Utils} from "./utils";
 

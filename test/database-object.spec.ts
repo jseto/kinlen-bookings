@@ -1,4 +1,4 @@
-import { Booking } from "../src/guide-booking";
+import { Booking } from "../src/booking";
 import { RestaurantBooking } from "../src/restaurant-booking";
 import { Guide } from "../src/guide";
 

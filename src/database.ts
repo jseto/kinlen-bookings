@@ -1,4 +1,4 @@
-import {Booking} from "./guide-booking";
+import {Booking} from "./booking";
 import {Utils} from "./utils";
 export class Database {
   private static _url = '/wp-json/kinlen/';
