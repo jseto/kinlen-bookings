@@ -12,17 +12,17 @@ class GuideAssigned extends Guide {
 	public _booked: boolean;
 }
 
-export class GuideBookings {
+export class BookingMapper {
 	private _restaurantId: number;
-	private _guideBookings: Booking[];    // All bookings for the month
-	private _guideBookingMap: Booking[][];  // All bookings for the month by day of the month as 1st array index and time as 2nd array index
+	private _bookings: Booking[];    // All bookings for the month
+	private _bookingMap: Booking[][];  // All bookings for the month by day of the month as 1st array index and time as 2nd array index
 	private _guides: Guide[];             // All guides -> guide pool
   private _lastBookingMapDate: string;
 
   constructor( restaurantId: number ) {
 		this._restaurantId = restaurantId;
-    this._guideBookingMap = [];
-		this._guideBookings = [];
+    this._bookingMap = [];
+		this._bookings = [];
     this._lastBookingMapDate = '';
   }
 
@@ -37,7 +37,7 @@ export class GuideBookings {
 			this._lastBookingMapDate = date;
 		}
 		let day = new Date( date );
-		return this._guideBookingMap[ day.getDay() ][ hour ];
+		return this._bookingMap[ day.getDay() ][ hour ];
 	}
 
 	isAvailable( date: string, hour: string, seats: number ){
@@ -53,13 +53,13 @@ export class GuideBookings {
 	private buildBookingMap( date ) {
 		let d = new Date( date );
 		for ( let i = 1; i <= 31; i++) {
-			this._guideBookings.forEach( ( booking )=>{
+			this._bookings.forEach( ( booking )=>{
 				let bd = new Date( booking.date );
 				if ( bd.getDay() == d.getDay() ) {
-					this._guideBookingMap[i][booking.time] = booking;
+					this._bookingMap[i][booking.time] = booking;
 				}
 				else {
-					this._guideBookingMap[i] = null;
+					this._bookingMap[i] = null;
 				}
 			});
 		}
@@ -75,7 +75,7 @@ export class GuideBookings {
 
   private async fetchBookingMap( date: string ) {
       let db = new Database();
-      this._guideBookings = await db.getAvailabilityMap( this._restaurantId, date );
+      this._bookings = await db.getAvailabilityMap( this._restaurantId, date );
   }
 
   private isAvailMapFresh( date: string ):boolean {

@@ -1,7 +1,7 @@
-import {GuideBookings} from "../src/bookings";
+import {BookingMapper} from "../src/booking-mapper";
 
 describe( 'Booking system', function() {
-	let bookings = new GuideBookings(1);
+	let bookings = new BookingMapper(1);
 
   describe( 'when require free slots', function() {
 
