@@ -45,7 +45,7 @@ describe( 'Database', function() {
     fetchMock.mock('/wp-json/kinlen/avail_map/?date=2018-09-25&restaurant_booking_id=1', JSON.stringify( mockData().avail_map( '2018-09-25', 1 ) ) );
 
     let db = new Database();
-    let guideBookings: GuideBooking[] = await db.getAvailabilityMap( '2018-09-25', 1 );
+    let guideBookings: GuideBooking[] = await db.getAvailabilityMap( 1, '2018-09-25' );
 
     expect( guideBookings.length ).toBe( bookingsCount );
   });

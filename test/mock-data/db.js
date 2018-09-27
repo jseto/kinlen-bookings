@@ -46,8 +46,8 @@ function mockData () {
       var res = [];
       while ( gb[i] ) {
         if ( gb[i].date >= date
-              & gb[i].date < ( date.slice( 0, 8 ) + '31' )
-              & gb[i].restaurant_booking_id === String(restaurant) ) {
+              && gb[i].date < ( date.slice( 0, 8 ) + '31' )
+              && gb[i].restaurant_booking_id === String(restaurant) ) {
           res.push( gb[i] );
         }
         i++;
