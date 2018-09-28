@@ -1,1 +1,1 @@
-# kinlen
+# Kinlen Booking System [![Build Status](https://travis-ci.org/jseto/kinlen-bookings.svg?branch=master)](https://travis-ci.org/jseto/kinlen-bookings)[![dependencies Status](https://david-dm.org/jseto/kinlen-bookings/status.svg)](https://david-dm.org/jseto/kinlen-bookings)[![devDependencies Status](https://david-dm.org/jseto/kinlen-bookings/dev-status.svg)](https://david-dm.org/jseto/kinlen-bookings?type=dev)
