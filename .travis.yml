@@ -9,4 +9,9 @@ before_install:
   - google-chrome-stable --headless --disable-gpu --remote-debugging-port=9222 http://localhost &
 script:
   - karma start --single-run
-  
+env:
+  - CODECLIMATE_API_HOST=https://codebeat.co/webhooks/code_coverage
+  - CODECLIMATE_REPO_TOKEN=8d092158-c69f-4613-a154-dbb5611f9a04
+after_script:
+  - npm install -g codeclimate-test-reporter
+  - codeclimate-test-reporter < coverage/report-lcov/lcov.info
