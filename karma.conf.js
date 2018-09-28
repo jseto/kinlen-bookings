@@ -32,7 +32,7 @@ module.exports = function (config) {
       'karma-chrome-launcher'
     ],
 		coverageReporter: {
-			type: 'lcovonly', subdir: 'report-lcov'
+			type: 'lcovonly', subdir: 'lcov'
 		},
     webpack: {
       mode: 'development',
