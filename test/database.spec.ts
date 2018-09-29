@@ -19,10 +19,15 @@ describe( 'Database helpers', ()=>{
   });
 
   describe( 'Mock data', ()=>{
+		it( 'should return elements from endpoint when an empty parameter url',()=>{
+			let resp = mockData( '/wp-json/kinlen/mock_data_test_data/' );
+			console.log( resp )
+			// expect( resp.length ).toBe( bookingsCount );
+		})
     describe( 'avail_map for restaurantId 1',()=>{
-      it( 'Should return GuideBookings for the month', ()=>{
-        var bookings = mockData().avail_map( '2018-09-25', 1 );
-        expect( bookings.length ).toBe( bookingsCount );
+      it( 'Should return one element when querying id', ()=>{
+				let resp = mockData( '/wp-json/kinlen/mock_data_test_data/?id=2' );
+        expect( resp.length ).toBe( 1 );
       });
     })
   });
@@ -30,18 +35,17 @@ describe( 'Database helpers', ()=>{
 
 describe( 'Database', function() {
 
-  it( 'Should return a GuideBooking', async ()=> {
-    fetchMock.mock('/wp-json/kinlen/guide_booking/?date=2018-09-25','[{"id":"3","date":"2018-09-25","time":"19:00:00","time_length":"3600","restaurant_booking_id":"-1","guide_id":"1","booked_seats":"2"}]')
-
+  it( 'Should return a Booking by id', async ()=> {
+  	fetchMock.mock('/wp-json/kinlen/guide_booking/?id=3','[{"id":"3","date":"2018-09-25","time":"19:00:00","time_length":"3600","restaurant_booking_id":"-1","guide_id":"1","booked_seats":"2"}]')
     let db = new Database();
-    let guideBooking: Booking = await db.getGuideBooking( '2018-09-25' );
+    let booking: Booking = await db.getBooking( 3 );
 
-    expect( guideBooking.date ).toEqual( '2018-09-25' );
-    expect( guideBooking.time ).toEqual( "19:00:00" );
-    expect( guideBooking.timeLength ).toBe( 3600 );
+    expect( booking.date ).toEqual( '2018-09-25' );
+    expect( booking.time ).toEqual( "19:00:00" );
+    expect( booking.timeLength ).toBe( 3600 );
   });
 
-  it( 'Should return an availability map', async ()=> {
+  xit( 'Should return an availability map', async ()=> {
     fetchMock.mock('/wp-json/kinlen/avail_map/?date=2018-09-25&restaurant_booking_id=1', JSON.stringify( mockData().avail_map( '2018-09-25', 1 ) ) );
 
     let db = new Database();

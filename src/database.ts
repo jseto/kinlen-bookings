@@ -1,15 +1,20 @@
 import {Booking} from "./booking";
 import {Utils} from "./utils";
 export class Database {
+
   private static _url = '/wp-json/kinlen/';
 
-  getGuideBooking( date: string ):Promise<Booking> {
-    Utils.checkValidDate( date );
-    let guideBooking = new Booking(-1);
+	getFreeGuides( date: string ) {
+
+	}
+
+  getBooking( id: number ):Promise<Booking> {
+		// select * from wp_kinlen_booking where id={id}
+    let booking = new Booking(-1);
     return new Promise( ( resolve ) => {
-      this.getREST( 'guide_booking/', { date: date } ).then( ( data ) => {
-        guideBooking.fromObject( data[0] );
-        resolve( guideBooking );
+      this.getREST( 'guide_booking/', { id: id } ).then( ( data ) => {
+        booking.fromObject( data[0] );
+        resolve( booking );
       })
     });
   }

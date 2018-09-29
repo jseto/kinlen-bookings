@@ -11,14 +11,14 @@ module.exports = function (config) {
       'test/*.spec.ts'
     ],
     preprocessors: {
-      'test/**/*.spec.ts': ['webpack', 'coverage'],
-      'src/**/*.ts': ['webpack', 'coverage']
+      'test/**/*.spec.ts': ['webpack'],
+      'src/**/*.ts': ['webpack']
     },
-    reporters: ['progress', 'coverage'],
+    reporters: ['progress'],
     autoWatch: true,
     browsers: [
+			// 'Chrome',
       'ChromeHeadless'
-      // 'Chrome'
     ],
     singleRun: false,
     concurrency: Infinity,
@@ -28,12 +28,12 @@ module.exports = function (config) {
     plugins: [
       'karma-webpack',
       'karma-jasmine',
-			'karma-coverage',
+			// 'karma-coverage',
       'karma-chrome-launcher'
     ],
-		coverageReporter: {
-			type: 'lcovonly', subdir: 'lcov'
-		},
+		// coverageReporter: {
+		// 	type: 'lcovonly', subdir: 'lcov'
+		// },
     webpack: {
       mode: 'development',
       module: {
