@@ -12,17 +12,15 @@ describe( 'Database helpers', ()=>{
       let obj = {
         date: '2018-09-25'
       }
-
-      let query = db.objectToQueryString( obj );
+			let query = db.objectToQueryString( obj );
       expect( query ).toEqual( '?date=2018-09-25' );
     });
   });
 
   describe( 'Mock data', ()=>{
-		it( 'should return elements from endpoint when an empty parameter url',()=>{
+		it( 'should return elements from endpoint when no url parameter',()=>{
 			let resp = mockData( '/wp-json/kinlen/mock_data_test_data/' );
-			console.log( resp )
-			// expect( resp.length ).toBe( bookingsCount );
+			expect( resp.length ).toBe( 2 );
 		})
     describe( 'avail_map for restaurantId 1',()=>{
       it( 'Should return one element when querying id', ()=>{
