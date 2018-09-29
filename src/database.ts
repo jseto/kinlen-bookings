@@ -1,11 +1,19 @@
 import {Booking} from "./booking";
+import {Guide} from "./guide";
 import {Utils} from "./utils";
+
 export class Database {
 
   private static _url = '/wp-json/kinlen/';
 
-	getFreeGuides( date: string ) {
-
+	getFreeGuide( date: string ):Promise<Guide> {
+		let guide = new Guide(-1);
+		return new Promise( ( resolve ) => {
+			this.getREST( 'free_guide/', {date: date } ).then( ( data ) => {
+				guide.fromObject( data[0] );
+				resolve( guide );
+			});
+		});
 	}
 
   getBooking( id: number ):Promise<Booking> {
@@ -15,7 +23,7 @@ export class Database {
       this.getREST( 'guide_booking/', { id: id } ).then( ( data ) => {
         booking.fromObject( data[0] );
         resolve( booking );
-      })
+      });
     });
   }
 

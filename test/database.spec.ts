@@ -46,7 +46,7 @@ describe( 'Database', function() {
   });
 
   xit( 'Should return an availability map', async ()=> {
-    fetchMock.mock('/wp-json/kinlen/avail_map/?date=2018-09-25&restaurant_booking_id=1', JSON.stringify( mockData().avail_map( '2018-09-25', 1 ) ) );
+    fetchMock.mock('/wp-json/kinlen/avail_map/?date=2018-09-25&restaurant_booking_id=1', mockData );
 
     let db = new Database();
     let guideBookings: Booking[] = await db.getAvailabilityMap( 1, '2018-09-25' );

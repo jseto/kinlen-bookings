@@ -8,15 +8,11 @@ export interface TimeSlot {
 	availableSeats: number;
 }
 
-class GuideAssigned extends Guide {
-	public _booked: boolean;
-}
-
 export class BookingMapper {
 	private _restaurantId: number;
 	private _bookings: Booking[];    // All bookings for the month
 	private _bookingMap: Booking[][];  // All bookings for the month by day of the month as 1st array index and time as 2nd array index
-	private _guides: Guide[];             // All guides -> guide pool
+	private _freeGuide: Guide;
   private _lastBookingMapDate: string;
 
   constructor( restaurantId: number ) {
@@ -65,12 +61,12 @@ export class BookingMapper {
 		}
 	}
 
-	private async guides( date: string ) {
-		if ( ! this._guides ) {
+	private async freeGuide( date: string ) {
+		if ( ! this._freeGuide ) {
 			let db = new Database();
-			// this._guides = await db.getGuides( this._restaurantId, date );
+			this._freeGuide = await db.getFreeGuide( date );
 		}
-		return this._guides;
+		return this._freeGuide;
 	}
 
   private async fetchBookingMap( date: string ) {
