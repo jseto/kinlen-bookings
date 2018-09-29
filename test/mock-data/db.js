@@ -29,19 +29,16 @@ function mockData ( url ) {
 
 	var data = dataBase[endpoint];
 
-	// console.log('->', urlParams, urlObject, endpoint );
+	var resp;
 
-	var resp = [];
-	var item;
+	// filter results on parameter basis
 	for( var key in urlObject ) {
-		for( var i=0; i<data.length; i++) {
-			// console.log( key, urlObject[ key ], data[i][ key ] );
-			if ( urlObject[ key ] === String( data[i][ key ] ) ) {
-				resp.push( item );
-			}
-		};
+		data = data.filter( function( value ){
+			return urlObject[ key ] === String( value[ key ] );
+		});
 	}
-	return resp;
+
+	return data;
 
 
 //     avail_map: function (date, restaurant) {

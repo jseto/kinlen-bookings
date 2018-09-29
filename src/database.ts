@@ -20,7 +20,7 @@ export class Database {
 		// select * from wp_kinlen_booking where id={id}
     let booking = new Booking(-1);
     return new Promise( ( resolve ) => {
-      this.getREST( 'guide_booking/', { id: id } ).then( ( data ) => {
+      this.getREST( 'booking/', { id: id } ).then( ( data ) => {
         booking.fromObject( data[0] );
         resolve( booking );
       });
@@ -30,7 +30,7 @@ export class Database {
   getAvailabilityMap( restaurantId: number, date: string ):Promise<Booking[]> {
     Utils.checkValidDate( date );
     return new Promise( ( resolve ) => {
-      this.getREST( 'avail_map/', {
+      this.getREST( 'booking/', {
           date: date,
           restaurant_booking_id: restaurantId
         }).then( ( data ) => {
