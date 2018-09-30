@@ -35,8 +35,9 @@ describe( 'Database helpers', ()=>{
 
 describe( 'Database', function() {
 
-  it( 'Should return a Booking by id', async ()=> {
-  	fetchMock.mock('/wp-json/kinlen/booking/?id=3', mockData );
+	fetchMock.mock('*', mockData );
+
+  it( 'should return a Booking by id', async ()=> {
     let db = new Database();
     let booking: Booking = await db.getBooking( 3 );
 
@@ -45,13 +46,55 @@ describe( 'Database', function() {
     expect( booking.timeLength ).toBe( 3000 );
   });
 
-  it( 'Should return an availability map', async ()=> {
-    fetchMock.mock('/wp-json/kinlen/booking/?date=2018-09-25&restaurant_booking_id=1', mockData );
-
+  it( 'should return all bookings for matching the queryObject', async ()=> {
     let db = new Database();
-    let guideBookings: Booking[] = await db.getAvailabilityMap( 1, '2018-09-25' );
+    let bookings: Booking[] = await db.getBookings( { restaurant_booking_id:1, date:'2018-09-25' } );
 
-    expect( guideBookings.length ).toBe( 3 );
+    expect( bookings.length ).toBe( 3 );
   });
+
+	describe( 'getMonthBookings should report all bookings for the restaurant in a natural month', ()=>{
+
+		it( 'with query date in the middle of the month', async ()=>{
+			let db = new Database();
+			let bookings: Booking[] = await db.getMonthBookings( 1, '2019-08-25' );
+
+			expect( bookings.length ).toBe( 4 );
+			expect( bookings[0].restautantBooking.id ).toBe( 1 );
+		});
+
+		it( 'with query date in the begining of the month', async ()=>{
+			let db = new Database();
+			let bookings: Booking[] = await db.getMonthBookings( 1, '2019-08-01' );
+
+			expect( bookings.length ).toBe( 4 );
+			expect( bookings[0].restautantBooking.id ).toBe( 1 );
+		});
+
+		it( 'with query date in the end of the month', async ()=>{
+			let db = new Database();
+			let bookings: Booking[] = await db.getMonthBookings( 1, '2019-08-31' );
+
+			expect( bookings.length ).toBe( 4 );
+			expect( bookings[0].restautantBooking.id ).toBe( 1 );
+		});
+
+		it( 'with query date in the end of the month', async ()=>{
+			let db = new Database();
+			let bookings: Booking[] = await db.getMonthBookings( 1, '2019-08-31' );
+
+			expect( bookings.length ).toBe( 4 );
+			expect( bookings[0].restautantBooking.id ).toBe( 1 );
+		});
+
+		it( 'but NOT with query date out of the end of the month', async ()=>{
+			let db = new Database();
+			let bookings: Booking[] = await db.getMonthBookings( 1, '2019-09-31' );
+
+			expect( bookings.length ).toBe( 1 );
+			expect( bookings[0].restautantBooking.id ).toBe( 1 );
+		});
+
+	})
 
 });

@@ -27,19 +27,33 @@ function mockData ( url ) {
 		return dataBase[ endpoint ];
 	}
 
-	var data = dataBase[endpoint];
+	if ( endpoint === 'booking_period') {
+		return monthBookings( dataBase['booking'], urlObject );
+	}
+	else {
+		return generic( dataBase[endpoint ], urlObject );
+	}
+}
 
-	var resp;
-
+function generic( data, urlObject ) {
 	// filter results on parameter basis
 	for( var key in urlObject ) {
 		data = data.filter( function( value ){
 			return urlObject[ key ] === String( value[ key ] );
 		});
 	}
-
 	return data;
+}
 
+function monthBookings( data, urlObject ) {
+	// filter results on parameter basis
+	data = data.filter( function( value ){
+		return ( value.date >= urlObject.minDate ) && ( value.date <= urlObject.maxDate );
+	});
+	delete urlObject.minDate;
+	delete urlObject.maxDate;
+	return generic( data, urlObject );
+}
 
 //     avail_map: function (date, restaurant) {
 //       var i = 0;
@@ -56,4 +70,3 @@ function mockData ( url ) {
 //       return res;
 //     }
 // }
-}

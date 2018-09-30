@@ -42,9 +42,13 @@ export class BookingMapper {
 			return ( g.availableSeats() - seats ) >= 0;  // so check if still have seats available
 		}
 		else { //there is no bookings for this restaurant
-//			return availableGuide( date, hour );				// so look if there is an available guide
+			return this.availableGuide( date, hour );				// so look if there is an available guide
 		}
 	}
+
+  availableGuide( date: string, hour: string ): any {
+    throw new Error("Method not implemented.");
+  }
 
 	private buildBookingMap( date ) {
 		let d = new Date( date );
@@ -71,7 +75,7 @@ export class BookingMapper {
 
   private async fetchBookingMap( date: string ) {
       let db = new Database();
-      this._bookings = await db.getAvailabilityMap( this._restaurantId, date );
+      this._bookings = await db.getMonthBookings( this._restaurantId, date );
   }
 
   private isAvailMapFresh( date: string ):boolean {

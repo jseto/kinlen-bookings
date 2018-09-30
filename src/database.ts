@@ -1,10 +1,11 @@
-import {Booking} from "./booking";
-import {Guide} from "./guide";
-import {Utils} from "./utils";
+import { DatabaseObject } from "./database-object";
+import { Booking } from "./booking";
+import { Guide } from "./guide";
+import { Utils } from "./utils";
 
 export class Database {
 
-  private static _url = '/wp-json/kinlen/';
+	private static _url = '/wp-json/kinlen/';
 
 	getFreeGuide( date: string ):Promise<Guide> {
 		let guide = new Guide(-1);
@@ -14,6 +15,22 @@ export class Database {
 				resolve( guide );
 			});
 		});
+	}
+
+	getMonthBookings( restaurantId: number, date: string):Promise<Booking[]> {
+		Utils.checkValidDate( date );
+		let year_month = date.slice( 0, 8 );
+		let minDate = year_month + '01';
+		let maxDate = year_month + '31';;
+		return new Promise( ( resolve ) => {
+      this.getREST( 'booking_period/', {
+				restaurant_booking_id: restaurantId,
+			 	minDate: minDate,
+				maxDate: maxDate
+			}).then( ( data ) => {
+				resolve( <Booking[]>this.buildList( new Booking(-1), data ) );
+      })
+    });
 	}
 
   getBooking( id: number ):Promise<Booking> {
@@ -27,25 +44,24 @@ export class Database {
     });
   }
 
-  getAvailabilityMap( restaurantId: number, date: string ):Promise<Booking[]> {
-    Utils.checkValidDate( date );
+  getBookings( queryObject ):Promise<Booking[]> {
     return new Promise( ( resolve ) => {
-      this.getREST( 'booking/', {
-          date: date,
-          restaurant_booking_id: restaurantId
-        }).then( ( data ) => {
-        let guideBookings: Booking[] = [];
-        let i = 0;
-        while ( data[i] ) {
-          let gb = new Booking(-1);
-          gb.fromObject( data[i] );
-          guideBookings.push( gb );
-          i++;
-        }
-        resolve( guideBookings );
+      this.getREST( 'booking/', queryObject ).then( ( data ) => {
+				resolve( <Booking[]>this.buildList( new Booking(-1), data ) );
       })
     });
   }
+
+	private buildList( element:DatabaseObject, data:any ):DatabaseObject[] {
+		let list: DatabaseObject[] = [];
+		let i = 0;
+		while ( data[i] ) {
+			element.fromObject( data[i] );
+			list.push( element );
+			i++;
+		}
+		return list;
+	}
 
   objectToQueryString( obj: Object ): string {
     return '?' + Object.keys(obj)
