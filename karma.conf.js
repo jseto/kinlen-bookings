@@ -14,7 +14,10 @@ module.exports = function (config) {
       'test/**/*.spec.ts': ['webpack'],
       'src/**/*.ts': ['webpack']
     },
-    reporters: ['progress'],
+    reporters: [
+			'progress',
+//			'spec'
+		],
     autoWatch: true,
     browsers: [
 			// 'Chrome',
@@ -29,8 +32,19 @@ module.exports = function (config) {
       'karma-webpack',
       'karma-jasmine',
 			// 'karma-coverage',
+			'karma-spec-reporter',
       'karma-chrome-launcher'
     ],
+		// specReporter: {
+		// 	maxLogLines: 1,             // limit number of lines logged per test
+		// 	suppressErrorSummary: true, // do not print error summary
+		// 	suppressFailed: false,      // do not print information about failed tests
+		// 	suppressPassed: true,      // do not print information about passed tests
+		// 	suppressSkipped: false,      // do not print information about skipped tests
+		// 	showSpecTiming: false,      // print the time elapsed for each spec
+		// 	failFast: false              // test would finish with error when a first fail occurs.
+		// },
+
 		// coverageReporter: {
 		// 	type: 'lcovonly', subdir: 'lcov'
 		// },

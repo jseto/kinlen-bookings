@@ -29,28 +29,33 @@ describe( 'In Utils class', function() {
   });
 
   describe( 'a date of equal month ', function() {
+		let date = '2000-00-00';
+		let differentMonth = [
+			'2009-00-00',
+			'2000-01-00',
+			''
+		]
+
+		let sameMonth = [
+			'2000-00-00',
+			'2000-00-23'
+		]
 
     it( 'shoul have the same month part', function() {
-      let date = '2000-00-00';
-      let differentMonth = [
-        '2009-00-00',
-        '2000-01-00',
-      ]
-
-      let sameMonth = [
-        '2000-00-00',
-        '2000-00-23'
-      ]
-
       differentMonth.forEach(( diff )=>{
         expect( Utils.isSameMonth( date, diff ) ).toBeFalsy();
       });
-
       sameMonth.forEach(( same )=>{
         expect( Utils.isSameMonth( date, same ) ).toBeTruthy();
       });
-
     });
+
+		it( 'should have any of the dates not empty or null', ()=>{
+			sameMonth.forEach(( same )=>{
+				expect( Utils.isSameMonth( '', same ) ).toBeFalsy()
+				expect( Utils.isSameMonth( same, null ) ).toBeFalsy()
+			})
+		});
 
   });
 

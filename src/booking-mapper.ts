@@ -23,17 +23,20 @@ export class BookingMapper {
   }
 
 	/**
-	 * @describe get the booking for a selected day and time
+	 * Get the booking for a selected day and time and this restaurant
+	 * @param  date the date of the required booking
+	 * @param  hour the hour of the booking
+	 * @return      the booking or null
 	 */
-	booking( date: string, hour: string ){
+	async booking( date: string, hour: string ){
 		Utils.checkValidDate( date );
 		if ( !this.isAvailMapFresh( date ) ) {
-			this.fetchBookingMap( date )
+			await this.fetchBookingMap( date )
 			this.buildBookingMap( date );
 			this._lastBookingMapDate = date;
 		}
 		let day = new Date( date );
-		return this._bookingMap[ day.getDay() ][ hour ];
+		return this._bookingMap[ day.getDate(), hour ];
 	}
 
 	isAvailable( date: string, hour: string, seats: number ){
@@ -76,6 +79,7 @@ export class BookingMapper {
   private async fetchBookingMap( date: string ) {
       let db = new Database();
       this._bookings = await db.getMonthBookings( this._restaurantId, date );
+			return this._bookings;
   }
 
   private isAvailMapFresh( date: string ):boolean {

@@ -2,6 +2,9 @@
 export class Utils {
 
   static isSameMonth( a: string, b: string ):boolean {
+		if ( !( a && b ) ) {
+			return false;
+		}
     this.checkValidDate(a);
     this.checkValidDate(b);
     return ( a.slice( 5, 7 ) === b.slice( 5, 7 )

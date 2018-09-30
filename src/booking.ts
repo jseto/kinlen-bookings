@@ -31,15 +31,15 @@ export class Booking extends DatabaseObject {
       booked_seats: this.bookedSeats
     };
   }
-
-  fillFields( date: string, time: string, timeLength: number, restaurantBooking: RestaurantBooking, assignedGuide: Guide, bookedSeats: number ) {
-    this._date = date;
-    this._time = time;
-    this._timeLength = timeLength;
-    this._restaurantBooking = restaurantBooking;
-    this._assignedGuide = assignedGuide;
-    this._bookedSeats = bookedSeats;
-  }
+	//
+  // fillFields( date: string, time: string, timeLength: number, restaurantBooking: RestaurantBooking, assignedGuide: Guide, bookedSeats: number ) {
+  //   this._date = date;
+  //   this._time = time;
+  //   this._timeLength = timeLength;
+  //   this._restaurantBooking = restaurantBooking;
+  //   this._assignedGuide = assignedGuide;
+  //   this._bookedSeats = bookedSeats;
+  // }
 
   setDate( date: string ) {
     this._date=date;
