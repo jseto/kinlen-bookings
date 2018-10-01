@@ -6,12 +6,33 @@ describe( 'BookingMapper is a class providing the following services:', ()=> {
 
 	describe( 'a booking map where month days are the indexes of the array.', ()=> {
 
+		describe( 'the booking map has to be cached for eficiency',()=>{
+
+			it( 'should to be built on the first call', async()=>{
+				let cacheSpy = spyOn( mapper, 'buildBookingMapCache' ).and.callThrough();
+				await mapper.bookingSummary( '2010-09-02', '19:00:00' );
+				expect( mapper.buildBookingMapCache ).toHaveBeenCalled();
+				cacheSpy.calls.reset();
+			// });
+			// it( 'should not to be built rebuilt on same month calls', async()=>{
+				await mapper.bookingSummary( '2010-09-12', '19:00:00' );
+				expect( mapper.buildBookingMapCache ).not.toHaveBeenCalled();
+				cacheSpy.calls.reset();
+			// });
+			// it( 'should to be rebuilt on different month call', async()=>{
+				await mapper.bookingSummary( '2010-02-02', '19:00:00' );
+				expect( mapper.buildBookingMapCache ).toHaveBeenCalled();
+				cacheSpy.calls.reset();
+			})
+		});
+
 		describe( 'if there is no booking for the day', ()=> {
 
 			it( 'should return falsy for no day booking', async ()=> {
 				let booking = await mapper.bookingSummary( '2018-09-02', '19:00:00' );
 				expect( booking ).toBeFalsy();
 			});
+
 			it( 'should return falsy for day booking but not in the time', async ()=> {
 				let booking = await mapper.bookingSummary( '2018-09-25', '10:00:00' );
 				expect( booking ).toBeFalsy();

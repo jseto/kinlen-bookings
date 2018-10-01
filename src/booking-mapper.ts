@@ -1,5 +1,4 @@
 import {Database} from "./database";
-import {Booking} from "./booking"
 import {Guide, MAX_SEATS_PER_GUIDE} from "./guide"
 import {Utils} from "./utils";
 
@@ -28,23 +27,22 @@ export class BookingMapper {
 	 * @param  hour the hour of the booking
 	 * @return      the booking or null
 	 */
-	bookingSummary( date: string, hour: string ) {
-		// Utils.checkValidDate( date );
-		// if ( !this.isAvailMapFresh( date ) ) {
-		// 	this.buildBookingMap( date );
-		// 	this._lastBookingMapDate = date;
-		// }
-		// let day = new Date( date );
-		// return this._bookingMap[ day.getDate() ][ hour ];
+	async bookingSummary( date: string, hour: string ) {
 		Utils.checkValidDate( date );
-		return new Promise<BookingSummary>( async (resolve)=>{
-			if ( !this.isAvailMapFresh( date ) ) {
-				await this.buildBookingMap( date );
-				this._lastBookingMapDate = date;
-			}
-			let day = new Date( date );
-			resolve( this._bookingMap[ day.getDate() ][ hour ] );
-		});
+		if ( !this.isAvailMapFresh( date ) ) {
+			await this.buildBookingMapCache( date );
+		}
+		let day = new Date( date );
+		return this._bookingMap[ day.getDate() ][ hour ];
+		// Utils.checkValidDate( date );
+		// return new Promise<BookingSummary>( async (resolve)=>{
+		// 	if ( !this.isAvailMapFresh( date ) ) {
+		// 		await this.buildBookingMapCache( date );
+		// 		this._lastBookingMapDate = date;
+		// 	}
+		// 	let day = new Date( date );
+		// 	resolve( this._bookingMap[ day.getDate() ][ hour ] );
+		// });
 	}
 
 
@@ -63,7 +61,13 @@ export class BookingMapper {
     throw new Error("Method not implemented.");
   }
 
-	private async buildBookingMap( date ) {
+	/**
+	 * Retrieves the bookings for the month in date and builds the booking map
+	 * and stores it in local memory for subsequent uses
+	 * @param  date the date where the month to retrieve bookings is taken
+	 * @return      a promise of
+	 */
+	async buildBookingMapCache( date ) {
 		for ( let i=0; i<32; i++ ) {
 			this._bookingMap[i] = {};
 		}
@@ -83,6 +87,7 @@ export class BookingMapper {
 				};
 			}
 		});
+		this._lastBookingMapDate = date;
 	}
 
 	private async freeGuide( date: string ) {
