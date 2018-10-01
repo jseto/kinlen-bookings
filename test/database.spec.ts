@@ -61,7 +61,7 @@ describe( 'Database', function() {
 			let bookings: Booking[] = await db.getMonthBookings( 1, '2019-08-25' );
 
 			expect( bookings.length ).toBe( 4 );
-			expect( bookings[0].restautantBooking.id ).toBe( 1 );
+			expect( bookings[1].id ).not.toBe( bookings[0].id );
 		});
 
 		it( 'with query date in the begining of the month', async ()=>{

@@ -8,12 +8,12 @@ describe( 'BookingMapper is a class providing the following services:', ()=> {
 
 		describe( 'if there is no booking for the day', ()=> {
 
-			it( 'should return falsy for no day booking', ()=> {
-				let booking = mapper.booking( '2018-09-02', '19:00:00' );
+			it( 'should return falsy for no day booking', async ()=> {
+				let booking = await mapper.bookingSummary( '2018-09-02', '19:00:00' );
 				expect( booking ).toBeFalsy();
 			});
-			it( 'should return falsy for day booking but not in the time', ()=> {
-				let booking = mapper.booking( '2018-09-25', '10:00:00' );
+			it( 'should return falsy for day booking but not in the time', async ()=> {
+				let booking = await mapper.bookingSummary( '2018-09-25', '10:00:00' );
 				expect( booking ).toBeFalsy();
 			});
 
@@ -21,12 +21,11 @@ describe( 'BookingMapper is a class providing the following services:', ()=> {
 
 		describe( 'if there are bookings for the day', ()=> {
 
-			it( 'should return the booking for that day and time', ()=> {
-				let booking = mapper.booking( '2018-09-25', '19:00:00' );
+			it( 'should return the booking for that day and time', async ()=> {
+				let booking = await mapper.bookingSummary( '2018-09-25', '21:00:00' );
 				expect( booking ).toBeTruthy();
-				expect( booking.date ).toEqual( '2018-09-25' );
-				expect( booking.time ).toEqual( '19:00:00' );
-				expect( booking.id ).toBe( 4 );
+				expect( booking.guideId ).toBe( 1 );
+				expect( booking.bookedSeats ).toBe( 5 );
 			});
 
 		});

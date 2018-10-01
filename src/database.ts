@@ -28,7 +28,7 @@ export class Database {
 			 	minDate: minDate,
 				maxDate: maxDate
 			}).then( ( data ) => {
-				resolve( <Booking[]>this.buildList( new Booking(-1), data ) );
+				resolve( <Booking[]>this.buildList( data, ()=>{ return new Booking(-1) } ) );
       })
     });
 	}
@@ -47,15 +47,16 @@ export class Database {
   getBookings( queryObject ):Promise<Booking[]> {
     return new Promise( ( resolve ) => {
       this.getREST( 'booking/', queryObject ).then( ( data ) => {
-				resolve( <Booking[]>this.buildList( new Booking(-1), data ) );
+				resolve( <Booking[]>this.buildList( data, ()=> { return new Booking(-1) } ) );
       })
     });
   }
 
-	private buildList( element:DatabaseObject, data:any ):DatabaseObject[] {
+	private buildList( data:any, createInstance:() => DatabaseObject ):DatabaseObject[] {
 		let list: DatabaseObject[] = [];
 		let i = 0;
 		while ( data[i] ) {
+			let element =  createInstance();
 			element.fromObject( data[i] );
 			list.push( element );
 			i++;
