@@ -2,36 +2,40 @@ var dataBase = require('./db.json');
 
 module.exports = mockData
 
+function mockData() {
+	return {
+		init: function() {},
+		response: function( url ) {
+			if ( typeof url === 'undefined' )	return null;
 
-function mockData ( url ) {
-	if ( typeof url === 'undefined' )	return null;
+			var urlParams = url.slice( url.indexOf('?')+1, url.length );
+			var urlWithoutParams = url;
 
-	var urlParams = url.slice( url.indexOf('?')+1, url.length );
-	var urlWithoutParams = url;
+			if ( urlParams !== url ) {
+				urlWithoutParams = url.slice( 0, url.indexOf('?')-1 );
+			}
+			else {
+				urlParams = '';
+				urlWithoutParams = url.slice( 0, url.length - 1 );
+			}
 
-	if ( urlParams !== url ) {
-		urlWithoutParams = url.slice( 0, url.indexOf('?')-1 );
-	}
-	else {
-		urlParams = '';
-		urlWithoutParams = url.slice( 0, url.length - 1 );
-	}
+			var endpoint = urlWithoutParams.slice( urlWithoutParams.lastIndexOf('/')+1, urlWithoutParams.length );
+			var urlObject;
 
-	var endpoint = urlWithoutParams.slice( urlWithoutParams.lastIndexOf('/')+1, urlWithoutParams.length );
-	var urlObject;
+			if ( urlParams !== '' ) {
+				urlObject = JSON.parse('{"' + decodeURI(urlParams).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}')
+			}
+			else {
+				return dataBase[ endpoint ];
+			}
 
-	if ( urlParams !== '' ) {
-		urlObject = JSON.parse('{"' + decodeURI(urlParams).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}')
-	}
-	else {
-		return dataBase[ endpoint ];
-	}
-
-	if ( endpoint === 'booking_period') {
-		return monthBookings( dataBase['booking'], urlObject );
-	}
-	else {
-		return generic( dataBase[endpoint ], urlObject );
+			if ( endpoint === 'booking_period') {
+				return monthBookings( dataBase['booking'], urlObject );
+			}
+			else {
+				return generic( dataBase[endpoint ], urlObject );
+			}
+		}
 	}
 }
 
