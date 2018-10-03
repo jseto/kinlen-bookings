@@ -54,19 +54,3 @@ function monthBookings( data, urlObject ) {
 	delete urlObject.maxDate;
 	return generic( data, urlObject );
 }
-
-//     avail_map: function (date, restaurant) {
-//       var i = 0;
-//       var gb = this.guide_booking;
-//       var res = [];
-//       while ( gb[i] ) {
-//         if ( gb[i].date >= date
-//               && gb[i].date < ( date.slice( 0, 8 ) + '31' )
-//               && gb[i].restaurant_booking_id === String(restaurant) ) {
-//           res.push( gb[i] );
-//         }
-//         i++;
-//       }
-//       return res;
-//     }
-// }

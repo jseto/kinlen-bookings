@@ -1,7 +1,9 @@
 import * as fetchMock from 'fetch-mock';
-import * as mockData from './mock-data/db.js';
+import * as mockData from './mock-data/db-json.js';
 import { Database } from "../src/database";
 import { Booking } from "../src/booking";
+
+//mockData().init();
 
 describe( '\nDatabase helpers', ()=>{
   describe( '\nobjectToQueryString method:', ()=>{
