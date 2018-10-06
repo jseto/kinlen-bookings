@@ -32,7 +32,7 @@ module.exports = function (config) {
       'karma-webpack',
       'karma-jasmine',
 			// 'karma-coverage',
-			'karma-spec-reporter',
+			// 'karma-spec-reporter',
       'karma-chrome-launcher'
     ],
 		// specReporter: {
@@ -60,6 +60,7 @@ module.exports = function (config) {
           }
         ]
       },
+			node: { fs: 'empty' },
       resolve: {
         extensions: ['.ts', '.js', '.tsx']
       },
