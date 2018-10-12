@@ -1,8 +1,23 @@
+import * as fetchMock from 'fetch-mock';
+import { MockData } from './mock-data/db-sql';
 import { BookingMapper } from "../src/booking-mapper";
+import { Database } from "../src/database";
 
 let mapper = new BookingMapper( 1 );
+let db = new Database();
 
 describe( 'BookingMapper is a class providing the following services:', ()=> {
+	let mockData: MockData;
+
+	beforeEach(()=>{
+		mockData = new MockData();
+		fetchMock.mock('*', ( url, opts )=>{ return mockData.response( url, opts ) } );
+	});
+
+	afterEach(()=>{
+		fetchMock.restore();
+		mockData.close();
+	});
 
 	describe( 'a booking map where month days are the indexes of the array.', ()=> {
 
@@ -53,65 +68,62 @@ describe( 'BookingMapper is a class providing the following services:', ()=> {
 
 	});
 
-	describe( 'a function to know about of availability.', ()=> {
+	describe( 'a function reporting that a slot is available when there is a free guide and restaurant is open', ()=> {
 
-		xit( 'should accept restaurant and date as parameters', ()=> {
+		describe( 'there is a free guide when a guide is assigned to this restaurant and still have seats available OR there is an available guide:', ()=> {
+
+			xdescribe( 'when a guide is assigned to this restaurant and still have seats available', ()=> {
+
+				it( 'should have this guide assigned to this restaurant in this slot', ()=> {
+
+				});
+
+				it( 'should have seats available', ()=> {
+
+				});
+
+				it( 'should happen both of the above conditions', ()=> {
+
+				});
+
+			});
+
+			describe( 'when guide is available for the day', ()=> {
+
+				it( 'should not have bookings for the day', async()=> {
+					let guide = await mapper.availableGuide( '2001-05-01' );
+					let guideBookings = await db.getBookings({
+						guide_id: guide.id,
+						date: '2001-05-01'
+					});
+					expect( guide.id ).toBe( 4 );
+					expect( guideBookings.length ).toBe( 0 );
+				});
+
+				it( 'should not be blocked (holiday, etc.) for the booking day', async ()=> {
+					let guide1 = await mapper.availableGuide( '2001-05-01' );
+					await db.blockGuide( guide1.id, '2001-05-01' );
+					let guide2 = await mapper.availableGuide( '2001-05-01' );
+					expect( guide1.id ).not.toEqual( guide2.id );
+				});
+
+				it( 'should verify both of the above conditions; no booking and no holiday for the day', ()=> {
+
+				});
+
+			});
 
 		});
 
-		xit( 'should accept optionally time', ()=> {
+		xdescribe( 'the restaurant open that day', ()=> {
+
+			it( 'should not be blocked for the booking day', ()=> {
+
+			});
 
 		});
 
-		describe( 'reporting that a slot is available when:', ()=> {
-
-			describe( 'there is a free guide whether one of the following conditions happen:', ()=> {
-
-				describe( 'a guide is assigned to this restaurant and still have seats available', ()=> {
-
-					xit( 'should have this guide assigned to this restaurant in this slot', ()=> {
-
-					});
-
-					xit( 'should have seats available', ()=> {
-
-					});
-
-					xit( 'should happen both of the above conditions', ()=> {
-
-					});
-
-				});
-
-				describe( 'when guide is available for the day', ()=> {
-
-					xit( 'should not have bookings for the day', ()=> {
-
-					});
-
-					xit( 'should not be blocked (holiday, etc.) for the booking day', ()=> {
-
-					});
-
-					xit( 'should verify both of the above conditions; no booking and no holiday for the day', ()=> {
-
-					});
-
-				});
-
-			});
-
-			describe( 'the restaurant open that day', ()=> {
-
-				xit( 'should not be blocked for the booking day', ()=> {
-
-				});
-
-			});
-
-			xit( 'should verify both of the above conditions; a free guide and the restaurant is open', ()=> {
-
-			});
+		it( 'should verify both of the above conditions; a free guide and the restaurant is open', ()=> {
 
 		});
 

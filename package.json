@@ -26,5 +26,7 @@
     "typescript": "^3.1.1",
     "webpack": "^4.20.2"
   },
-  "dependencies": {}
+  "dependencies": {
+    "fs": "0.0.1-security"
+  }
 }

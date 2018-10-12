@@ -1,5 +1,5 @@
 import {Database} from "./database";
-import {Guide, MAX_SEATS_PER_GUIDE} from "./guide"
+import {MAX_SEATS_PER_GUIDE} from "./guide"
 import {Utils} from "./utils";
 
 export interface BookingSummary {
@@ -11,14 +11,16 @@ export class BookingMapper {
 	private _restaurantId: number;
 //	private _bookings: Booking[];    // All bookings for the month
 	private _bookingMap: Object[];  // All bookings for the month by day of the month as 1st array index and time as 2nd array index
-	private _freeGuide: Guide;
   private _lastBookingMapDate: string;
+	private _db: Database;
 
   constructor( restaurantId: number ) {
 		this._restaurantId = restaurantId;
     this._bookingMap = [];
 //		this._bookings = [];
     this._lastBookingMapDate = '';
+		this._db = new Database();
+
   }
 
 	/**
@@ -45,20 +47,18 @@ export class BookingMapper {
 		// });
 	}
 
-
-
 	async isAvailable( date: string, hour: string, seats: number ){
 		let g = await this.bookingSummary( date, hour );
 		if ( g ) {  // there is a guide serving this restaurant
 			return ( g.bookedSeats + seats ) <= MAX_SEATS_PER_GUIDE;  // so check if still have seats available
 		}
 		else { //there is no bookings for this restaurant
-			return this.availableGuide( date, hour );				// so look if there is an available guide
+			return this.availableGuide( date );				// so look if there is an available guide
 		}
 	}
 
-  availableGuide( date: string, hour: string ): any {
-    throw new Error("Method not implemented.");
+  availableGuide( date: string ) {
+		return this._db.getFreeGuide( date )
   }
 
 	/**
@@ -72,8 +72,7 @@ export class BookingMapper {
 			this._bookingMap[i] = {};
 		}
 
-		let db = new Database();
-		let bookings = await db.getMonthBookings( this._restaurantId, date );
+		let bookings = await this._db.getMonthBookings( this._restaurantId, date );
 		bookings.forEach(( booking )=>{
 			let day = new Date( booking.date ).getDate();
 			let bday = this._bookingMap[ day ];
@@ -88,14 +87,6 @@ export class BookingMapper {
 			}
 		});
 		this._lastBookingMapDate = date;
-	}
-
-	private async freeGuide( date: string ) {
-		if ( ! this._freeGuide ) {
-			let db = new Database();
-			this._freeGuide = await db.getFreeGuide( date );
-		}
-		return this._freeGuide;
 	}
 
   private isAvailMapFresh( date: string ):boolean {

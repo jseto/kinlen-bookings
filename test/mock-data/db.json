@@ -117,6 +117,132 @@
 			"restaurant_booking_id":"2",
 			"guide_id":"1",
 			"booked_seats":"2"
+		},
+		{
+			"id":"106",
+			"date":"2001-05-01",
+			"time":"19:00:00",
+			"time_length":"test availableGuide",
+			"restaurant_booking_id":"1",
+			"guide_id":"1",
+			"booked_seats":"2"
+		},
+		{
+			"id":"107",
+			"date":"2001-05-01",
+			"time":"19:00:00",
+			"time_length":"test availableGuide",
+			"restaurant_booking_id":"1",
+			"guide_id":"1",
+			"booked_seats":"4"
+		},
+		{
+			"id":"108",
+			"date":"2001-05-01",
+			"time":"21:00:00",
+			"time_length":"test availableGuide",
+			"restaurant_booking_id":"1",
+			"guide_id":"1",
+			"booked_seats":"6"
+		},
+		{
+			"id":"109",
+			"date":"2001-05-01",
+			"time":"19:00:00",
+			"time_length":"test availableGuide",
+			"restaurant_booking_id":"2",
+			"guide_id":"2",
+			"booked_seats":"2"
+		},
+		{
+			"id":"110",
+			"date":"2001-05-01",
+			"time":"21:00:00",
+			"time_length":"test availableGuide",
+			"restaurant_booking_id":"2",
+			"guide_id":"2",
+			"booked_seats":"6"
+		},
+		{
+			"id":"111",
+			"date":"2001-05-02",
+			"time":"21:00:00",
+			"time_length":"test availableGuide",
+			"restaurant_booking_id":"1",
+			"guide_id":"1",
+			"booked_seats":"2"
+		},
+		{
+			"id":"112",
+			"date":"2001-05-02",
+			"time":"21:00:00",
+			"time_length":"test availableGuide",
+			"restaurant_booking_id":"2",
+			"guide_id":"1",
+			"booked_seats":"2"
+		}
+		,
+		{
+			"id":"113",
+			"date":"2001-05-02",
+			"time":"19:00:00",
+			"time_length":"test availableGuide",
+			"restaurant_booking_id":"1",
+			"guide_id":"4",
+			"booked_seats":"6"
+		}
+	],
+	"guide": [
+		{
+			"id":"1",
+			"name":"Somchai",
+			"score":"100",
+			"paypal":"paypalSomchai",
+			"phone":"05625632",
+			"email":"somchai@bestthaifood.info",
+			"line_id":"somchai100"
+		},
+		{
+			"id":"2",
+			"name":"Nui",
+			"score":"50",
+			"paypal":"paypalNui",
+			"phone":"025658635",
+			"email":"nui@bestthaifood.info",
+			"line_id":"nui2356"
+		},
+		{
+			"id":"3",
+			"name":"Sara",
+			"score":"50",
+			"paypal":"paypalSara",
+			"phone":"59854458",
+			"email":"sara@bestthaifood.info",
+			"line_id":"sara25100"
+		},
+		{
+			"id":"4",
+			"name":"Profesional",
+			"score":"99",
+			"paypal":"paypalProfesional",
+			"phone":"5984546658",
+			"email":"profesional@bestthaifood.info",
+			"line_id":"profesional25100"
+		},
+		{
+			"id":"5",
+			"name":"Lazy",
+			"score":"101",
+			"paypal":"paypalLazy",
+			"phone":"5900058",
+			"email":"lazy@bestthaifood.info",
+			"line_id":"lazy25100"
+		}
+	],
+	"guide_holiday": [
+		{
+			"id":"5",
+			"date":"2001-05-01"
 		}
 	]
 }

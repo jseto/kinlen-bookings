@@ -11,7 +11,7 @@ export class Database {
 		let guide = new Guide(-1);
 		return new Promise( ( resolve ) => {
 			this.getREST( 'free_guide/', {date: date } ).then( ( data ) => {
-				guide.fromObject( data[0] );
+				guide.fromObject( data );
 				resolve( guide );
 			});
 		});
@@ -52,6 +52,14 @@ export class Database {
     });
   }
 
+	blockGuide( guideId: number, date: string ) {
+		Utils.checkValidDate( date );
+		return this.postREST( 'guide_holiday/', {
+			id: guideId,
+			date: date
+		});
+	}
+
 	private buildList( data:any, createInstance:() => DatabaseObject ):DatabaseObject[] {
 		let list: DatabaseObject[] = [];
 		let i = 0;
@@ -72,16 +80,27 @@ export class Database {
       .join('&');
   }
 
+	private postREST( endpointCommand: string, dataObject: {} ) {
+		let fullURL = Database._url + endpointCommand;
+		return fetch( fullURL, {
+	    method: 'POST',
+	    headers: {
+	      'Accept': 'application/json',
+	      'Content-Type': 'application/json'
+	    },
+	    body: JSON.stringify( dataObject )
+  	});
+	}
+
   private getREST( endpointCommand: string, queryObject: Object ) {
     let fullURL = Database._url + endpointCommand + this.objectToQueryString( queryObject );
     return new Promise( ( resolve ) => {
       fetch( fullURL ).then((resp)=>{
         let data = resp.json();
         resolve( data );
-      }).catch(()=>{
-        throw( new Error( 'Kinlen Booking System Error: ' ) );
+      }).catch((error)=>{
+        throw( new Error( 'Kinlen Booking System: ' + error.message ) );
       });
     });
   }
-
 }

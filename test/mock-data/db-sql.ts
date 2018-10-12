@@ -1,9 +1,13 @@
 import * as Sql from "sql.js";
 import * as jsonData from "./db.json"
+import * as fs from "fs"
 
 export class MockData {
 	readonly bookingsTable = 'booking';
 	readonly testDataTable = 'mock_data_test_data';
+	readonly guideTable = 'guide';
+	readonly guideHolidaysTable = 'guide_holiday';
+	readonly restaurantHolidaysTable = 'restaurant_holiday';
 	private _db: Sql.Database;
 
 	constructor() {
@@ -37,24 +41,110 @@ export class MockData {
 		]
 		this._db.run( sqlArr.join('') + ';' );
 		this.fillData( this.bookingsTable );
+
+		sqlArr = [
+			'CREATE TABLE IF NOT EXISTS ',
+			this.guideTable,
+			' ( ',
+			'id int(10), ', // NOT NULL AUTO INCREMENT, ',
+			'name varchar(255), ',
+			'score int(3), ',
+			'phone varchar(10), ',
+			'email varchar(255), ',
+			'line_id varchar(255), ',
+			'paypal varchar(255), ',
+			'PRIMARY KEY (id) ',
+			');'
+		];
+		this._db.run( sqlArr.join('') );
+		this.fillData( this.guideTable );
+
+		sqlArr = [
+			'CREATE TABLE IF NOT EXISTS ',
+			this.guideHolidaysTable,
+			' ( ',
+			'id int(10), ', // NOT NULL AUTO INCREMENT, ',
+			'date date, ',
+			'PRIMARY KEY (id) ',
+			');'
+		];
+		this._db.run( sqlArr.join('') );
+		this.fillData( this.guideHolidaysTable );
+
+		sqlArr = [
+			'CREATE TABLE IF NOT EXISTS ',
+			this.restaurantHolidaysTable,
+			' ( ',
+			'id int(10), ', // NOT NULL AUTO INCREMENT, ',
+			'date date, ',
+			'PRIMARY KEY (id) ',
+			');'
+		];
+		this._db.run( sqlArr.join('') );
+		this.fillData( this.restaurantHolidaysTable );
 	}
 
-	response( fullURL ){
+	close() {
+    this._db.close();
+  }
+
+	response( fullURL: string, opts?: any ) {
 		let urlObj = new URL( fullURL, 'http://localhost' );
 		let p = urlObj.pathname;
-		let tableName = p.slice( p.lastIndexOf( '/', p.length - 2 ) + 1, p.length - 1 );
+		let table = p.slice( p.lastIndexOf( '/', p.length - 2 ) + 1, p.length - 1 );
 		let params = {};
 		urlObj.searchParams.forEach(( value, key )=>{
 			params[ key ] = value;
 		});
 
-		switch ( tableName ) {
-			case 'booking_period':
-				return this.queryPeriod( params );
-			default:
-				return this.queryGeneric( tableName, params );
+		if ( opts === undefined || opts.method === 'GET' ) {
+			return this.mockGET( table, params );
+		}
+
+		if ( opts.method === 'POST' ) {
+			return this.mockPOST( table, JSON.parse( opts.body ) );
 		}
 	}
+
+	private mockPOST( table: string, dataObject:any ) {
+		let data = [];
+		data.push( dataObject );
+		this.insert( table, data );
+		return 200;
+	}
+
+	private mockGET( table: string, params: {} ) {
+		switch ( table ) {
+			case 'booking_period':
+				return this.queryPeriod( params );
+			case 'free_guide':
+				return this.queryFreeGuide( params );
+			default:
+				return this.queryGeneric( table, params );
+		}
+	}
+
+  private queryFreeGuide( params: {} ) {
+		let sqlArr = [
+			'SELECT * FROM',
+			this.guideTable,
+			'WHERE ( id NOT IN ( SELECT guide_id FROM',
+			this.bookingsTable,
+			'WHERE date =',
+			'"' + params[ 'date' ] + '"',
+		 	') ) AND ( id not in ( SELECT id FROM',
+			this.guideHolidaysTable,
+			'WHERE date =',
+			'"' + params[ 'date' ] + '"',
+			') ) ORDER BY score DESC;'
+		];
+
+		let s = this._db.prepare( sqlArr.join(' ') );
+		s.step();
+		let resp = s.getAsObject();
+		s.free();
+		return resp;
+  }
 
   private queryPeriod(params: {}): any {
 		let whereArr = [];
@@ -93,8 +183,12 @@ export class MockData {
 		return resp;
 	}
 
-	private fillData( tableName: string ) {
-		let data = jsonData[ tableName ];
+	private fillData( table: string ) {
+		this.insert( table, jsonData[ table ] );
+	}
+
+	private insert( tableName: string, data: any[] ) {
+		if ( !data ) return;
 
 		let keys = [];
 		for ( var key in data[0] ) {
@@ -114,4 +208,12 @@ export class MockData {
 		this._db.run( sqlStr );
 	}
 
+	exportDatabase() {
+		let data = this._db.export();
+		let buffer = new Buffer(data);
+		fs.writeFileSync("out/test/mock-data/filename.sqlite", buffer);
+		console.log('database writen');
+	}
 }
+
+//new MockData().exportDatabase();

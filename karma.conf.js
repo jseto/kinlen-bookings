@@ -61,6 +61,9 @@ module.exports = function (config) {
         ]
       },
 			node: { fs: 'empty' },
+			// externals:{
+			// 	fs: 'commonjs fs',
+			// },
       resolve: {
         extensions: ['.ts', '.js', '.tsx']
       },
