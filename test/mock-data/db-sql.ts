@@ -63,7 +63,7 @@ export class MockData {
 			'CREATE TABLE IF NOT EXISTS ',
 			this.guideHolidaysTable,
 			' ( ',
-			'id int(10), ', // NOT NULL AUTO INCREMENT, ',
+			'id int(10), ', // NOT NULL
 			'date date, ',
 			'PRIMARY KEY (id) ',
 			');'
@@ -75,7 +75,7 @@ export class MockData {
 			'CREATE TABLE IF NOT EXISTS ',
 			this.restaurantHolidaysTable,
 			' ( ',
-			'id int(10), ', // NOT NULL AUTO INCREMENT, ',
+			'id int(10), ', // NOT NULL
 			'date date, ',
 			'PRIMARY KEY (id) ',
 			');'

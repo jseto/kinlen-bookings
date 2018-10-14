@@ -69,12 +69,14 @@ describe( 'BookingMapper is a class providing the following services:', ()=> {
 	});
 
 	describe( 'a function reporting that a slot is available when there is a free guide and restaurant is open', ()=> {
+		let bookingDate = '2001-05-01';
 
 		describe( 'there is a free guide when a guide is assigned to this restaurant and still have seats available OR there is an available guide:', ()=> {
 
-			xdescribe( 'when a guide is assigned to this restaurant and still have seats available', ()=> {
+			describe( 'when a guide is assigned to this restaurant and still have seats available', ()=> {
 
-				it( 'should have this guide assigned to this restaurant in this slot', ()=> {
+				it( 'should have this guide assigned to this restaurant in this slot', async ()=> {
+					let guide = await mapper.availableGuide( bookingDate );
 
 				});
 
@@ -85,34 +87,41 @@ describe( 'BookingMapper is a class providing the following services:', ()=> {
 				it( 'should happen both of the above conditions', ()=> {
 
 				});
-
 			});
 
 			describe( 'when guide is available for the day', ()=> {
 
 				it( 'should not have bookings for the day', async()=> {
-					let guide = await mapper.availableGuide( '2001-05-01' );
+					let guide = await mapper.availableGuide( bookingDate );
 					let guideBookings = await db.getBookings({
 						guide_id: guide.id,
-						date: '2001-05-01'
+						date: bookingDate
 					});
 					expect( guide.id ).toBe( 4 );
 					expect( guideBookings.length ).toBe( 0 );
 				});
 
 				it( 'should not be blocked (holiday, etc.) for the booking day', async ()=> {
-					let guide1 = await mapper.availableGuide( '2001-05-01' );
-					await db.blockGuide( guide1.id, '2001-05-01' );
-					let guide2 = await mapper.availableGuide( '2001-05-01' );
+					let guide1 = await mapper.availableGuide( bookingDate );
+					let holiday = await db.getGuideHolidays( guide1.id, bookingDate );
+					expect( holiday.length ).toBe( 0 );
+
+					await db.blockGuide( guide1.id, bookingDate );
+					let guide2 = await mapper.availableGuide( bookingDate );
 					expect( guide1.id ).not.toEqual( guide2.id );
 				});
 
-				it( 'should verify both of the above conditions; no booking and no holiday for the day', ()=> {
-
+				it( 'both conditions above should happen', async ()=>{
+					let guide = await mapper.availableGuide( bookingDate );
+					let bookings = await db.getBookings({
+						guide_id: guide.id,
+						date: bookingDate
+					});
+					let holidays = await db.getGuideHolidays( guide.id, bookingDate );
+					expect( bookings.length ).toBe( 0 );
+					expect( holidays.length ).toBe( 0 );
 				});
-
 			});
-
 		});
 
 		xdescribe( 'the restaurant open that day', ()=> {

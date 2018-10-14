@@ -1,6 +1,6 @@
 import { DatabaseObject } from "./database-object";
 import { Booking } from "./booking";
-import { Guide } from "./guide";
+import { Guide, GuideHoliday } from "./guide";
 import { Utils } from "./utils";
 
 export class Database {
@@ -57,6 +57,18 @@ export class Database {
 		return this.postREST( 'guide_holiday/', {
 			id: guideId,
 			date: date
+		});
+	}
+
+	getGuideHolidays( guideId: number, date?: string ): Promise<GuideHoliday[]> {
+		let q = { id: guideId };
+		if ( date != undefined ) {
+			q[ date ] = date;
+		}
+		return new Promise( ( resolve ) => {
+			this.getREST( 'guide_holiday/', q ).then((data)=>{
+				resolve( <GuideHoliday[]>this.buildList( data, ()=>{ return new GuideHoliday(-1) } ) );
+			})
 		});
 	}
 
