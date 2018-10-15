@@ -10,7 +10,7 @@ export interface BookingSummary {
 export class BookingMapper {
 	private _restaurantId: number;
 //	private _bookings: Booking[];    // All bookings for the month
-	private _bookingMap: Object[];  // All bookings for the month by day of the month as 1st array index and time as 2nd array index
+	private _bookingMap: BookingSummary[][];  // All bookings for the month by day of the month as 1st array index and time as 2nd array index
   private _lastBookingMapDate: string;
 	private _db: Database;
 
@@ -29,31 +29,23 @@ export class BookingMapper {
 	 * @param  hour the hour of the booking
 	 * @return      the booking or null
 	 */
-	async bookingSummary( date: string, hour: string ) {
+	async bookingSummary( date: string, hour: string ): Promise<BookingSummary> {
 		Utils.checkValidDate( date );
 		if ( !this.isAvailMapFresh( date ) ) {
 			await this.buildBookingMapCache( date );
 		}
 		let day = new Date( date );
 		return this._bookingMap[ day.getDate() ][ hour ];
-		// Utils.checkValidDate( date );
-		// return new Promise<BookingSummary>( async (resolve)=>{
-		// 	if ( !this.isAvailMapFresh( date ) ) {
-		// 		await this.buildBookingMapCache( date );
-		// 		this._lastBookingMapDate = date;
-		// 	}
-		// 	let day = new Date( date );
-		// 	resolve( this._bookingMap[ day.getDate() ][ hour ] );
-		// });
 	}
 
-	async isAvailable( date: string, hour: string, seats: number ){
+	async availableSeats( date: string, hour: string ): Promise<number> {
 		let g = await this.bookingSummary( date, hour );
 		if ( g ) {  // there is a guide serving this restaurant
-			return ( g.bookedSeats + seats ) <= MAX_SEATS_PER_GUIDE;  // so check if still have seats available
+			return ( MAX_SEATS_PER_GUIDE - g.bookedSeats );  // so check if still have seats available
 		}
 		else { //there is no bookings for this restaurant
-			return this.availableGuide( date );				// so look if there is an available guide
+			let guide = await this.availableGuide( date );				// so look if there is an available guide
+			return guide.maxSeats();
 		}
 	}
 
@@ -69,7 +61,7 @@ export class BookingMapper {
 	 */
 	async buildBookingMapCache( date ) {
 		for ( let i=0; i<32; i++ ) {
-			this._bookingMap[i] = {};
+			this._bookingMap[i] = [];
 		}
 
 		let bookings = await this._db.getMonthBookings( this._restaurantId, date );

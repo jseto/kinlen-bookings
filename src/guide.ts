@@ -36,8 +36,8 @@ export class Guide extends DatabaseObject{
   private _lineId: string;
   private _paypal: string;
 
-  maxOfferedSeats(): number{
-    return 6;
+  maxSeats(): number {
+    return MAX_SEATS_PER_GUIDE;
   };
 
   toObject(){

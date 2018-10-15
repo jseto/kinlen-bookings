@@ -2,6 +2,7 @@ import * as fetchMock from 'fetch-mock';
 import { MockData } from './mock-data/db-sql';
 import { BookingMapper } from "../src/booking-mapper";
 import { Database } from "../src/database";
+import { MAX_SEATS_PER_GUIDE } from '../src/guide';
 
 let mapper = new BookingMapper( 1 );
 let db = new Database();
@@ -68,28 +69,33 @@ describe( 'BookingMapper is a class providing the following services:', ()=> {
 
 	});
 
-	describe( 'a function reporting that a slot is available when there is a free guide and restaurant is open', ()=> {
-		let bookingDate = '2001-05-01';
+	describe( 'a function reporting how many seats are available for a slot (when there is a free guide and restaurant is open)', ()=> {
 
 		describe( 'there is a free guide when a guide is assigned to this restaurant and still have seats available OR there is an available guide:', ()=> {
 
 			describe( 'when a guide is assigned to this restaurant and still have seats available', ()=> {
+				let bookingDate = '2001-05-02';
+				let bookingTime = '21:00:00';
 
 				it( 'should have this guide assigned to this restaurant in this slot', async ()=> {
-					let guide = await mapper.availableGuide( bookingDate );
-
+					let booking = await mapper.bookingSummary( bookingDate, bookingTime );
+					expect( booking.guideId ).toBe( 1 );
 				});
 
-				it( 'should have seats available', ()=> {
-
+				it( 'should have seats available', async ()=> {
+					let booking = await mapper.bookingSummary( bookingDate, bookingTime );
+					expect( booking.bookedSeats ).toBeLessThan( MAX_SEATS_PER_GUIDE );
 				});
 
-				it( 'should happen both of the above conditions', ()=> {
-
+				it( 'should happen both of the above conditions', async ()=> {
+					let booking = await mapper.bookingSummary( bookingDate, bookingTime );
+					let available = await mapper.availableSeats( bookingDate, bookingTime );
+					expect( available ).toBe( MAX_SEATS_PER_GUIDE - booking.bookedSeats );
 				});
 			});
 
 			describe( 'when guide is available for the day', ()=> {
+				let bookingDate = '2001-05-01';
 
 				it( 'should not have bookings for the day', async()=> {
 					let guide = await mapper.availableGuide( bookingDate );
@@ -124,15 +130,15 @@ describe( 'BookingMapper is a class providing the following services:', ()=> {
 			});
 		});
 
-		xdescribe( 'the restaurant open that day', ()=> {
+		describe( 'the restaurant open that day', ()=> {
 
-			it( 'should not be blocked for the booking day', ()=> {
+			xit( 'should not be blocked for the booking day', ()=> {
 
 			});
 
 		});
 
-		it( 'should verify both of the above conditions; a free guide and the restaurant is open', ()=> {
+		xit( 'should verify both of the above conditions; a free guide and the restaurant is open', ()=> {
 
 		});
 

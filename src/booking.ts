@@ -96,6 +96,6 @@ export class Booking extends DatabaseObject {
   }
 
   availableSeats() {
-    return this._assignedGuide.maxOfferedSeats() - this._bookedSeats;
+    return this._assignedGuide.maxSeats() - this._bookedSeats;
   }
 }

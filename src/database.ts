@@ -72,6 +72,14 @@ export class Database {
 		});
 	}
 
+  objectToQueryString( obj: Object ): string {
+    return '?' + Object.keys(obj)
+      .map( function(k) {
+          return encodeURIComponent( k ) + '=' + encodeURIComponent( obj[ k ] );
+      })
+      .join('&');
+  }
+
 	private buildList( data:any, createInstance:() => DatabaseObject ):DatabaseObject[] {
 		let list: DatabaseObject[] = [];
 		let i = 0;
@@ -83,14 +91,6 @@ export class Database {
 		}
 		return list;
 	}
-
-  objectToQueryString( obj: Object ): string {
-    return '?' + Object.keys(obj)
-      .map( function(k) {
-          return encodeURIComponent( k ) + '=' + encodeURIComponent( obj[ k ] );
-      })
-      .join('&');
-  }
 
 	private postREST( endpointCommand: string, dataObject: {} ) {
 		let fullURL = Database._url + endpointCommand;
