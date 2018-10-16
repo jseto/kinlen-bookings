@@ -9,7 +9,7 @@ export interface BookingSummary {
 
 export class BookingMapper {
 	private _restaurantId: number;
-//	private _bookings: Booking[];    // All bookings for the month
+	private _restaurantHolidays: boolean[];    // All bookings for the month
 	private _bookingMap: BookingSummary[][];  // All bookings for the month by day of the month as 1st array index and time as 2nd array index
   private _lastBookingMapDate: string;
 	private _db: Database;
@@ -17,7 +17,7 @@ export class BookingMapper {
   constructor( restaurantId: number ) {
 		this._restaurantId = restaurantId;
     this._bookingMap = [];
-//		this._bookings = [];
+		this._restaurantHolidays = [];
     this._lastBookingMapDate = '';
 		this._db = new Database();
 
@@ -38,15 +38,37 @@ export class BookingMapper {
 		return this._bookingMap[ day.getDate() ][ hour ];
 	}
 
+	/**
+	 * Retrieves from the cache wether a restaurant is closed or open on date
+	 * @param  date the date to check
+	 * @return      true if the restaurant is closed
+	 */
+	async restaurantHoliday( date: string ) {
+		Utils.checkValidDate( date );
+		if ( !this.isAvailMapFresh( date ) ) {
+			await this.buildBookingMapCache( date );
+		}
+		let day = new Date( date );
+		return this._restaurantHolidays[ day.getDate() ];
+	}
+
 	async availableSeats( date: string, hour: string ): Promise<number> {
-		let g = await this.bookingSummary( date, hour );
-		if ( g ) {  // there is a guide serving this restaurant
-			return ( MAX_SEATS_PER_GUIDE - g.bookedSeats );  // so check if still have seats available
+		let booking = await this.bookingSummary( date, hour );
+		let holiday = await this.restaurantHoliday( date );
+		if ( holiday ) {
+			return 0;
+		}
+		if ( booking ) {  // there is a guide serving this restaurant
+			return ( MAX_SEATS_PER_GUIDE - booking.bookedSeats );  // so check if still have seats available
 		}
 		else { //there is no bookings for this restaurant
 			let guide = await this.availableGuide( date );				// so look if there is an available guide
 			return guide.maxSeats();
 		}
+	}
+
+	invalidateCache() {
+		this._lastBookingMapDate = '';
 	}
 
   availableGuide( date: string ) {
@@ -62,6 +84,7 @@ export class BookingMapper {
 	async buildBookingMapCache( date ) {
 		for ( let i=0; i<32; i++ ) {
 			this._bookingMap[i] = [];
+			this._restaurantHolidays[i] = false;
 		}
 
 		let bookings = await this._db.getMonthBookings( this._restaurantId, date );
@@ -78,6 +101,13 @@ export class BookingMapper {
 				};
 			}
 		});
+
+		let holidays = await this._db.getRestaurantMonthHolidays( this._restaurantId, date );
+		holidays.forEach(( holiday )=>{
+			let day = new Date( holiday.date ).getDate();
+			this._restaurantHolidays[ day ] = true;
+		});
+
 		this._lastBookingMapDate = date;
 	}
 

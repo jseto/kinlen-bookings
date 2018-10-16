@@ -1,10 +1,9 @@
-import { DatabaseObject } from "./database-object";
+import { DatabaseObject, Holiday } from "./database-object";
 import { Booking } from "./booking";
-import { Guide, GuideHoliday } from "./guide";
+import { Guide } from "./guide";
 import { Utils } from "./utils";
 
 export class Database {
-
 	private static _url = '/wp-json/kinlen/';
 
 	getFreeGuide( date: string ):Promise<Guide> {
@@ -18,16 +17,8 @@ export class Database {
 	}
 
 	getMonthBookings( restaurantId: number, date: string):Promise<Booking[]> {
-		Utils.checkValidDate( date );
-		let year_month = date.slice( 0, 8 );
-		let minDate = year_month + '01';
-		let maxDate = year_month + '31';;
-		return new Promise( ( resolve ) => {
-      this.getREST( 'booking_period/', {
-				restaurant_booking_id: restaurantId,
-			 	minDate: minDate,
-				maxDate: maxDate
-			}).then( ( data ) => {
+		return new Promise((resolve)=>{
+			this.getMonthPeriod( 'booking_period/', date, { restaurant_id: restaurantId } ).then( ( data ) => {
 				resolve( <Booking[]>this.buildList( data, ()=>{ return new Booking(-1) } ) );
       })
     });
@@ -52,22 +43,46 @@ export class Database {
     });
   }
 
-	blockGuide( guideId: number, date: string ) {
+	setGuideHoliday( guideId: number, date: string ) {
+		return this.setHoliday( 'guide_holiday/', guideId, date );
+	}
+
+	getGuideHolidays( guideId: number, date?: string ): Promise<Holiday[]> {
+		return this.getHolidays( 'guide_holiday/', guideId, date )
+	}
+
+	setRestaurantHoliday( restaurantId: number, date: string ) {
+		return this.setHoliday( 'restaurant_holiday/', restaurantId, date );
+	}
+
+	getRestaurantHolidays( restaurantId: number, date?: string ): Promise<Holiday[]> {
+		return this.getHolidays( 'restaurant_holiday/', restaurantId, date )
+	}
+
+	getRestaurantMonthHolidays( restaurantId: number, date: string ): Promise<Holiday[]> {
+		return new Promise((resolve)=>{
+			this.getMonthPeriod( 'restaurant_holiday_period/', date, { id: restaurantId } ).then( ( data ) => {
+				resolve( <Holiday[]>this.buildList( data, ()=>{ return new Holiday(-1) } ) );
+      })
+    });
+	}
+
+	setHoliday( endpoint: string, id: number, date: string ) {
 		Utils.checkValidDate( date );
-		return this.postREST( 'guide_holiday/', {
-			id: guideId,
+		return this.postREST( endpoint, {
+			id: id,
 			date: date
 		});
 	}
 
-	getGuideHolidays( guideId: number, date?: string ): Promise<GuideHoliday[]> {
-		let q = { id: guideId };
+	getHolidays( endpoint: string, id: number, date?: string ): Promise<Holiday[]> {
+		let q = { id: id };
 		if ( date != undefined ) {
 			q[ date ] = date;
 		}
 		return new Promise( ( resolve ) => {
-			this.getREST( 'guide_holiday/', q ).then((data)=>{
-				resolve( <GuideHoliday[]>this.buildList( data, ()=>{ return new GuideHoliday(-1) } ) );
+			this.getREST( endpoint, q ).then((data)=>{
+				resolve( <Holiday[]>this.buildList( data, ()=>{ return new Holiday(-1) } ) );
 			})
 		});
 	}
@@ -79,6 +94,16 @@ export class Database {
       })
       .join('&');
   }
+
+	private getMonthPeriod( endpoint: string, date: string, queryObject: {} ) {
+		Utils.checkValidDate( date );
+		let year_month = date.slice( 0, 8 );
+		let minDate = year_month + '01';
+		let maxDate = year_month + '31';
+		queryObject[ 'minDate' ] = minDate;
+		queryObject[ 'maxDate' ] = maxDate;
+		return this.getREST( endpoint, queryObject );
+	}
 
 	private buildList( data:any, createInstance:() => DatabaseObject ):DatabaseObject[] {
 		let list: DatabaseObject[] = [];

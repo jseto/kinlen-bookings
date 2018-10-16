@@ -112,7 +112,7 @@ describe( 'BookingMapper is a class providing the following services:', ()=> {
 					let holiday = await db.getGuideHolidays( guide1.id, bookingDate );
 					expect( holiday.length ).toBe( 0 );
 
-					await db.blockGuide( guide1.id, bookingDate );
+					await db.setGuideHoliday( guide1.id, bookingDate );
 					let guide2 = await mapper.availableGuide( bookingDate );
 					expect( guide1.id ).not.toEqual( guide2.id );
 				});
@@ -131,17 +131,27 @@ describe( 'BookingMapper is a class providing the following services:', ()=> {
 		});
 
 		describe( 'the restaurant open that day', ()=> {
+			describe( 'testing bloking of restaurant', ()=>{
 
-			xit( 'should not be blocked for the booking day', ()=> {
+				it( 'should report availavility if not a holiday', async ()=>{
+					let seats = await mapper.availableSeats( '2001-05-03', '19:00:00' );
+					expect( seats ).toBeTruthy();
+				})
 
+				it( 'should not report seats when blocked for the booking day', async ()=> {
+					await db.setRestaurantHoliday( 1, '2001-06-04' );
+					mapper.invalidateCache();
+					let seats = await mapper.availableSeats( '2001-06-04', '19:00:00' );
+					expect( seats ).toBe( 0 );
+				});
+
+				it( 'should not report seats when blocked for the booking day at any time', async ()=> {
+					await db.setRestaurantHoliday( 1, '2001-06-04' );
+					mapper.invalidateCache();
+					let seats = await mapper.availableSeats( '2001-06-04', '21:00:00' );
+					expect( seats ).toBe( 0 );
+				});
 			});
-
 		});
-
-		xit( 'should verify both of the above conditions; a free guide and the restaurant is open', ()=> {
-
-		});
-
 	});
-
 });

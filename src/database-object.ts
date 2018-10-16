@@ -1,3 +1,4 @@
+import { Utils } from "./utils";
 
 export abstract class DatabaseObject {
     protected _id: number;
@@ -12,4 +13,30 @@ export abstract class DatabaseObject {
 
   abstract fromObject( p: any );
   abstract toObject();
+}
+
+
+export class Holiday extends DatabaseObject{
+  private _date: string;
+
+	toObject() {
+		return {
+			id: this._id,
+			date: this._date
+		}
+	}
+
+	fromObject( obj: any ) {
+		this._id = Number(obj.id);
+		this._date = obj.date;
+	}
+
+	get date() {
+		return this._date;
+	}
+
+	set date( date: string ) {
+		Utils.checkValidDate( date );
+		this._date = date;
+	}
 }

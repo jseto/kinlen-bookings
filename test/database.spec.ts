@@ -13,7 +13,7 @@ describe( 'Database helpers', ()=>{
 			let query = db.objectToQueryString( obj );
 			expect( query ).toEqual( '?date=2018-09-25' );
 		});
-	}); 
+	});
 });
 
 describe( 'Mock data', ()=>{
@@ -82,7 +82,7 @@ describe( 'Database', function() {
 
 	it( 'should return all bookings for matching the queryObject', async ()=> {
 		let db = new Database();
-		let bookings: Booking[] = await db.getBookings( { restaurant_booking_id:1, date:'2018-09-25' } );
+		let bookings: Booking[] = await db.getBookings( { restaurant_id:1, date:'2018-09-25' } );
 
 		expect( bookings.length ).toBe( 3 );
 	});
@@ -102,7 +102,7 @@ describe( 'Database', function() {
 			let bookings: Booking[] = await db.getMonthBookings( 1, '2019-08-01' );
 
 			expect( bookings.length ).toBe( 4 );
-			expect( bookings[0].restautantBooking.id ).toBe( 1 );
+			expect( bookings[0].restautant.id ).toBe( 1 );
 		});
 
 		it( 'with query date in the end of the month', async ()=>{
@@ -110,7 +110,7 @@ describe( 'Database', function() {
 			let bookings: Booking[] = await db.getMonthBookings( 1, '2019-08-31' );
 
 			expect( bookings.length ).toBe( 4 );
-			expect( bookings[0].restautantBooking.id ).toBe( 1 );
+			expect( bookings[0].restautant.id ).toBe( 1 );
 		});
 
 		it( 'but NOT with query date out of the end of the month', async ()=>{
@@ -118,7 +118,7 @@ describe( 'Database', function() {
 			let bookings: Booking[] = await db.getMonthBookings( 1, '2019-09-31' );
 
 			expect( bookings.length ).toBe( 1 );
-			expect( bookings[0].restautantBooking.id ).toBe( 1 );
+			expect( bookings[0].restautant.id ).toBe( 1 );
 		});
 
 	})

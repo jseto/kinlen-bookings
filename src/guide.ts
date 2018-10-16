@@ -1,32 +1,6 @@
 import {DatabaseObject} from "./database-object";
-import { Utils } from "./utils";
 
 export const MAX_SEATS_PER_GUIDE = 6;
-
-export class GuideHoliday extends DatabaseObject{
-  private _date: string;
-
-	toObject() {
-		return {
-			id: this._id,
-			date: this._date
-		}
-	}
-
-	fromObject( obj: any ) {
-		this._id = Number(obj.id);
-		this._date = obj.date;
-	}
-
-	get date() {
-		return this._date;
-	}
-
-	set date( date: string ) {
-		Utils.checkValidDate( date );
-		this._date = date;
-	}
-}
 
 export class Guide extends DatabaseObject{
   private _name: string;

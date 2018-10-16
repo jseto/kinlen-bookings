@@ -33,7 +33,7 @@ export class MockData {
 			'date date, ',
 			'time time, ',
 			'time_length int(10), ',
-			'restaurant_booking_id int(10), ',
+			'restaurant_id int(10), ',
 			'guide_id int(10), ',
 			'booked_seats int(10), ',
 			'PRIMARY KEY (id) ',
@@ -116,7 +116,9 @@ export class MockData {
 	private mockGET( table: string, params: {} ) {
 		switch ( table ) {
 			case 'booking_period':
-				return this.queryPeriod( params );
+				return this.queryPeriod( this.bookingsTable, params );
+			case 'restaurant_holiday_period':
+				return this.queryPeriod( this.restaurantHolidaysTable, params );
 			case 'free_guide':
 				return this.queryFreeGuide( params );
 			default:
@@ -146,7 +148,7 @@ export class MockData {
 		return resp;
   }
 
-  private queryPeriod(params: {}): any {
+  private queryPeriod( table: string, params: {}): any {
 		let whereArr = [];
 		whereArr.push( 'date >= "' + params[ 'minDate' ] + '"' );
 		whereArr.push( 'date <= "' + params[ 'maxDate' ] + '"' );
@@ -156,7 +158,7 @@ export class MockData {
 			whereArr.push( key + '= "' + params[ key ] + '"' );
 		}
 
-		return this.query( 'booking', whereArr );
+		return this.query( table, whereArr );
   }
 
 	private queryGeneric( table: string, params:{} ) {
