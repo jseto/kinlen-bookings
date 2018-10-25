@@ -53,7 +53,7 @@ module.exports = function (config) {
       module: {
         rules: [
           {
-            test: /\.ts$/,
+            test: /\.tsx?$/,
             use: [{
               loader: 'ts-loader'
             }]
@@ -67,7 +67,7 @@ module.exports = function (config) {
       resolve: {
         extensions: ['.ts', '.js', '.tsx']
       },
-      devtool: 'inline-source-map',
+			devtool: 'inline-source-map',
       plugins: [
         // existing plugins go here
         // new webpack.SourceMapDevToolPlugin({
