@@ -13,7 +13,6 @@
     "@types/jest": "^23.3.7",
     "@types/sql.js": "0.0.29",
     "fetch-mock": "^7.0.5",
-		"isomorphic-fetch": "^2.2.1",
     "jest": "^23.6.0",
     "node-fetch": "^2.2.0",
     "sql.js": "^0.5.0",
@@ -22,11 +21,5 @@
     "typescript": "^3.1.1",
     "webpack": "^4.20.2"
   },
-  "dependencies": {},
-  "jest": {
-    "automock": false,
-    "setupFiles": [
-      "./jest.setup.js"
-    ]
-  }
+  "dependencies": {}
 }
