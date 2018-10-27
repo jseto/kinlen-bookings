@@ -1,6 +1,6 @@
 module.exports = {
 	mode: 'production',
-	entry: "./src/index.ts",
+	entry: "./src/index.tsx",
 	output: {
 	filename: "kinlen-bookings.js",
 	path: __dirname + "/dist"
@@ -30,6 +30,8 @@ module.exports = {
 	// dependencies, which allows browsers to cache those libraries between builds.
 	externals: {
 	"react": "React",
-	"react-dom": "ReactDOM"
+	"react-dom": "ReactDOM",
+	"moment": "moment",
+	"react-datepicker": "DatePicker"
 	}
 };

@@ -2,6 +2,7 @@
   "compileOnSave": false,
   "compilerOptions": {
     "target": "es5",
+		"jsx": "react",
     "module": "commonjs",
     "moduleResolution": "node",
     "sourceMap": true,
