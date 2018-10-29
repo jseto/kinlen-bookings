@@ -16,6 +16,8 @@
     "@types/react-dom": "^16.0.9",
     "@types/sql.js": "0.0.29",
     "ajv": "^6.5.4",
+    "clean-webpack-plugin": "^0.1.19",
+    "copy-webpack-plugin": "^4.5.4",
     "fetch-mock": "^7.0.5",
     "jest": "^23.6.0",
     "node-fetch": "^2.2.0",
