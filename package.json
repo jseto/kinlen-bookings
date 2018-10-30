@@ -9,8 +9,8 @@
   "author": "Josep Seto",
   "license": "MIT",
   "devDependencies": {
-    "@types/fetch-mock": "^6.0.3",
-    "@types/jest": "^23.3.7",
+    "@types/fetch-mock": "^6.0.4",
+    "@types/jest": "^23.3.8",
     "@types/moment": "^2.13.0",
     "@types/react": "^16.4.18",
     "@types/react-dom": "^16.0.9",
@@ -18,14 +18,14 @@
     "ajv": "^6.5.4",
     "clean-webpack-plugin": "^0.1.19",
     "copy-webpack-plugin": "^4.5.4",
-    "fetch-mock": "^7.0.5",
+    "fetch-mock": "^7.2.2",
     "jest": "^23.6.0",
     "node-fetch": "^2.2.0",
     "sql.js": "^0.5.0",
     "ts-jest": "^23.10.4",
-    "ts-loader": "^5.2.1",
-    "typescript": "^3.1.1",
-    "webpack": "^4.20.2"
+    "ts-loader": "^5.2.2",
+    "typescript": "^3.1.4",
+    "webpack": "^4.23.1"
   },
   "dependencies": {
     "moment": "^2.22.2",
