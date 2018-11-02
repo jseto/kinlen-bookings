@@ -154,4 +154,11 @@ describe( 'BookingMapper is a class providing the following services:', ()=> {
 			});
 		});
 	});
+
+	describe( 'a function isDayAvailable to report if a day has available time slots left for an amount of seats', ()=>{
+		it( 'should report true when no bookings for the day', async ()=>{
+//			let free = await mapper.isDayAvailable( '2000-01-01', 6 );
+//			expect( free ).toBeTruthy();
+		});
+	});
 });

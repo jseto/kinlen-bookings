@@ -1,32 +1,26 @@
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-const _mode = 'production';
+const _mode = 'development';
 
 const externals = [
-	{
-		globalName: 'React',
-		nodeModule: 'react',
-		productionFilePath: '/cjs/react.production.min.js',
-		developmentFilePath: '/cjs/react.development.js'
-	},
-	{
-		globalName: 'ReactDOM',
-	 	nodeModule: 'react-dom',
-		productionFilePath: '/cjs/react-dom.production.min.js',
-		developmentFilePath: '/cjs/react-dom.development.js'
-	},
-	{
-		globalName: 'moment',
-	 	nodeModule: 'moment',
-		productionFilePath:  '/min/moment.min.js',
-		developmentFilePath: '/moment.js'
-	},
-	{
-		globalName: 'DatePicker',
-	 	nodeModule: 'react-datepicker',
-		productionFilePath: '/dist/react-datepicker.min.js',
-		developmentFilePath: '/lib/index.js'
-	},
+	// {
+	// 	globalName: 'React',
+	// 	nodeModule: 'react',
+	// 	productionFilePath: '/umd/react.production.min.js',
+	// 	developmentFilePath: '/umd/react.development.js'
+	// },
+	// {
+	// 	globalName: 'ReactDOM',
+	//  	nodeModule: 'react-dom',
+	// 	productionFilePath: '/umd/react-dom.production.min.js',
+	// 	developmentFilePath: '/umd/react-dom.development.js'
+	// },
+	// {
+	// 	globalName: 'moment',
+	//  	nodeModule: 'moment',
+	// 	productionFilePath:  '/min/moment.min.js',
+	// 	developmentFilePath: '/moment.js'
+	// }
 ];
 
 function buildExternals(){
@@ -34,25 +28,25 @@ function buildExternals(){
 	externals.forEach( ( item )=>{
 		obj[ item.nodeModule ] = item.globalName
 	});
-	// return JSON.stringify( obj );
 	return obj;
 }
 
 const _externals = buildExternals();
 
 function buildCopyDependencies( mode ) {
-	console.log( mode )
 	let paths = [];
 	externals.forEach(( item )=>{
 		let filePath = 'node_modules/' + item.nodeModule;
 		if ( mode === 'production' ) {
-			filePath += item.productionFilePath;
+			paths.push( filePath + item.productionFilePath );
 		}
 		else {
-			filePath += item.developmentFilePath;
+			paths.push( filePath + item.developmentFilePath );
 		}
 
-		paths.push( filePath );
+		if ( item.style ) {
+			paths.push( filePath + item.style );
+		}
 	});
 	return paths;
 }
@@ -119,5 +113,3 @@ module.exports = {
 		new CopyWebpackPlugin( buildCopyDependencies( _mode ) )
 	]
 };
-
-console.log( module.exports.externals );
