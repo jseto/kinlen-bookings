@@ -2,6 +2,8 @@ import { DatabaseObject } from "./database-object"
 import { Restaurant } from "./restaurant";
 import { Guide } from "./guide";
 
+export const BOOKABLE_TIMES = [ '19:00:00', '21:00:00' ];
+
 export class Booking extends DatabaseObject {
   private _date: string;
   private _time: string;

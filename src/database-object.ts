@@ -27,8 +27,10 @@ export class Holiday extends DatabaseObject{
 	}
 
 	fromObject( obj: any ) {
-		this._id = Number(obj.id);
-		this._date = obj.date;
+		if ( obj.id ) {
+			this._id = Number(obj.id);
+			this._date = obj.date;
+		}
 	}
 
 	get date() {

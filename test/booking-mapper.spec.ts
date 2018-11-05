@@ -151,14 +151,52 @@ describe( 'BookingMapper is a class providing the following services:', ()=> {
 					let seats = await mapper.availableSeats( '2001-06-04', '21:00:00' );
 					expect( seats ).toBe( 0 );
 				});
+
+				it( 'should not report seats when all guides on holiday', async ()=> {
+					let seats = await mapper.availableSeats( '2017-08-04', '19:00:00' );
+					expect( seats ).toBe( 0 );
+				});
+
 			});
 		});
 	});
 
 	describe( 'a function isDayAvailable to report if a day has available time slots left for an amount of seats', ()=>{
-		it( 'should report true when no bookings for the day', async ()=>{
-//			let free = await mapper.isDayAvailable( '2000-01-01', 6 );
-//			expect( free ).toBeTruthy();
+		let freeBookingDate = '2017-08-01';
+		let freeTimeSlotDate = '2017-08-03';
+		let seatsLeftDate = '2017-08-05';
+		let noSeatsLeftDate = '2017-08-07';
+		let allGuideOnHoliday = '2017-08-04';
+
+		it( 'should report true when no bookings for the day and have free guide', async ()=>{
+			let free = await mapper.isDayAvailable( freeBookingDate, 6 );
+			expect( free ).toBeTruthy();
 		});
+		it( 'should report false when no bookings for the day but NOT have free guide', async ()=>{
+			let free = await mapper.isDayAvailable( allGuideOnHoliday, 6 );
+			expect( free ).toBeFalsy();
+		});
+		it( 'should report true when available time slot for the day', async ()=>{
+			let free = await mapper.isDayAvailable( freeTimeSlotDate, 6 );
+			expect( free ).toBeTruthy();
+		});
+		it( 'should report true when still available seats in any time slot for the day', async ()=>{
+			let free = await mapper.isDayAvailable( seatsLeftDate, 4 );
+			expect( free ).toBeTruthy();
+		});
+		it( 'should report false when all booked for the day', async ()=>{
+			let free = await mapper.isDayAvailable( noSeatsLeftDate, 3 );
+			expect( free ).toBeFalsy();
+		});
+		it( 'should report false when no enought seats are available for the day in any time slot', async ()=>{
+			let free = await mapper.isDayAvailable( seatsLeftDate, 5 );
+			expect( free ).toBeFalsy();
+		});
+		it( 'should report false if restaurant have holiday', async ()=>{
+			await db.setRestaurantHoliday( 1, freeBookingDate );
+			mapper.invalidateCache();
+			let free = await mapper.isDayAvailable( freeBookingDate, 6 );
+			expect( free ).toBeFalsy();
+		})
 	});
 });

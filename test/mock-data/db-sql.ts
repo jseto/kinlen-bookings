@@ -64,8 +64,7 @@ export class MockData {
 			this.guideHolidaysTable,
 			' ( ',
 			'id int(10), ', // NOT NULL
-			'date date, ',
-			'PRIMARY KEY (id) ',
+			'date date ',
 			');'
 		];
 		this._db.run( sqlArr.join('') );
@@ -76,8 +75,7 @@ export class MockData {
 			this.restaurantHolidaysTable,
 			' ( ',
 			'id int(10), ', // NOT NULL
-			'date date, ',
-			'PRIMARY KEY (id) ',
+			'date date ',
 			');'
 		];
 		this._db.run( sqlArr.join('') );

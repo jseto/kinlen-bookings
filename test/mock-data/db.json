@@ -190,6 +190,51 @@
 			"restaurant_id":"1",
 			"guide_id":"4",
 			"booked_seats":"6"
+		},
+		{
+			"id":"210",
+			"date":"2017-08-03",
+			"time":"19:00:00",
+			"time_length":"test isDayAvailable",
+			"restaurant_id":"1",
+			"guide_id":"1",
+			"booked_seats":"6"
+		},
+		{
+			"id":"211",
+			"date":"2017-08-05",
+			"time":"21:00:00",
+			"time_length":"test isDayAvailable",
+			"restaurant_id":"1",
+			"guide_id":"1",
+			"booked_seats":"2"
+		},
+		{
+			"id":"212",
+			"date":"2017-08-05",
+			"time":"19:00:00",
+			"time_length":"test isDayAvailable",
+			"restaurant_id":"1",
+			"guide_id":"1",
+			"booked_seats":"6"
+		},
+		{
+			"id":"213",
+			"date":"2017-08-07",
+			"time":"21:00:00",
+			"time_length":"test isDayAvailable",
+			"restaurant_id":"1",
+			"guide_id":"1",
+			"booked_seats":"6"
+		},
+		{
+			"id":"214",
+			"date":"2017-08-07",
+			"time":"19:00:00",
+			"time_length":"test isDayAvailable",
+			"restaurant_id":"1",
+			"guide_id":"1",
+			"booked_seats":"6"
 		}
 	],
 	"guide": [
@@ -243,6 +288,26 @@
 		{
 			"id":"5",
 			"date":"2001-05-01"
+		},
+		{
+			"id":"1",
+			"date":"2017-08-04"
+		},
+		{
+			"id":"2",
+			"date":"2017-08-04"
+		},
+		{
+			"id":"3",
+			"date":"2017-08-04"
+		},
+		{
+			"id":"4",
+			"date":"2017-08-04"
+		},
+		{
+			"id":"5",
+			"date":"2017-08-04"
 		}
 	]
 }

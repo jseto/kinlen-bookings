@@ -4,7 +4,8 @@
   "description": "Kinlen booking engine",
   "repository": "https://github.com/jseto/kinlen-bookings",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+		"debug": "node --inspect-brk node_modules/.bin/jest --runInBand --coverage false"
   },
   "author": "Josep Seto",
   "license": "MIT",

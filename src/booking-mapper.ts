@@ -1,6 +1,7 @@
 import {Database} from "./database";
 import {MAX_SEATS_PER_GUIDE} from "./guide"
 import {Utils} from "./utils";
+import { BOOKABLE_TIMES } from "./booking";
 
 export interface BookingSummary {
 	guideId: number;
@@ -23,19 +24,24 @@ export class BookingMapper {
 
   }
 
+	async dayBookingSummary( date: string ): Promise<BookingSummary[]> {
+		Utils.checkValidDate( date );
+		if ( !this.isAvailMapFresh( date ) ) {
+			await this.buildBookingMapCache( date );
+		}
+		let day = new Date( date );
+		return this._bookingMap[ day.getDate() ];
+	}
+
 	/**
 	 * Get the booking summary for a selected day and time and this restaurant
 	 * @param  date the date of the required booking
 	 * @param  hour the hour of the booking
 	 * @return      the booking or null
 	 */
-	async bookingSummary( date: string, hour: string ): Promise<BookingSummary> {
-		Utils.checkValidDate( date );
-		if ( !this.isAvailMapFresh( date ) ) {
-			await this.buildBookingMapCache( date );
-		}
-		let day = new Date( date );
-		return this._bookingMap[ day.getDate() ][ hour ];
+	async bookingSummary( date: string, hour: string ):Promise<BookingSummary> {
+		let daySummary = await this.dayBookingSummary( date );
+		return daySummary[ hour ];
 	}
 
 	/**
@@ -64,6 +70,29 @@ export class BookingMapper {
 		else { //there is no bookings for this restaurant
 			let guide = await this.availableGuide( date );				// so look if there is an available guide
 			return guide.maxSeats();
+		}
+	}
+
+	async isDayAvailable( date: string, requiredSeats: number): Promise<boolean> {
+		let daySummary = await this.dayBookingSummary( date );
+		let holiday = await this.restaurantHoliday( date );
+		console.log( '----------------',holiday )
+		if ( holiday ) {
+			console.log('holiday false', date )
+			return false;
+		}
+		if ( Object.keys(daySummary).length ) {
+			for ( let i = 0; i < BOOKABLE_TIMES.length; ++i ) {
+				let time = BOOKABLE_TIMES[i];
+				if ( typeof daySummary[ time ] === 'undefined' || ( MAX_SEATS_PER_GUIDE - daySummary[ time ].bookedSeats ) >= requiredSeats ) {
+					return true;
+				}
+			}
+			return false;
+		}
+		else {
+			let guide = await this.availableGuide( date );				// so look if there is an available guide
+			return ( guide.maxSeats() > 0 );
 		}
 	}
 

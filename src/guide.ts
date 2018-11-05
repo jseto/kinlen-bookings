@@ -11,7 +11,12 @@ export class Guide extends DatabaseObject{
   private _paypal: string;
 
   maxSeats(): number {
-    return MAX_SEATS_PER_GUIDE;
+		if ( this._id >=0 ) {
+    	return MAX_SEATS_PER_GUIDE;
+		}
+		else {
+			return 0;
+		}
   };
 
   toObject(){
@@ -27,12 +32,14 @@ export class Guide extends DatabaseObject{
   }
 
   fromObject( obj: any ) {
-		this._id = Number(obj.id);
-		this._name = obj.name;
-		this._score = obj.score;
-		this._phone = obj.phone;
-		this._email = obj.email;
-		this._lineId = obj.line_id;
-		this._paypal = obj.paypal;
+		if ( obj.id ) {
+			this._id = Number(obj.id);
+			this._name = obj.name;
+			this._score = obj.score;
+			this._phone = obj.phone;
+			this._email = obj.email;
+			this._lineId = obj.line_id;
+			this._paypal = obj.paypal;
+		}
   }
 }
