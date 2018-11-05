@@ -76,9 +76,7 @@ export class BookingMapper {
 	async isDayAvailable( date: string, requiredSeats: number): Promise<boolean> {
 		let daySummary = await this.dayBookingSummary( date );
 		let holiday = await this.restaurantHoliday( date );
-		console.log( '----------------',holiday )
 		if ( holiday ) {
-			console.log('holiday false', date )
 			return false;
 		}
 		if ( Object.keys(daySummary).length ) {
@@ -94,6 +92,21 @@ export class BookingMapper {
 			let guide = await this.availableGuide( date );				// so look if there is an available guide
 			return ( guide.maxSeats() > 0 );
 		}
+	}
+
+	async getUnavailableDays( date: string, seats: number ): Promise<string[]> {
+		let days:string[] = [];
+		let d = new Date( date );
+
+		for ( let i = 1; i < 32; ++i ) {
+			let dd = new Date( d.getFullYear(), d.getMonth(), i );
+			let day = dd.toISOString().slice( 0, 10 );
+			let available = await this.isDayAvailable( day, seats );
+			if ( !available ) {
+				days.push( day );
+			}
+		}
+		return days;
 	}
 
 	invalidateCache() {
