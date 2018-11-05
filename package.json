@@ -5,7 +5,7 @@
   "repository": "https://github.com/jseto/kinlen-bookings",
   "scripts": {
     "test": "jest",
-		"debug": "node --inspect-brk node_modules/.bin/jest --runInBand --coverage false"
+    "debug": "node --inspect-brk node_modules/.bin/jest --runInBand --coverage false"
   },
   "author": "Josep Seto",
   "license": "MIT",
@@ -26,5 +26,7 @@
     "typescript": "^3.1.6",
     "webpack": "^4.24.0"
   },
-  "dependencies": {}
+  "dependencies": {
+    "flatpickr": "^4.5.2"
+  }
 }

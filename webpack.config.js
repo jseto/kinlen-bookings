@@ -15,12 +15,10 @@ const externals = [
 	// 	productionFilePath: '/umd/react-dom.production.min.js',
 	// 	developmentFilePath: '/umd/react-dom.development.js'
 	// },
-	// {
-	// 	globalName: 'moment',
-	//  	nodeModule: 'moment',
-	// 	productionFilePath:  '/min/moment.min.js',
-	// 	developmentFilePath: '/moment.js'
-	// }
+	{
+		globalName: 'flatpickr',
+	 	nodeModule: 'flatpickr'
+	}
 ];
 
 function buildExternals(){
@@ -38,10 +36,14 @@ function buildCopyDependencies( mode ) {
 	externals.forEach(( item )=>{
 		let filePath = 'node_modules/' + item.nodeModule;
 		if ( mode === 'production' ) {
-			paths.push( filePath + item.productionFilePath );
+			if ( item.productionFilePath ) {
+				paths.push( filePath + item.productionFilePath );
+			}
 		}
 		else {
-			paths.push( filePath + item.developmentFilePath );
+			if ( item.developmentFilePath ) {
+				paths.push( filePath + item.developmentFilePath );
+			}
 		}
 
 		if ( item.style ) {

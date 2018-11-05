@@ -94,21 +94,18 @@ export class BookingMapper {
 		}
 	}
 
-	async getUnavailableDays( date: string, seats: number ): Promise<string[]> {
-		let days:string[] = [];
-		let d = date.slice( 0, 7 );
-
-		for ( let i = 1; i < 32; ++i ) {
+	async getUnavailableDays( date: Date, seats: number ): Promise<Date[]> {
+		let days:Date[] = [];
+		let daysInMonth = new Date( date.getFullYear(), date.getMonth(), 0 ).getDate();
+		for ( let i = 1; i < daysInMonth+1; ++i ) {
+			date.setDate( i );
 			// let dd = new Date( d.getFullYear(), d.getMonth(), i );
-			// let day = d.toISOString().slice( 0, 10 );
-			let day = d + '-' + Utils.toString( i, 2 );
-			console.log( day )
+			let day = date.toISOString().slice( 0, 10 );
 			let available = await this.isDayAvailable( day, seats );
 			if ( !available ) {
-				days.push( day );
+				days.push( date );
 			}
 		}
-		console.log( days )
 		return days;
 	}
 
