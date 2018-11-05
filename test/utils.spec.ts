@@ -59,12 +59,16 @@ describe( 'In Utils class', function() {
 
 	});
 
-	// describe( 'function parseUrl', ()=>{
-	// 	it( 'should work with single url', ()=>{
-	// 		let url = Utils.parseUrl( '/single' );
-	// 		expect( url.base ).toEqual('/single');
-	//
-	// 	})
-	// });
-
+	describe( 'toString', ()=>{
+		it( 'should return string padded with 0 by default', ()=>{
+			expect( Utils.toString( 3, 4 ) ).toEqual( '0003' );
+		})
+		it( 'should return string without padding if more digits than padding', ()=>{
+			expect( Utils.toString( 3000, 3 ) ).toEqual( '3000' );
+			expect( Utils.toString( 300, 3 ) ).toEqual( '300' );
+		})
+		it( 'should return string padded with char if specified', ()=>{
+			expect( Utils.toString( 3, 4, ' ' ) ).toEqual( '   3' );
+		})
+	})
 });

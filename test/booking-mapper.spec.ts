@@ -198,14 +198,16 @@ describe( 'BookingMapper is a class providing the following services:', ()=> {
 			let free = await mapper.isDayAvailable( freeBookingDate, 6 );
 			expect( free ).toBeFalsy();
 		});
+
 		describe( 'helps to implement the method getUnavailableDays that', ()=>{
+			//2017-08-01 has been set as holiday avobe
 			it( 'should report a map of unavailable days for 6 seats', async ()=>{
 				let map = await mapper.getUnavailableDays( '2017-08-01', 6 );
-				expect( map.length ).toBe( 3 );
+				expect( map.length ).toBe( 4 );
 			});
 			it( 'should report a map of unavailable days for 2 seats', async ()=>{
 				let map = await mapper.getUnavailableDays( '2017-08-01', 2 );
-				expect( map.length ).toBe( 2 );
+				expect( map.length ).toBe( 3 );
 			});
 		})
 	});

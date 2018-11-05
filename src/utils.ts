@@ -16,4 +16,10 @@ export class Utils {
 			throw( new Error('Kinlen Bookings System Error: invalid date' ) );
 		}
 	}
+
+	static toString( n: number, leftPad: number, char:string = '0' ) {
+		let str: string = String( n );
+		while ( str.length < leftPad ) str = char + str;
+		return str;
+	}
 }

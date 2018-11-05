@@ -96,11 +96,13 @@ export class BookingMapper {
 
 	async getUnavailableDays( date: string, seats: number ): Promise<string[]> {
 		let days:string[] = [];
-		let d = new Date( date );
+		let d = date.slice( 0, 7 );
 
 		for ( let i = 1; i < 32; ++i ) {
-			let dd = new Date( d.getFullYear(), d.getMonth(), i );
-			let day = dd.toISOString().slice( 0, 10 );
+			// let dd = new Date( d.getFullYear(), d.getMonth(), i );
+			// let day = d.toISOString().slice( 0, 10 );
+			let day = d + '-' + Utils.toString( i, 2 );
+			console.log( day )
 			let available = await this.isDayAvailable( day, seats );
 			if ( !available ) {
 				days.push( day );
