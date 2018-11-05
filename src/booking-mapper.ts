@@ -106,6 +106,7 @@ export class BookingMapper {
 				days.push( day );
 			}
 		}
+		console.log( days )
 		return days;
 	}
 
