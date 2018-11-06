@@ -1,4 +1,4 @@
-import flatPickr from "flatpickr";
+import * as flatpickr from "flatpickr";
 import { BookingMapper } from "./booking-mapper";
 
 export class DatePickerManager {
@@ -8,19 +8,21 @@ export class DatePickerManager {
 		this._mapper = new BookingMapper( restaurantId )
 	}
 
-	setup( instanceId: string ) {
-		flatPickr( instanceId, {
-	//		disable: mapper.getUnavailableDays( calendar.flatpickr().currentMonth, 2 ),
-	//				disable: ["2018-11-30", "2018-11-21", "2018-11-08", new Date(2018, calendar.flatpickr().currentMonth, 9)],
-			onMonthChange: this.setDisabledDates,
-			onOpen: this.setDisabledDates
-		});
-	}
+	// setup( flatPickrInstance: flatpickr.default.Instance ) {
+	// 	flatPickrInstance.config.onOpen = [this.setDisabledDates];
+	// 	flatPickrInstance.config.onMonthChange = [this.setDisabledDates];
+	// }
+	//
+	// setDisabledDates( _selectedDates, _dateStr, instance ) {
+	// 	this.updateDates( instance );
+	// //		console.log('monthChange ', instance.currentMonth);
+	// }
 
-	private async setDisabledDates( selectedDates, _dateStr, instance ) {
-		let map = await this._mapper.getUnavailableDays( selectedDates[0], 2 );
-		instance.config.disable = map;
-		instance.redraw();
-	//		console.log('monthChange ', instance.currentMonth);
+	updateDates( instance: flatpickr.default.Instance ) {
+		let date = new Date( instance.currentYear, instance.currentMonth, 1)
+		this._mapper.getUnavailableDays( date, 2 ).then(( map )=>{
+			instance.config.disable = map;
+			instance.redraw();
+		})
 	}
 }
