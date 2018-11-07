@@ -1,5 +1,5 @@
 {
-  "mock_data_test_data": [
+  "wp_kinlen_mock_data_test_data": [
     {
       "id": 1,
       "name": "Pankaj",
@@ -11,7 +11,7 @@
       "id": 2
     }
   ],
-	"booking": [
+	"wp_kinlen_booking": [
 		{"id":"1",
 			"date":"2018-09-25",
 			"time":"19:00:00",
@@ -237,7 +237,7 @@
 			"booked_seats":"6"
 		}
 	],
-	"guide": [
+	"wp_kinlen_guide": [
 		{
 			"id":"1",
 			"name":"Somchai",
@@ -284,7 +284,7 @@
 			"line_id":"lazy25100"
 		}
 	],
-	"guide_holiday": [
+	"wp_kinlen_guide_holiday": [
 		{
 			"id":"5",
 			"date":"2001-05-01"

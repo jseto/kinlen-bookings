@@ -3,15 +3,18 @@ import * as jsonData from "./db.json"
 import * as fs from "fs"
 
 export class MockData {
-	readonly bookingsTable = 'booking';
-	readonly testDataTable = 'mock_data_test_data';
-	readonly guideTable = 'guide';
-	readonly guideHolidaysTable = 'guide_holiday';
-	readonly restaurantHolidaysTable = 'restaurant_holiday';
+	private tablePrefix = 'wp_kinlen_';
+	readonly bookingsTable = this.tablePrefix + 'booking';
+	readonly testDataTable = this.tablePrefix + 'mock_data_test_data';
+	readonly guideTable = this.tablePrefix + 'guide';
+	readonly guideHolidaysTable = this.tablePrefix + 'guide_holiday';
+	readonly restaurantHolidaysTable = this.tablePrefix + 'restaurant_holiday';
 	private _db: Sql.Database;
+  private _insertStatement: string[];
 
 	constructor() {
 		this._db = new Sql.Database();
+		this._insertStatement = [];
 
 		let sqlArr = [
 			'CREATE TABLE IF NOT EXISTS ',
@@ -107,7 +110,7 @@ export class MockData {
 	private mockPOST( table: string, dataObject:any ) {
 		let data = [];
 		data.push( dataObject );
-		this.insert( table, data );
+		this.insert( this.tablePrefix + table, data );
 		return 200;
 	}
 
@@ -120,7 +123,7 @@ export class MockData {
 			case 'free_guide':
 				return this.queryFreeGuide( params );
 			default:
-				return this.queryGeneric( endpoint, params );
+				return this.queryGeneric( this.tablePrefix + endpoint, params );
 		}
 	}
 
@@ -205,6 +208,7 @@ export class MockData {
 		});
 
 		let sqlStr = 'INSERT INTO ' + tableName +' ( ' + keys.join(', ') + ' ) ' + 'VALUES ' + elements.join(',') + ';'
+		this._insertStatement.push( sqlStr );
 		this._db.run( sqlStr );
 	}
 
@@ -216,6 +220,7 @@ export class MockData {
     	fs.mkdirSync( dir );
 		}
 		fs.writeFileSync( dir + 'filename.sqlite', buffer );
+		fs.writeFileSync( dir + 'filename.sql', this._insertStatement.join('\n') );
 //		console.log('database writen');
 	}
 }
