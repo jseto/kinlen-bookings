@@ -78,7 +78,7 @@ export class Database {
 	getHolidays( endpoint: string, id: number, date?: string ): Promise<Holiday[]> {
 		let q = { id: id };
 		if ( date != undefined ) {
-			q[ date ] = date;
+			q[ 'date' ] = date;
 		}
 		return new Promise( ( resolve ) => {
 			this.getREST( endpoint, q ).then((data)=>{

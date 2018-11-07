@@ -121,6 +121,22 @@ describe( 'Database', function() {
 			expect( bookings[0].restautant.id ).toBe( 1 );
 		});
 
+	});
+
+	describe( 'Holiday tables', ()=>{
+		it( 'shoud return a holiday object if have holiday', async ()=>{
+			let db = new Database();
+			let holiday = await db.getGuideHolidays( 1, '2017-08-04' );
+			expect( holiday.length ).toBe( 1 );
+
+		})
+		it( 'shoud return a holiday object if NOT have holiday', async ()=>{
+			let db = new Database();
+			let holiday = await db.getGuideHolidays( 1, '2017-08-05' );
+			console.log( '~~~~~~~~', holiday );
+			expect( holiday.length ).toBe( 0 );
+
+		})
 	})
 
 });

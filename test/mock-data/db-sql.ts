@@ -111,8 +111,8 @@ export class MockData {
 		return 200;
 	}
 
-	private mockGET( table: string, params: {} ) {
-		switch ( table ) {
+	private mockGET( endpoint: string, params: {} ) {
+		switch ( endpoint ) {
 			case 'booking_period':
 				return this.queryPeriod( this.bookingsTable, params );
 			case 'restaurant_holiday_period':
@@ -120,7 +120,7 @@ export class MockData {
 			case 'free_guide':
 				return this.queryFreeGuide( params );
 			default:
-				return this.queryGeneric( table, params );
+				return this.queryGeneric( endpoint, params );
 		}
 	}
 

@@ -115,6 +115,8 @@ describe( 'BookingMapper is a class providing the following services:', ()=> {
 					await db.setGuideHoliday( guide1.id, bookingDate );
 					let guide2 = await mapper.availableGuide( bookingDate );
 					expect( guide1.id ).not.toEqual( guide2.id );
+					let holiday2 = await db.getGuideHolidays( guide1.id, bookingDate );
+					expect( holiday2.length ).toBe( 1 );
 				});
 
 				it( 'both conditions above should happen', async ()=>{
