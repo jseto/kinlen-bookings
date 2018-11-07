@@ -212,8 +212,10 @@ export class MockData {
 		let data = this._db.export();
 		let buffer = new Buffer(data);
 		fs.writeFileSync("out/test/mock-data/filename.sqlite", buffer);
-		console.log('database writen');
+//		console.log('database writen');
 	}
 }
 
-//new MockData().exportDatabase();
+if (typeof module !== 'undefined' && module.exports) {
+	new MockData().exportDatabase();
+}
