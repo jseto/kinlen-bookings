@@ -133,7 +133,6 @@ describe( 'Database', function() {
 		it( 'shoud return a holiday object if NOT have holiday', async ()=>{
 			let db = new Database();
 			let holiday = await db.getGuideHolidays( 1, '2017-08-05' );
-			console.log( '~~~~~~~~', holiday );
 			expect( holiday.length ).toBe( 0 );
 
 		})
