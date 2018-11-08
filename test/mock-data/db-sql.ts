@@ -36,6 +36,7 @@ export class MockData {
 			'date date, ',
 			'time time, ',
 			'time_length int(10), ',
+			'comment text, ',
 			'restaurant_id int(10), ',
 			'guide_id int(10), ',
 			'booked_seats int(10), ',

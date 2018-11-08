@@ -8,6 +8,7 @@ export class Booking extends DatabaseObject {
   private _date: string;
   private _time: string;
   private _timeLength: number;
+	private _comment: string;
   private _restaurant: Restaurant;
   private _assignedGuide: Guide;
   private _bookedSeats: number;
@@ -17,6 +18,7 @@ export class Booking extends DatabaseObject {
     this._date = obj.date;
     this._time = obj.time;
     this._timeLength = Number( obj.time_length );
+		this._comment = obj.comment;
     this._restaurant = new Restaurant( Number( obj.restaurant_id ) );
     this._assignedGuide = new Guide( Number( obj.guide_id ) );
     this._bookedSeats = Number( obj.booked_seats );
@@ -28,6 +30,7 @@ export class Booking extends DatabaseObject {
       date: this.date,
       time: this.time,
       time_length: this.timeLength,
+			comment: this.comment,
       restautant: this.restautant.toObject(),
       assigned_guide: this.assignedGuide.toObject(),
       booked_seats: this.bookedSeats
@@ -52,13 +55,22 @@ export class Booking extends DatabaseObject {
     return this._time;
   }
 
-  setTimeLength( time: number ){
+	setTimeLength( time: number ){
     this._timeLength = time;
     return this;
   }
 
   get timeLength() {
     return this._timeLength;
+  }
+
+	setComment( comment: string ){
+    this._comment = comment;
+    return this;
+  }
+
+  get comment() {
+    return this._comment;
   }
 
   setRestaurant( restaurant: Restaurant ) {

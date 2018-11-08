@@ -11,18 +11,21 @@ class MyCustomReporter {
   }
 
   onRunComplete(contexts, results) {
-		let output = '';
+		let output = ( results.numFailedTests + results.numRuntimeErrorTestSuites )? fgRed + '✘ ': fgGreen + '✔ ';
 		if ( results.numFailedTests ) {
 			 output += fgRed + results.numFailedTests + ' failed, ';
+		}
+		if ( results.numRuntimeErrorTestSuites ) {
+			 output += fgRed + results.numRuntimeErrorTestSuites + ' runtime errors, ';
 		}
 		if ( results.numPendingTests ) {
 			 output += fgYellow + results.numPendingTests + ' pending, ';
 		}
 		if ( results.numPassedTests ) {
-			 output += fgGreen + results.numPassedTests + '/' + results.numTotalTests + ' passed. ';
+			 output += fgGreen + results.numPassedTests + '/' + ( results.numTotalTests + results.numRuntimeErrorTestSuites ) + ' passed. ';
 		}
-		output += fgWhite + results.numTotalTests + ' total';
-		console.log( 	output,	fgReset );
+		output += fgWhite + ( results.numTotalTests + results.numRuntimeErrorTestSuites ) + ' total';
+		console.log( output,	fgReset );
   }
 }
 

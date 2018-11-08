@@ -78,6 +78,7 @@ describe( 'Database', function() {
 		expect( booking.date ).toEqual( '2018-09-25' );
 		expect( booking.time ).toEqual( "21:00:00" );
 		expect( booking.timeLength ).toBe( 3000 );
+		expect( booking.comment ).toBe( 'this is booking with id 3' );
 	});
 
 	it( 'should return all bookings for matching the queryObject', async ()=> {
@@ -91,7 +92,7 @@ describe( 'Database', function() {
 
 		it( 'with query date in the middle of the month', async ()=>{
 			let db = new Database();
-			let bookings: Booking[] = await db.getMonthBookings( 1, '2019-08-25' );
+			let bookings: Booking[] = await db.getMonthBookings( 1, '2009-08-25' );
 
 			expect( bookings.length ).toBe( 4 );
 			expect( bookings[1].id ).not.toBe( bookings[0].id );
@@ -99,7 +100,7 @@ describe( 'Database', function() {
 
 		it( 'with query date in the begining of the month', async ()=>{
 			let db = new Database();
-			let bookings: Booking[] = await db.getMonthBookings( 1, '2019-08-01' );
+			let bookings: Booking[] = await db.getMonthBookings( 1, '2009-08-01' );
 
 			expect( bookings.length ).toBe( 4 );
 			expect( bookings[0].restautant.id ).toBe( 1 );
@@ -107,7 +108,7 @@ describe( 'Database', function() {
 
 		it( 'with query date in the end of the month', async ()=>{
 			let db = new Database();
-			let bookings: Booking[] = await db.getMonthBookings( 1, '2019-08-31' );
+			let bookings: Booking[] = await db.getMonthBookings( 1, '2009-08-31' );
 
 			expect( bookings.length ).toBe( 4 );
 			expect( bookings[0].restautant.id ).toBe( 1 );
@@ -115,7 +116,7 @@ describe( 'Database', function() {
 
 		it( 'but NOT with query date out of the end of the month', async ()=>{
 			let db = new Database();
-			let bookings: Booking[] = await db.getMonthBookings( 1, '2019-09-31' );
+			let bookings: Booking[] = await db.getMonthBookings( 1, '2009-09-31' );
 
 			expect( bookings.length ).toBe( 1 );
 			expect( bookings[0].restautant.id ).toBe( 1 );

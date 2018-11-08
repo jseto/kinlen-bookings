@@ -31,7 +31,7 @@ describe( 'In Utils class', function() {
 	describe( 'a date of equal month ', function() {
 		let date = '2000-00-00';
 		let differentMonth = [
-			'2009-00-00',
+			'2008-00-00',
 			'2000-01-00',
 			''
 		]
