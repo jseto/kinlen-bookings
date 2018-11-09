@@ -96,8 +96,8 @@ export class BookingMapper {
 
 	async getUnavailableDays( date: Date, seats: number ): Promise<Date[]> {
 		let days:Date[] = [];
-		let daysInMonth = new Date( date.getFullYear(), date.getMonth(), 0 ).getDate();
-		for ( let i = 1; i < daysInMonth+1; ++i ) {
+		let daysInMonth = new Date( date.getFullYear(), date.getMonth()+1, 0 ).getDate();
+		for ( let i = 1; i <= daysInMonth; ++i ) {
 			date.setDate( i );
 			let day = Utils.dateToString( date );
 			let available = await this.isDayAvailable( day, seats );

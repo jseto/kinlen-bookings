@@ -223,6 +223,16 @@ describe( 'BookingMapper is a class providing the following services:', ()=> {
 				expect( map.length ).toBe( 2 );
 				expect( map ).toContainEqual( new Date( '2018-10-01' ) );
 				expect( map ).toContainEqual( new Date( '2018-10-07' ) );
+			});
+			it ( 'should report abailability for last day of month', async ()=>{
+				let map = await mapper.getUnavailableDays( new Date( '2018-02-28' ), 2 );
+				expect( map ).not.toContainEqual( new Date( '2018-02-28' ) );
+			})
+			it ( 'should report UNabailability for last day of month', async ()=>{
+				await db.setRestaurantHoliday( 1, '2018-02-28' );
+				mapper.invalidateCache();
+				let map = await mapper.getUnavailableDays( new Date( '2018-02-28' ), 2 );
+				expect( map ).toContainEqual( new Date( '2018-02-28' ) );
 			})
 		})
 	});
