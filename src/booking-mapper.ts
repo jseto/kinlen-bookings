@@ -79,7 +79,7 @@ export class BookingMapper {
 		if ( holiday ) {
 			return false;
 		}
-		if ( Object.keys(daySummary).length ) {
+		if ( Object.keys(daySummary).length ) { //have some booking for the day
 			for ( let i = 0; i < BOOKABLE_TIMES.length; ++i ) {
 				let time = BOOKABLE_TIMES[i];
 				if ( typeof daySummary[ time ] === 'undefined' || ( MAX_SEATS_PER_GUIDE - daySummary[ time ].bookedSeats ) >= requiredSeats ) {

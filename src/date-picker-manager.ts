@@ -20,7 +20,7 @@ export class DatePickerManager {
 
 	updateDates( instance: flatpickr.default.Instance ) {
 		let date = new Date( instance.currentYear, instance.currentMonth, 1)
-		this._mapper.getUnavailableDays( date, 2 ).then(( map )=>{
+		return this._mapper.getUnavailableDays( date, 2 ).then(( map )=>{
 			instance.config.disable = map;
 			instance.redraw();
 		})
