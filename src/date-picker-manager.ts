@@ -22,6 +22,7 @@ export class DatePickerManager {
 		let date = new Date( instance.currentYear, instance.currentMonth, 1)
 		return this._mapper.getUnavailableDays( date, 2 ).then(( map )=>{
 			instance.config.disable = map;
+			console.log( map );
 			instance.redraw();
 		})
 	}

@@ -260,6 +260,56 @@
 			"restaurant_id":"1",
 			"guide_id":"1",
 			"booked_seats":"6"
+		},
+		{
+			"id":"310",
+			"date":"2018-10-03",
+			"time":"19:00:00",
+			"time_length":"0",
+			"comment":"live test",
+			"restaurant_id":"1",
+			"guide_id":"1",
+			"booked_seats":"6"
+		},
+		{
+			"id":"311",
+			"date":"2018-10-05",
+			"time":"21:00:00",
+			"time_length":"0",
+			"comment":"live test",
+			"restaurant_id":"1",
+			"guide_id":"1",
+			"booked_seats":"2"
+		},
+		{
+			"id":"312",
+			"date":"2018-10-05",
+			"time":"19:00:00",
+			"time_length":"0",
+			"comment":"live test",
+			"restaurant_id":"1",
+			"guide_id":"1",
+			"booked_seats":"6"
+		},
+		{
+			"id":"313",
+			"date":"2018-10-07",
+			"time":"21:00:00",
+			"time_length":"0",
+			"comment":"live test",
+			"restaurant_id":"1",
+			"guide_id":"1",
+			"booked_seats":"6"
+		},
+		{
+			"id":"314",
+			"date":"2018-10-07",
+			"time":"19:00:00",
+			"time_length":"0",
+			"comment":"live test",
+			"restaurant_id":"1",
+			"guide_id":"1",
+			"booked_seats":"6"
 		}
 	],
 	"wp_kinlen_guide": [
@@ -333,6 +383,60 @@
 		{
 			"id":"5",
 			"date":"2017-08-04"
+		},
+		{
+			"id":"2",
+			"date":"2018-10-07"
+		},
+		{
+			"id":"2",
+			"date":"2018-10-05"
+		},
+		{
+			"id":"2",
+			"date":"2018-10-03"
+		},
+		{
+			"id":"3",
+			"date":"2018-10-07"
+		},
+		{
+			"id":"3",
+			"date":"2018-10-05"
+		},
+		{
+			"id":"3",
+			"date":"2018-10-03"
+		},
+		{
+			"id":"4",
+			"date":"2018-10-07"
+		},
+		{
+			"id":"4",
+			"date":"2018-10-05"
+		},
+		{
+			"id":"4",
+			"date":"2018-10-03"
+		},
+		{
+			"id":"5",
+			"date":"2018-10-07"
+		},
+		{
+			"id":"5",
+			"date":"2018-10-05"
+		},
+		{
+			"id":"5",
+			"date":"2018-10-03"
+		}
+	],
+	"wp_kinlen_restaurant_holiday": [
+		{
+			"id":"1",
+			"date":"2018-10-01"
 		}
 	]
 }

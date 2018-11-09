@@ -206,11 +206,24 @@ describe( 'BookingMapper is a class providing the following services:', ()=> {
 			it( 'should report a map of unavailable days for 6 seats', async ()=>{
 				let map = await mapper.getUnavailableDays( new Date( '2017-08-01' ), 6 );
 				expect( map.length ).toBe( 4 );
+				expect( map ).toContainEqual( new Date( '2017-08-01' ) );
+				expect( map ).toContainEqual( new Date( noSeatsLeftDate ) );
+				expect( map ).toContainEqual( new Date( allGuideOnHoliday ) );
+				expect( map ).toContainEqual( new Date( seatsLeftDate ) );
 			});
 			it( 'should report a map of unavailable days for 2 seats', async ()=>{
 				let map = await mapper.getUnavailableDays( new Date( '2017-08-01' ), 2 );
 				expect( map.length ).toBe( 3 );
+				expect( map ).toContainEqual( new Date( '2017-08-01' ) );
+				expect( map ).toContainEqual( new Date( noSeatsLeftDate ) );
+				expect( map ).toContainEqual( new Date( allGuideOnHoliday ) );
 			});
+			it ( 'should report unavailability for web dates also', async()=>{
+				let map = await mapper.getUnavailableDays( new Date( '2018-10-01' ), 2 );
+				expect( map.length ).toBe( 2 );
+				expect( map ).toContainEqual( new Date( '2018-10-01' ) );
+				expect( map ).toContainEqual( new Date( '2018-10-07' ) );
+			})
 		})
 	});
 });

@@ -15,7 +15,6 @@ describe( 'In Utils class', function() {
 
 		let validDate = '2000-00-00';
 
-
 		it( 'should throw on invalid date', function() {
 			invalidDate.forEach(( date )=>{
 				expect( ()=>{ Utils.checkValidDate( date ) } ).toThrowError();
@@ -57,6 +56,17 @@ describe( 'In Utils class', function() {
 			})
 		});
 
+	});
+
+	describe( 'dateToString', ()=>{
+		it ( 'should return date format YYYY-MM-DD', ()=>{
+			let date = new Date( 2018, 9, 2 );
+			expect( Utils.dateToString( date ) ).toEqual( '2018-10-02' );
+		})
+		it ( 'should return date format YYYY-MM-DD near begining of month', ()=>{
+			let date = new Date( 2018, 9, 1 );
+			expect( Utils.dateToString( date ) ).toEqual( '2018-10-01' );
+		})
 	});
 
 	describe( 'toString', ()=>{

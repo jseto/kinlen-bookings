@@ -99,11 +99,10 @@ export class BookingMapper {
 		let daysInMonth = new Date( date.getFullYear(), date.getMonth(), 0 ).getDate();
 		for ( let i = 1; i < daysInMonth+1; ++i ) {
 			date.setDate( i );
-			// let dd = new Date( d.getFullYear(), d.getMonth(), i );
-			let day = date.toISOString().slice( 0, 10 );
+			let day = Utils.dateToString( date );
 			let available = await this.isDayAvailable( day, seats );
 			if ( !available ) {
-				days.push( date );
+				days.push( new Date( day ) );
 			}
 		}
 		return days;
