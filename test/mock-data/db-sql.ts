@@ -1,6 +1,7 @@
 import * as Sql from "sql.js";
 import * as jsonData from "./db.json"
 import * as fs from "fs"
+import { Utils } from "../../src/utils";
 
 export class MockData {
 	private tablePrefix = 'wp_kinlen_';
@@ -122,7 +123,7 @@ export class MockData {
 			case 'restaurant_holiday_period':
 				return this.queryPeriod( this.restaurantHolidaysTable, params );
 			case 'free_guide':
-				return this.queryFreeGuide( params );
+				return this.queryFreeGuidePeriod( params );
 			default:
 				return this.queryGeneric( this.tablePrefix + endpoint, params );
 		}
@@ -149,6 +150,26 @@ export class MockData {
 		s.free();
 		return resp;
   }
+
+	private queryFreeGuidePeriod( params:{} ) {
+		if ( params ['date'] ) {
+			return this.queryFreeGuide( params );
+		}
+
+		let resp = [];
+		let currentDate = new Date( params[ 'minDate' ] );
+		let maxDate = new Date( params[ 'maxDate' ] );
+		while ( currentDate <= maxDate ) {
+			let dateStr = Utils.dateToString( currentDate );
+			let obj = {
+				date: dateStr,
+				guide: this.queryFreeGuide( { date: dateStr } )
+			}
+			resp.push( obj );
+			currentDate.setDate( currentDate.getDate() + 1 );
+		}
+		return resp;
+	}
 
   private queryPeriod( table: string, params: {}): any {
 		let whereArr = [];

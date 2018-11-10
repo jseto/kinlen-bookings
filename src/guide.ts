@@ -19,9 +19,8 @@ export class Guide extends DatabaseObject{
 		}
   };
 
-  toObject(){
+  _toObject(){
     return {
-      id: this._id,
 			name: this._name,
 			score: this._score,
 			phone: this._phone,
@@ -31,15 +30,12 @@ export class Guide extends DatabaseObject{
     };
   }
 
-  fromObject( obj: any ) {
-		if ( obj.id ) {
-			this._id = Number(obj.id);
-			this._name = obj.name;
-			this._score = obj.score;
-			this._phone = obj.phone;
-			this._email = obj.email;
-			this._lineId = obj.line_id;
-			this._paypal = obj.paypal;
-		}
+  _fromObject( obj: any ) {
+		this._name = obj.name;
+		this._score = obj.score;
+		this._phone = obj.phone;
+		this._email = obj.email;
+		this._lineId = obj.line_id;
+		this._paypal = obj.paypal;
   }
 }

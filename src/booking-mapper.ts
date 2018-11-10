@@ -1,5 +1,5 @@
 import {Database} from "./database";
-import {MAX_SEATS_PER_GUIDE} from "./guide"
+import {MAX_SEATS_PER_GUIDE, Guide} from "./guide"
 import {Utils} from "./utils";
 import { BOOKABLE_TIMES } from "./booking";
 
@@ -11,6 +11,7 @@ export interface BookingSummary {
 export class BookingMapper {
 	private _restaurantId: number;
 	private _restaurantHolidays: boolean[];    // All bookings for the month
+	private _availableGuide: Guide[];
 	private _bookingMap: BookingSummary[][];  // All bookings for the month by day of the month as 1st array index and time as 2nd array index
   private _lastBookingMapDate: string;
 	private _db: Database;
@@ -19,6 +20,7 @@ export class BookingMapper {
 		this._restaurantId = restaurantId;
     this._bookingMap = [];
 		this._restaurantHolidays = [];
+		this._availableGuide = [];
     this._lastBookingMapDate = '';
 		this._db = new Database();
 
@@ -112,6 +114,15 @@ export class BookingMapper {
 		this._lastBookingMapDate = '';
 	}
 
+  // async availableGuide( date: string ) {
+	// 	Utils.checkValidDate( date );
+	// 	if ( !this.isAvailMapFresh( date ) ) {
+	// 		await this.buildBookingMapCache( date );
+	// 	}
+	// 	let day = new Date( date );
+	// 	return this._restaurantHolidays[ day.getDate() ];
+  // }
+
   availableGuide( date: string ) {
 		return this._db.getFreeGuide( date )
   }
@@ -126,6 +137,7 @@ export class BookingMapper {
 		for ( let i=0; i<32; i++ ) {
 			this._bookingMap[i] = [];
 			this._restaurantHolidays[i] = false;
+			this._availableGuide[i] = null;
 		}
 
 		let bookings = await this._db.getMonthBookings( this._restaurantId, date );
@@ -148,6 +160,11 @@ export class BookingMapper {
 			let day = new Date( holiday.date ).getDate();
 			this._restaurantHolidays[ day ] = true;
 		});
+
+		// let availableGuides = await this._db.getMonthFreeGuide( date );
+		// availableGuides.forEach( (guide)=>{
+		// 	this._availableGuide[ guide.dummy ] = guide;
+		// });
 
 		this._lastBookingMapDate = date;
 	}

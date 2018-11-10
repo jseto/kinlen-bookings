@@ -13,8 +13,7 @@ export class Booking extends DatabaseObject {
   private _assignedGuide: Guide;
   private _bookedSeats: number;
 
-  fromObject( obj: any ){
-    this._id = Number(obj.id);
+  _fromObject( obj: any ){
     this._date = obj.date;
     this._time = obj.time;
     this._timeLength = Number( obj.time_length );
@@ -24,9 +23,8 @@ export class Booking extends DatabaseObject {
     this._bookedSeats = Number( obj.booked_seats );
   }
 
-  toObject() {
+  _toObject() {
     return{
-      id: this._id,
       date: this.date,
       time: this.time,
       time_length: this.timeLength,

@@ -11,26 +11,36 @@ export abstract class DatabaseObject {
 		return this._id;
 	}
 
-  abstract fromObject( p: any );
-  abstract toObject();
+	fromObject( p: any ) {
+		if ( p.id ) {
+			this._id = Number( p.id );
+			this._fromObject( p );
+		}
+	}
+
+	toObject() {
+		let obj = this._toObject();
+		obj.id = this._id;
+		return obj;
+	}
+
+  abstract _fromObject( p: any );
+  abstract _toObject();
 }
 
 
 export class Holiday extends DatabaseObject{
   private _date: string;
 
-	toObject() {
+	_toObject() {
 		return {
 			id: this._id,
 			date: this._date
 		}
 	}
 
-	fromObject( obj: any ) {
-		if ( obj.id ) {
-			this._id = Number(obj.id);
+	_fromObject( obj: any ) {
 			this._date = obj.date;
-		}
 	}
 
 	get date() {

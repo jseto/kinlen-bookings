@@ -16,6 +16,10 @@ export class Database {
 		});
 	}
 
+	// getMonthFreeGuide( date: string ):Promise<Guide[]> {
+	//
+	// }
+
 	getMonthBookings( restaurantId: number, date: string):Promise<Booking[]> {
 		return new Promise((resolve)=>{
 			this.getMonthPeriod( 'booking_period/', date, { restaurant_id: restaurantId } ).then( ( data ) => {
