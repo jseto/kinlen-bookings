@@ -71,7 +71,7 @@ export class BookingMapper {
 		}
 		else { //there is no bookings for this restaurant
 			let guide = await this.availableGuide( date );				// so look if there is an available guide
-			return guide.maxSeats();
+			return guide != null? guide.maxSeats() : 0;
 		}
 	}
 
@@ -92,7 +92,7 @@ export class BookingMapper {
 		}
 		else {
 			let guide = await this.availableGuide( date );				// so look if there is an available guide
-			return ( guide.maxSeats() > 0 );
+			return guide != null;
 		}
 	}
 
@@ -114,18 +114,18 @@ export class BookingMapper {
 		this._lastBookingMapDate = '';
 	}
 
-  // async availableGuide( date: string ) {
-	// 	Utils.checkValidDate( date );
-	// 	if ( !this.isAvailMapFresh( date ) ) {
-	// 		await this.buildBookingMapCache( date );
-	// 	}
-	// 	let day = new Date( date );
-	// 	return this._restaurantHolidays[ day.getDate() ];
-  // }
-
-  availableGuide( date: string ) {
-		return this._db.getFreeGuide( date )
+  async availableGuide( date: string ) {
+		Utils.checkValidDate( date );
+		if ( !this.isAvailMapFresh( date ) ) {
+			await this.buildBookingMapCache( date );
+		}
+		let day = new Date( date );
+		return this._availableGuide[ day.getDate() ];
   }
+
+  // availableGuide( date: string ) {
+	// 	return this._db.getFreeGuide( date )
+  // }
 
 	/**
 	 * Retrieves the bookings for the month in date and builds the booking map
@@ -161,10 +161,12 @@ export class BookingMapper {
 			this._restaurantHolidays[ day ] = true;
 		});
 
-		// let availableGuides = await this._db.getMonthFreeGuide( date );
-		// availableGuides.forEach( (guide)=>{
-		// 	this._availableGuide[ guide.dummy ] = guide;
-		// });
+		let availableGuides = await this._db.getMonthFreeGuide( date );
+		console.log( availableGuides );
+		availableGuides.forEach( (guide)=>{
+			let day = new Date( guide.date ).getDate();
+			this._availableGuide[ day ] = guide;
+		});
 
 		this._lastBookingMapDate = date;
 	}

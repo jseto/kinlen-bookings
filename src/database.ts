@@ -1,6 +1,6 @@
 import { DatabaseObject, Holiday } from "./database-object";
 import { Booking } from "./booking";
-import { Guide } from "./guide";
+import { Guide, FreeGuide } from "./guide";
 import { Utils } from "./utils";
 
 export class Database {
@@ -16,9 +16,14 @@ export class Database {
 		});
 	}
 
-	// getMonthFreeGuide( date: string ):Promise<Guide[]> {
-	//
-	// }
+	getMonthFreeGuide( date: string ):Promise<FreeGuide[]> {
+		return new Promise((resolve)=>{
+			this.getMonthPeriod( 'free_guide/', date, {} ).then( ( data ) => {
+				resolve( <FreeGuide[]>this.buildList( data, ()=>{ return new FreeGuide(-1) } ) );
+			})
+		});
+
+	}
 
 	getMonthBookings( restaurantId: number, date: string):Promise<Booking[]> {
 		return new Promise((resolve)=>{

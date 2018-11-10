@@ -39,3 +39,27 @@ export class Guide extends DatabaseObject{
 		this._paypal = obj.paypal;
   }
 }
+
+export class FreeGuide extends Guide {
+  private _date: string;
+
+	setDate( date: string ) {
+		this._date = date;
+		return this;
+	}
+
+	get date() {
+		return this._date;
+	}
+
+	_toObject() {
+		let obj:any = super._toObject();
+		obj.date = this._date;
+		return obj;
+	}
+
+	_fromObject( obj: any ) {
+		super._fromObject( obj );
+		this._date = obj.date;
+	}
+}

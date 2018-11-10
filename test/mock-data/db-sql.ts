@@ -161,10 +161,8 @@ export class MockData {
 		let maxDate = new Date( params[ 'maxDate' ] );
 		while ( currentDate <= maxDate ) {
 			let dateStr = Utils.dateToString( currentDate );
-			let obj = {
-				date: dateStr,
-				guide: this.queryFreeGuide( { date: dateStr } )
-			}
+			let obj = this.queryFreeGuide( { date: dateStr } )
+			obj.date = dateStr;
 			resp.push( obj );
 			currentDate.setDate( currentDate.getDate() + 1 );
 		}
