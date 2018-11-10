@@ -1,11 +1,13 @@
 import * as flatpickr from "flatpickr";
-import { BookingMapper } from "./booking-mapper";
+import { BookingMapper, BookingSummary } from "./booking-mapper";
+import { Utils } from "./utils";
 
 export class DatePickerManager {
 	private _mapper;
 
 	constructor( restaurantId: number ) {
 		this._mapper = new BookingMapper( restaurantId )
+		this._mapper.buildBookingMapCache( Utils.dateToString( new Date() ) )
 	}
 
 	// setup( flatPickrInstance: flatpickr.default.Instance ) {
@@ -25,5 +27,11 @@ export class DatePickerManager {
 			console.log( map );
 			instance.redraw();
 		})
+	}
+
+	getFreeTimeSlots( date:string, callback: ( bookingSummary: BookingSummary[] ) => void ) {
+		return this._mapper.dayBookingSummary().then( bookingSummary =>{
+			callback( bookingSummary );
+		});
 	}
 }

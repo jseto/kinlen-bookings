@@ -162,7 +162,6 @@ export class BookingMapper {
 		});
 
 		let availableGuides = await this._db.getMonthFreeGuide( date );
-		console.log( availableGuides );
 		availableGuides.forEach( (guide)=>{
 			let day = new Date( guide.date ).getDate();
 			this._availableGuide[ day ] = guide;
