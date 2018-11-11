@@ -1,4 +1,4 @@
-import {DatabaseObject} from "./database-object";
+import {DatabaseObject} from "../database/database-object";
 
 export const MAX_SEATS_PER_GUIDE = 6;
 

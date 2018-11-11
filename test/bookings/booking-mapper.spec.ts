@@ -1,11 +1,11 @@
 import * as fetchMock from 'fetch-mock';
 import { MockData } from './../mock-data/db-sql';
 import { BookingMapper } from "../../src/bookings/booking-mapper";
-import { Database } from "../../src/database";
 import { MAX_SEATS_PER_GUIDE } from '../../src/bookings/guide';
+import { BookingData } from '../../src/bookings/booking-data';
 
 let mapper = new BookingMapper( 1 );
-let db = new Database();
+let db = new BookingData();
 
 describe( 'BookingMapper is a class providing the following services:', ()=> {
 	let mockData: MockData;

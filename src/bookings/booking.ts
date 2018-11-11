@@ -1,4 +1,4 @@
-import { DatabaseObject } from "./database-object"
+import { DatabaseObject } from "../database/database-object"
 import { Restaurant } from "./restaurant";
 import { Guide } from "./guide";
 

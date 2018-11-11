@@ -1,7 +1,7 @@
 import * as fetchMock from 'fetch-mock';
 import { MockData } from './mock-data/db-sql';
 import * as flatpickr from "flatpickr";
-import { DatePickerManager } from "../src/date-picker-manager";
+import { DatePickerManager } from '../src/frontend/date-picker-manager';
 
 describe( 'DatePickerManager provides a bridge between TS and JSES5', ()=> {
 	let datePickerManager = new DatePickerManager( 1 );

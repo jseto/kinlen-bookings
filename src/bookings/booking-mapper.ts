@@ -1,4 +1,4 @@
-import {Database} from "../database";
+import {BookingData} from "./booking-data";
 import {MAX_SEATS_PER_GUIDE, Guide} from "./guide"
 import {Utils} from "../utils/utils";
 import { BOOKABLE_TIMES } from "./booking";
@@ -14,7 +14,7 @@ export class BookingMapper {
 	private _availableGuide: Guide[];
 	private _bookingMap: BookingSummary[][];  // All bookings for the month by day of the month as 1st array index and time as 2nd array index
   private _lastBookingMapDate: string;
-	private _db: Database;
+	private _db: BookingData;
 
   constructor( restaurantId: number ) {
 		this._restaurantId = restaurantId;
@@ -22,7 +22,7 @@ export class BookingMapper {
 		this._restaurantHolidays = [];
 		this._availableGuide = [];
     this._lastBookingMapDate = '';
-		this._db = new Database();
+		this._db = new BookingData();
 
   }
 
