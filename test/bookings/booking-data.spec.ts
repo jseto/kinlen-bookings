@@ -19,8 +19,8 @@ describe( 'BookingData', function() {
 		let db = new BookingData();
 		let booking: Booking = await db.getBooking( 3 );
 
-		expect( booking.date ).toEqual( '2018-09-25' );
-		expect( booking.time ).toEqual( "21:00:00" );
+		expect( booking.date ).toEqual( new Date( '2018-09-25' ) );
+		expect( booking.time ).toEqual( '21:00:00' );
 		expect( booking.timeLength ).toBe( 3000 );
 		expect( booking.comment ).toBe( 'this is booking with id 3' );
 	});
@@ -36,7 +36,7 @@ describe( 'BookingData', function() {
 
 		it( 'with query date in the middle of the month', async ()=>{
 			let db = new BookingData();
-			let bookings: Booking[] = await db.getMonthBookings( 1, '2009-08-25' );
+			let bookings: Booking[] = await db.getMonthBookings( 1, new Date( '2009-08-25' ) );
 
 			expect( bookings.length ).toBe( 4 );
 			expect( bookings[1].id ).not.toBe( bookings[0].id );
@@ -44,7 +44,7 @@ describe( 'BookingData', function() {
 
 		it( 'with query date in the begining of the month', async ()=>{
 			let db = new BookingData();
-			let bookings: Booking[] = await db.getMonthBookings( 1, '2009-08-01' );
+			let bookings: Booking[] = await db.getMonthBookings( 1, new Date( '2009-08-01' ) );
 
 			expect( bookings.length ).toBe( 4 );
 			expect( bookings[0].restautant.id ).toBe( 1 );
@@ -52,7 +52,7 @@ describe( 'BookingData', function() {
 
 		it( 'with query date in the end of the month', async ()=>{
 			let db = new BookingData();
-			let bookings: Booking[] = await db.getMonthBookings( 1, '2009-08-31' );
+			let bookings: Booking[] = await db.getMonthBookings( 1, new Date( '2009-08-31' ) );
 
 			expect( bookings.length ).toBe( 4 );
 			expect( bookings[0].restautant.id ).toBe( 1 );
@@ -60,10 +60,9 @@ describe( 'BookingData', function() {
 
 		it( 'but NOT with query date out of the end of the month', async ()=>{
 			let db = new BookingData();
-			let bookings: Booking[] = await db.getMonthBookings( 1, '2009-09-31' );
+			let bookings: Booking[] = await db.getMonthBookings( 1, new Date( '2009-09-31' ) );
 
-			expect( bookings.length ).toBe( 1 );
-			expect( bookings[0].restautant.id ).toBe( 1 );
+			expect( bookings.length ).toBe( 0 );
 		});
 
 	});
@@ -71,13 +70,13 @@ describe( 'BookingData', function() {
 	describe( 'Holiday tables', ()=>{
 		it( 'shoud return a holiday object if have holiday', async ()=>{
 			let db = new BookingData();
-			let holiday = await db.getGuideHolidays( 1, '2017-08-04' );
+			let holiday = await db.getGuideHolidays( 1, new Date( '2017-08-04' ) );
 			expect( holiday.length ).toBe( 1 );
 
 		})
 		it( 'shoud return a holiday object if NOT have holiday', async ()=>{
 			let db = new BookingData();
-			let holiday = await db.getGuideHolidays( 1, '2017-08-05' );
+			let holiday = await db.getGuideHolidays( 1, new Date( '2017-08-05' ) );
 			expect( holiday.length ).toBe( 0 );
 
 		})

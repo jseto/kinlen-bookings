@@ -1,6 +1,5 @@
 import {BookingData} from "./booking-data";
 import {MAX_SEATS_PER_GUIDE, Guide} from "./guide"
-import {Utils} from "../utils/utils";
 import { BOOKABLE_TIMES } from "./booking";
 
 export interface BookingSummary {
@@ -13,7 +12,7 @@ export class BookingMapper {
 	private _restaurantHolidays: boolean[];    // All bookings for the month
 	private _availableGuide: Guide[];
 	private _bookingMap: BookingSummary[][];  // All bookings for the month by day of the month as 1st array index and time as 2nd array index
-  private _lastBookingMapDate: string;
+  private _lastBookingMapDate: Date;
 	private _db: BookingData;
 
   constructor( restaurantId: number ) {
@@ -21,13 +20,12 @@ export class BookingMapper {
     this._bookingMap = [];
 		this._restaurantHolidays = [];
 		this._availableGuide = [];
-    this._lastBookingMapDate = '';
+    this._lastBookingMapDate = new Date( 0 );
 		this._db = new BookingData();
 
   }
 
-	async dayBookingSummary( date: string ): Promise<BookingSummary[]> {
-		Utils.checkValidDate( date );
+	async dayBookingSummary( date: Date ): Promise<BookingSummary[]> {
 		if ( !this.isAvailMapFresh( date ) ) {
 			await this.buildBookingMapCache( date );
 		}
@@ -41,7 +39,7 @@ export class BookingMapper {
 	 * @param  hour the hour of the booking
 	 * @return      the booking or null
 	 */
-	async bookingSummary( date: string, hour: string ):Promise<BookingSummary> {
+	async bookingSummary( date: Date, hour: string ):Promise<BookingSummary> {
 		let daySummary = await this.dayBookingSummary( date );
 		return daySummary[ hour ];
 	}
@@ -51,8 +49,7 @@ export class BookingMapper {
 	 * @param  date the date to check
 	 * @return      true if the restaurant is closed
 	 */
-	async restaurantHoliday( date: string ) {
-		Utils.checkValidDate( date );
+	async restaurantHoliday( date: Date ) {
 		if ( !this.isAvailMapFresh( date ) ) {
 			await this.buildBookingMapCache( date );
 		}
@@ -60,7 +57,7 @@ export class BookingMapper {
 		return this._restaurantHolidays[ day.getDate() ];
 	}
 
-	async availableSeats( date: string, hour: string ): Promise<number> {
+	async availableSeats( date: Date, hour: string ): Promise<number> {
 		let booking = await this.bookingSummary( date, hour );
 		let holiday = await this.restaurantHoliday( date );
 		if ( holiday ) {
@@ -75,7 +72,7 @@ export class BookingMapper {
 		}
 	}
 
-	async isDayAvailable( date: string, requiredSeats: number): Promise<boolean> {
+	async isDayAvailable( date: Date, requiredSeats: number): Promise<boolean> {
 		let daySummary = await this.dayBookingSummary( date );
 		let holiday = await this.restaurantHoliday( date );
 		if ( holiday ) {
@@ -101,21 +98,19 @@ export class BookingMapper {
 		let daysInMonth = new Date( date.getFullYear(), date.getMonth()+1, 0 ).getDate();
 		for ( let i = 1; i <= daysInMonth; ++i ) {
 			date.setDate( i );
-			let day = Utils.dateToString( date );
-			let available = await this.isDayAvailable( day, seats );
+			let available = await this.isDayAvailable( date, seats );
 			if ( !available ) {
-				days.push( new Date( day ) );
+				days.push( new Date( date ) );
 			}
 		}
 		return days;
 	}
 
 	invalidateCache() {
-		this._lastBookingMapDate = '';
+		this._lastBookingMapDate = new Date( 0 );
 	}
 
-  async availableGuide( date: string ) {
-		Utils.checkValidDate( date );
+  async availableGuide( date: Date ) {
 		if ( !this.isAvailMapFresh( date ) ) {
 			await this.buildBookingMapCache( date );
 		}
@@ -123,7 +118,7 @@ export class BookingMapper {
 		return this._availableGuide[ day.getDate() ];
   }
 
-  // availableGuide( date: string ) {
+  // availableGuide( date: Date ) {
 	// 	return this._db.getFreeGuide( date )
   // }
 
@@ -170,7 +165,7 @@ export class BookingMapper {
 		this._lastBookingMapDate = date;
 	}
 
-  private isAvailMapFresh( date: string ):boolean {
-		return Utils.isSameMonth( this._lastBookingMapDate, date );
+  private isAvailMapFresh( date: Date ):boolean {
+		return this._lastBookingMapDate.getMonth() == date.getMonth();
   }
 }

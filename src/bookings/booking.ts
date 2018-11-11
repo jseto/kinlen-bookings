@@ -1,11 +1,12 @@
 import { DatabaseObject } from "../database/database-object"
 import { Restaurant } from "./restaurant";
 import { Guide } from "./guide";
+import { Utils } from "../utils/utils";
 
 export const BOOKABLE_TIMES = [ '19:00:00', '21:00:00' ];
 
 export class Booking extends DatabaseObject {
-  private _date: string;
+  private _date: Date;
   private _time: string;
   private _timeLength: number;
 	private _comment: string;
@@ -14,7 +15,7 @@ export class Booking extends DatabaseObject {
   private _bookedSeats: number;
 
   _fromObject( obj: any ){
-    this._date = obj.date;
+    this._date = new Date( obj.date );
     this._time = obj.time;
     this._timeLength = Number( obj.time_length );
 		this._comment = obj.comment;
@@ -25,7 +26,7 @@ export class Booking extends DatabaseObject {
 
   _toObject() {
     return{
-      date: this.date,
+      date: Utils.dateToString( this.date ),
       time: this.time,
       time_length: this.timeLength,
 			comment: this.comment,
@@ -35,12 +36,12 @@ export class Booking extends DatabaseObject {
     };
   }
 
-  setDate( date: string ) {
+  setDate( date: Date ) {
     this._date=date;
     return this;
   }
 
-  get date() {
+  get date(): Date {
     return this._date;
   }
 

@@ -2,25 +2,24 @@ import { DatabaseObject } from "../database/database-object";
 import { Utils } from "../utils/utils";
 
 export class Holiday extends DatabaseObject{
-  private _date: string;
+  private _date: Date;
 
 	_toObject() {
 		return {
 			id: this._id,
-			date: this._date
+			date: Utils.dateToString( this._date )
 		}
 	}
 
 	_fromObject( obj: any ) {
-			this._date = obj.date;
+			this._date = new Date( obj.date );
 	}
 
-	get date() {
+	get date(): Date {
 		return this._date;
 	}
 
-	set date( date: string ) {
-		Utils.checkValidDate( date );
+	set date( date: Date ) {
 		this._date = date;
 	}
 }

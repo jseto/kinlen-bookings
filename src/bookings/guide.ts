@@ -1,4 +1,5 @@
 import {DatabaseObject} from "../database/database-object";
+import { Utils } from "../utils/utils";
 
 export const MAX_SEATS_PER_GUIDE = 6;
 
@@ -41,25 +42,25 @@ export class Guide extends DatabaseObject{
 }
 
 export class FreeGuide extends Guide {
-  private _date: string;
+  private _date: Date;
 
-	setDate( date: string ) {
+	setDate( date: Date ) {
 		this._date = date;
 		return this;
 	}
 
-	get date() {
+	get date(): Date {
 		return this._date;
 	}
 
 	_toObject() {
 		let obj:any = super._toObject();
-		obj.date = this._date;
+		obj.date = Utils.dateToString( this._date );
 		return obj;
 	}
 
 	_fromObject( obj: any ) {
 		super._fromObject( obj );
-		this._date = obj.date;
+		this._date = new Date( obj.date );
 	}
 }

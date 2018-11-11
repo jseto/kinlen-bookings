@@ -6,7 +6,7 @@ describe( 'DatabaseObject', function() {
 
   it( 'toObject method should work for every descendant', ()=> {
     let booking = new Booking(3)
-                              .setDate('2018-05-23')
+                              .setDate( new Date( '2018-05-23' ) )
                               .setTime( "19:00:00" )
                               .setTimeLength( 1800 )
                               .setBookedSeats( 5 )

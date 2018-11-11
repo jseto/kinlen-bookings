@@ -26,17 +26,17 @@ describe( 'BookingMapper is a class providing the following services:', ()=> {
 
 			it( 'should to be built on the first call', async()=>{
 				let cacheSpy = spyOn( mapper, 'buildBookingMapCache' ).and.callThrough();
-				await mapper.bookingSummary( '2010-09-02', '19:00:00' );
+				await mapper.bookingSummary( new Date( '2010-09-02' ), '19:00:00' );
 				expect( mapper.buildBookingMapCache ).toHaveBeenCalled();
 				cacheSpy.calls.reset();
 			// });
 			// it( 'should not to be built rebuilt on same month calls', async()=>{
-				await mapper.bookingSummary( '2010-09-12', '19:00:00' );
+				await mapper.bookingSummary( new Date( '2010-09-12' ), '19:00:00' );
 				expect( mapper.buildBookingMapCache ).not.toHaveBeenCalled();
 				cacheSpy.calls.reset();
 			// });
 			// it( 'should to be rebuilt on different month call', async()=>{
-				await mapper.bookingSummary( '2010-02-02', '19:00:00' );
+				await mapper.bookingSummary( new Date( '2010-02-02' ), '19:00:00' );
 				expect( mapper.buildBookingMapCache ).toHaveBeenCalled();
 				cacheSpy.calls.reset();
 			})
@@ -45,12 +45,12 @@ describe( 'BookingMapper is a class providing the following services:', ()=> {
 		describe( 'if there is no booking for the day', ()=> {
 
 			it( 'should return falsy for no day booking', async ()=> {
-				let booking = await mapper.bookingSummary( '2018-09-02', '19:00:00' );
+				let booking = await mapper.bookingSummary( new Date( '2018-09-02' ), '19:00:00' );
 				expect( booking ).toBeFalsy();
 			});
 
 			it( 'should return falsy for day booking but not in the time', async ()=> {
-				let booking = await mapper.bookingSummary( '2018-09-25', '10:00:00' );
+				let booking = await mapper.bookingSummary( new Date( '2018-09-25' ), '10:00:00' );
 				expect( booking ).toBeFalsy();
 			});
 
@@ -59,7 +59,7 @@ describe( 'BookingMapper is a class providing the following services:', ()=> {
 		describe( 'if there are bookings for the day', ()=> {
 
 			it( 'should return the booking for that day and time', async ()=> {
-				let booking = await mapper.bookingSummary( '2018-09-25', '21:00:00' );
+				let booking = await mapper.bookingSummary( new Date( '2018-09-25' ), '21:00:00' );
 				expect( booking ).toBeTruthy();
 				expect( booking.guideId ).toBe( 1 );
 				expect( booking.bookedSeats ).toBe( 5 );
@@ -74,7 +74,7 @@ describe( 'BookingMapper is a class providing the following services:', ()=> {
 		describe( 'there is a free guide when a guide is assigned to this restaurant and still have seats available OR there is an available guide:', ()=> {
 
 			describe( 'when a guide is assigned to this restaurant and still have seats available', ()=> {
-				let bookingDate = '2001-05-02';
+				let bookingDate = new Date( '2001-05-02' );
 				let bookingTime = '21:00:00';
 
 				it( 'should have this guide assigned to this restaurant in this slot', async ()=> {
@@ -95,7 +95,7 @@ describe( 'BookingMapper is a class providing the following services:', ()=> {
 			});
 
 			describe( 'when guide is available for the day', ()=> {
-				let bookingDate = '2001-05-01';
+				let bookingDate = new Date( '2001-05-01' );
 
 				it( 'should not have bookings for the day', async()=> {
 					let guide = await mapper.availableGuide( bookingDate );
@@ -137,26 +137,26 @@ describe( 'BookingMapper is a class providing the following services:', ()=> {
 			describe( 'testing bloking of restaurant', ()=>{
 
 				it( 'should report availavility if not a holiday', async ()=>{
-					let seats = await mapper.availableSeats( '2001-05-03', '19:00:00' );
+					let seats = await mapper.availableSeats( new Date( '2001-05-03' ), '19:00:00' );
 					expect( seats ).toBeTruthy();
 				})
 
 				it( 'should not report seats when blocked for the booking day', async ()=> {
-					await db.setRestaurantHoliday( 1, '2001-06-04' );
+					await db.setRestaurantHoliday( 1, new Date( '2001-06-04' ) );
 					mapper.invalidateCache();
-					let seats = await mapper.availableSeats( '2001-06-04', '19:00:00' );
+					let seats = await mapper.availableSeats( new Date( '2001-06-04' ), '19:00:00' );
 					expect( seats ).toBe( 0 );
 				});
 
 				it( 'should not report seats when blocked for the booking day at any time', async ()=> {
-					await db.setRestaurantHoliday( 1, '2001-06-04' );
+					await db.setRestaurantHoliday( 1, new Date( '2001-06-04' ) );
 					mapper.invalidateCache();
-					let seats = await mapper.availableSeats( '2001-06-04', '21:00:00' );
+					let seats = await mapper.availableSeats( new Date( '2001-06-04' ), '21:00:00' );
 					expect( seats ).toBe( 0 );
 				});
 
 				it( 'should not report seats when all guides on holiday', async ()=> {
-					let seats = await mapper.availableSeats( '2017-08-04', '19:00:00' );
+					let seats = await mapper.availableSeats( new Date( '2017-08-04' ), '19:00:00' );
 					expect( seats ).toBe( 0 );
 				});
 
@@ -165,11 +165,11 @@ describe( 'BookingMapper is a class providing the following services:', ()=> {
 	});
 
 	describe( 'a function isDayAvailable to report if a day has available time slots left for an amount of seats', ()=>{
-		let freeBookingDate = '2017-08-01';
-		let freeTimeSlotDate = '2017-08-03';
-		let seatsLeftDate = '2017-08-05';
-		let noSeatsLeftDate = '2017-08-07';
-		let allGuideOnHoliday = '2017-08-04';
+		let freeBookingDate = new Date( '2017-08-01' );
+		let freeTimeSlotDate = new Date( '2017-08-03' );
+		let seatsLeftDate = new Date( '2017-08-05' );
+		let noSeatsLeftDate = new Date( '2017-08-07' );
+		let allGuideOnHoliday = new Date( '2017-08-04' );
 
 		it( 'should report true when no bookings for the day and have free guide', async ()=>{
 			let free = await mapper.isDayAvailable( freeBookingDate, 6 );
@@ -230,7 +230,7 @@ describe( 'BookingMapper is a class providing the following services:', ()=> {
 				expect( map ).not.toContainEqual( new Date( '2018-02-28' ) );
 			})
 			it ( 'should report UNabailability for last day of month', async ()=>{
-				await db.setRestaurantHoliday( 1, '2018-02-28' );
+				await db.setRestaurantHoliday( 1, new Date( '2018-02-28' ) );
 				mapper.invalidateCache();
 				let map = await mapper.getUnavailableDays( new Date( '2018-02-28' ), 2 );
 				expect( map ).toContainEqual( new Date( '2018-02-28' ) );
