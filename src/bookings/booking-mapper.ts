@@ -29,8 +29,7 @@ export class BookingMapper {
 		if ( !this.isAvailMapFresh( date ) ) {
 			await this.buildBookingMapCache( date );
 		}
-		let day = new Date( date );
-		return this._bookingMap[ day.getDate() ];
+		return this._bookingMap[ date.getDate() ];
 	}
 
 	/**
@@ -53,8 +52,7 @@ export class BookingMapper {
 		if ( !this.isAvailMapFresh( date ) ) {
 			await this.buildBookingMapCache( date );
 		}
-		let day = new Date( date );
-		return this._restaurantHolidays[ day.getDate() ];
+		return this._restaurantHolidays[ date.getDate() ];
 	}
 
 	async availableSeats( date: Date, hour: string ): Promise<number> {
@@ -95,13 +93,15 @@ export class BookingMapper {
 
 	async getUnavailableDays( date: Date, seats: number ): Promise<Date[]> {
 		let days:Date[] = [];
-		let daysInMonth = new Date( date.getFullYear(), date.getMonth()+1, 0 ).getDate();
-		for ( let i = 1; i <= daysInMonth; ++i ) {
-			date.setDate( i );
-			let available = await this.isDayAvailable( date, seats );
+		let month = date.getMonth();
+		let day = new Date( date );
+		day.setDate( 1 );
+		while ( month === day.getMonth() ) {
+			let available = await this.isDayAvailable( day, seats );
 			if ( !available ) {
-				days.push( new Date( date ) );
+				days.push( new Date( day ) );
 			}
+		  day.setDate( day.getDate() + 1 );
 		}
 		return days;
 	}
@@ -114,13 +114,8 @@ export class BookingMapper {
 		if ( !this.isAvailMapFresh( date ) ) {
 			await this.buildBookingMapCache( date );
 		}
-		let day = new Date( date );
-		return this._availableGuide[ day.getDate() ];
+		return this._availableGuide[ date.getDate() ];
   }
-
-  // availableGuide( date: Date ) {
-	// 	return this._db.getFreeGuide( date )
-  // }
 
 	/**
 	 * Retrieves the bookings for the month in date and builds the booking map
@@ -137,7 +132,7 @@ export class BookingMapper {
 
 		let bookings = await this._db.getMonthBookings( this._restaurantId, date );
 		bookings.forEach(( booking )=>{
-			let day = new Date( booking.date ).getDate();
+			let day = booking.date.getDate();
 			let bday = this._bookingMap[ day ];
 			if ( bday && bday[ booking.time ] ) {
 				this._bookingMap[ day ][ booking.time ].bookedSeats += booking.bookedSeats;
@@ -152,14 +147,16 @@ export class BookingMapper {
 
 		let holidays = await this._db.getRestaurantMonthHolidays( this._restaurantId, date );
 		holidays.forEach(( holiday )=>{
-			let day = new Date( holiday.date ).getDate();
+			let day = holiday.date.getDate();
 			this._restaurantHolidays[ day ] = true;
 		});
 
 		let availableGuides = await this._db.getMonthFreeGuide( date );
 		availableGuides.forEach( (guide)=>{
-			let day = new Date( guide.date ).getDate();
-			this._availableGuide[ day ] = guide;
+			if ( guide.date ) {
+				let day = guide.date.getDate();
+				this._availableGuide[ day ] = guide;
+			}
 		});
 
 		this._lastBookingMapDate = date;
