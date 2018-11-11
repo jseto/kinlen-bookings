@@ -123,7 +123,7 @@ export class BookingMapper {
 	 * @param  date the date where the month to retrieve bookings is taken
 	 * @return      a promise of
 	 */
-	async buildBookingMapCache( date ) {
+	async buildBookingMapCache( date: Date ) {
 		for ( let i=0; i<32; i++ ) {
 			this._bookingMap[i] = [];
 			this._restaurantHolidays[i] = false;

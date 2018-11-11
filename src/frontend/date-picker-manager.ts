@@ -7,7 +7,7 @@ export class DatePickerManager {
 
 	constructor( restaurantId: number ) {
 		this._mapper = new BookingMapper( restaurantId );
-		this._mapper.buildBookingMapCache( Utils.dateToString( new Date() ) );
+		this._mapper.buildBookingMapCache( new Date() );
 	}
 
 	setDisabledDates( _selectedDates, _dateStr, instance: flatpickr.Instance ) {
