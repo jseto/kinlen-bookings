@@ -1,7 +1,7 @@
 import * as Sql from "sql.js";
 import * as jsonData from "./db.json"
 import * as fs from "fs"
-import { Utils } from "../../src/utils";
+import { Utils } from "../../src/utils/utils";
 
 export class MockData {
 	private tablePrefix = 'wp_kinlen_';

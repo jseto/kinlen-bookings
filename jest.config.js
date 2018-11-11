@@ -1,6 +1,15 @@
 // For a detailed explanation regarding each configuration property, visit:
 // https://jestjs.io/docs/en/configuration.html
 
+function pathsToIgnore( extraPaths=[] ) {
+	var paths = [
+		"/node_modules/",
+		"/dest/",
+		"/out/"
+	];
+	return paths.concat( extraPaths );
+};
+
 module.exports = {
   // All imported modules in your tests should be mocked automatically
   // automock: false,
@@ -27,12 +36,7 @@ module.exports = {
   coverageDirectory: "coverage",
 
   // An array of regexp pattern strings used to skip coverage collection
-  coveragePathIgnorePatterns: [
-    "/node_modules/",
-		"/test/",
-		"/dest/",
-		"/out/",
-  ],
+  coveragePathIgnorePatterns: pathsToIgnore(["/test/"]),
 
   // A list of reporter names that Jest uses when writing coverage reports
   coverageReporters: [
@@ -143,15 +147,11 @@ module.exports = {
 
   // The glob patterns Jest uses to detect test files
   testMatch: [
-    "**/test/*.spec.+(ts|tsx|js)"
+    "**/test/**/*.spec.+(ts|tsx|js)"
   ],
 
   // An array of regexp pattern strings that are matched against all test paths, matched tests are skipped
-  testPathIgnorePatterns: [
-  	"/node_modules/",
-		"/dest/",
-		"/out/",
-  ],
+  testPathIgnorePatterns: pathsToIgnore(),
 
   // The regexp pattern Jest uses to detect test files
   // testRegex: "",
@@ -185,7 +185,7 @@ module.exports = {
   // verbose: null,
 
   // An array of regexp patterns that are matched against all source file paths before re-running tests in watch mode
-  // watchPathIgnorePatterns: [],
+  watchPathIgnorePatterns: pathsToIgnore(),
 
   // Whether to use watchman for file crawling
   // watchman: true,

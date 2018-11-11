@@ -12,6 +12,7 @@
   "devDependencies": {
     "@types/fetch-mock": "^6.0.4",
     "@types/jest": "^23.3.9",
+    "@types/jquery": "^3.3.22",
     "@types/react": "^16.4.18",
     "@types/react-dom": "^16.0.9",
     "@types/sql.js": "0.0.29",

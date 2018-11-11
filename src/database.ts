@@ -1,7 +1,7 @@
-import { DatabaseObject, Holiday } from "./database-object";
-import { Booking } from "./booking";
-import { Guide, FreeGuide } from "./guide";
-import { Utils } from "./utils";
+import { DatabaseObject, Holiday } from "./bookings/database-object";
+import { Booking } from "./bookings/booking";
+import { Guide, FreeGuide } from "./bookings/guide";
+import { Utils } from "./utils/utils";
 
 export class Database {
 	private static _url = '/wp-json/kinlen/';

@@ -1,8 +1,8 @@
 import * as fetchMock from 'fetch-mock';
-import { MockData } from './mock-data/db-sql';
-import { BookingMapper } from "../src/booking-mapper";
-import { Database } from "../src/database";
-import { MAX_SEATS_PER_GUIDE } from '../src/guide';
+import { MockData } from './../mock-data/db-sql';
+import { BookingMapper } from "../../src/bookings/booking-mapper";
+import { Database } from "../../src/database";
+import { MAX_SEATS_PER_GUIDE } from '../../src/bookings/guide';
 
 let mapper = new BookingMapper( 1 );
 let db = new Database();

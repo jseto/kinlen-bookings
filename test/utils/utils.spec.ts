@@ -1,4 +1,4 @@
-import {Utils} from "../src/utils"
+import {Utils} from "../../src/utils/utils"
 
 describe( 'In Utils class', function() {
 

@@ -1,6 +1,6 @@
-import { Booking } from "../src/booking";
-import { Guide } from "../src/guide";
-import { Restaurant } from "../src/restaurant";
+import { Booking } from "../../src/bookings/booking";
+import { Guide } from "../../src/bookings/guide";
+import { Restaurant } from "../../src/bookings/restaurant";
 
 describe( 'DatabaseObject', function() {
 

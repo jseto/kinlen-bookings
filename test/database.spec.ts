@@ -1,7 +1,7 @@
 import * as fetchMock from 'fetch-mock';
 import { MockData } from './mock-data/db-sql';
 import { Database } from "../src/database";
-import { Booking } from "../src/booking";
+import { Booking } from "../src/bookings/booking";
 
 describe( 'Database helpers', ()=>{
 	describe( 'objectToQueryString method:', ()=>{

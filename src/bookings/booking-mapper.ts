@@ -1,6 +1,6 @@
-import {Database} from "./database";
+import {Database} from "../database";
 import {MAX_SEATS_PER_GUIDE, Guide} from "./guide"
-import {Utils} from "./utils";
+import {Utils} from "../utils/utils";
 import { BOOKABLE_TIMES } from "./booking";
 
 export interface BookingSummary {
