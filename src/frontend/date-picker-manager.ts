@@ -10,36 +10,14 @@ export class DatePickerManager {
 		this._mapper.buildBookingMapCache( Utils.dateToString( new Date() ) );
 	}
 
-	setup2( element: string ) {
-		flatpickr( element, {
-			disableMobile: true,
-			onOpen: this.setDisabledDates,
-			onMonthChange: this.setDisabledDates,
-			// flatpickr.config.onChange = enableTimeSlots;
-		});
-	}
-
-	setup( calendar: ({})=> void ) {
-		calendar({
-			disableMobile: true,
-			onOpen: this.setDisabledDates,
-			onMonthChange: this.setDisabledDates,
-			// onChange: enableTimeSlots
-		})
-		// flatpickr.config.disableMobile = true;
-		// flatpickr.config.onOpen = [this.setDisabledDates];
-		// flatpickr.config.onMonthChange = [this.setDisabledDates];
-		// // flatpickr.config.onChange = enableTimeSlots;
-	}
-
-	setDisabledDates( _selectedDates, _dateStr, instance ) {
+	setDisabledDates( _selectedDates, _dateStr, instance: flatpickr.Instance ) {
 		this.updateDates( instance );
 	//		console.log('monthChange ', instance.currentMonth);
 	}
 
-	updateDates( instance: flatpickr.Instance ) {
+	async updateDates( instance: flatpickr.Instance ) {
 		let date = new Date( instance.currentYear, instance.currentMonth, 1)
-		this._mapper.getUnavailableDays( date, 2 ).then(( map )=>{
+		return await this._mapper.getUnavailableDays( date, 2 ).then(( map )=>{
 			instance.config.disable = map;
 			console.log( map );
 			instance.redraw();
