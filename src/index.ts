@@ -1,5 +1,5 @@
 import * as jQuery from "jquery";
-import { DatePickerManager } from "./frontend/date-picker-manager";
+import { BookingFormManager } from "./frontend/booking-form-manager";
 
 jQuery( document ).ready( function(){
   jQuery('#bookingButton').on( 'click', function() {
@@ -8,7 +8,7 @@ jQuery( document ).ready( function(){
 	let bookingForm = jQuery('#kl-booking-form');
 	if ( bookingForm.length ) {
 		bookingForm.ready( ()=>{
-			new DatePickerManager( 1 )
+			new BookingFormManager( 1 )
 				.setPeople( '#form-field-kl-adults', '#form-field-kl-children' )
 				.setCalendar('#form-field-kl-booking-date')
 				.addTimeOption( '19:00', '#form-field-kl-booking-time-0' )

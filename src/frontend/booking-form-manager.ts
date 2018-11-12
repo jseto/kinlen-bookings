@@ -1,13 +1,12 @@
 import flatpickr from 'flatpickr';
 import { BookingMapper } from "../bookings/booking-mapper";
-import { Utils } from '../utils/utils';
 
 interface TimeOption {
   time: string,
 	element: JQuery<HTMLElement>
 }
 
-export class DatePickerManager {
+export class BookingFormManager {
 	private _mapper: BookingMapper;
   private _timeOption: TimeOption[];
   private _adultsElement: JQuery<HTMLElement>;
@@ -75,7 +74,6 @@ export class DatePickerManager {
 	}
 
 	private requiredSeats(): number {
-		console.log(this.adults())
     return this.adults() + this.children();
   }
 }
