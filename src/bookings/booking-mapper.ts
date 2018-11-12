@@ -70,6 +70,11 @@ export class BookingMapper {
 		}
 	}
 
+	async isTimeSlotAvailable( date: Date, time: string, requiredSeats: number ) {
+		let seats = await this.availableSeats( date, time );
+		return seats >= requiredSeats;
+	}
+
 	async isDayAvailable( date: Date, requiredSeats: number): Promise<boolean> {
 		let daySummary = await this.dayBookingSummary( date );
 		let holiday = await this.restaurantHoliday( date );

@@ -1,6 +1,7 @@
-const CleanWebpackPlugin = require('clean-webpack-plugin');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
+const FileManagerPlugin = require('filemanager-webpack-plugin');
+
 const _mode = 'development';
+const _output = 'dist'
 
 const externals = [
 	// {
@@ -38,20 +39,28 @@ const _externals = buildExternals();
 function buildCopyDependencies( mode ) {
 	let paths = [];
 	externals.forEach(( item )=>{
+		let obj = {
+			destination: _output,
+			source: ''
+		}
 		let filePath = 'node_modules/' + item.nodeModule;
 		if ( mode === 'production' ) {
 			if ( item.productionFilePath ) {
-				paths.push( filePath + item.productionFilePath );
+				obj.source = filePath + item.productionFilePath;
 			}
 		}
 		else {
 			if ( item.developmentFilePath ) {
-				paths.push( filePath + item.developmentFilePath );
+				obj.source = filePath + item.developmentFilePath;
 			}
 		}
+		paths.push( obj );
 
 		if ( item.style ) {
-			paths.push( filePath + item.style );
+			paths.push({
+				destination: _output,
+				source: filePath + item.style
+			});
 		}
 	});
 	return paths;
@@ -62,7 +71,7 @@ module.exports = {
 	entry: "./src/index.ts",
 	output: {
 		filename: '[name].kinlen.js',
-		path: __dirname + "/dist",
+		path: __dirname + '/' + _output,
 		libraryTarget: 'umd',
 		library: 'KinlenBooking',
 		umdNamedDefine: true
@@ -121,7 +130,18 @@ module.exports = {
 	externals: buildExternals(),
 	// externals: {"react":"React","react-dom":"ReactDOM","moment":"moment","react-datepicker":"DatePicker"},
 	plugins: [
-		new CleanWebpackPlugin(['dist']),
-		new CopyWebpackPlugin( buildCopyDependencies( _mode ) )
+		new FileManagerPlugin({
+			onStart: {
+				delete: [
+					_output+'/*',
+					'../kinlen/frontend/kinlen-bookings/*'
+				]
+			},
+			onEnd: {
+				copy: buildCopyDependencies().concat([
+					{ source: _output, destination:'../kinlen/frontend/kinlen-bookings' }
+				])
+			}
+		})
 	]
 };

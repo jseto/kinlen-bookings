@@ -18,24 +18,5 @@ describe( 'DatePickerManager provides a bridge between TS and JSES5', ()=> {
 		mockData.close();
 	});
 
-	describe( 'updateDates is a callback funtion', ()=> {
-
-		it( 'should return a map of disabled days ', async ()=> {
-			let emptyDate: Date[] = [];
-			let redraw = jest.fn();
-
-			let datePickerInstance = {
-				currentYear: 2018,
-				currentMonth: 9,
-				config: {
-					disable: emptyDate
-				},
-				redraw: <()=>void>redraw
-			};
-			await datePickerManager.updateDates( <flatpickr.default.Instance>datePickerInstance );
-			expect( redraw.mock.calls.length ).toBe( 1 );
-		});
-
-	});
 
 });

@@ -1,50 +1,21 @@
 import * as jQuery from "jquery";
 import { DatePickerManager } from "./frontend/date-picker-manager";
-import flatpickr from "flatpickr";
-
-let calendarMng;
 
 jQuery( document ).ready( function(){
   jQuery('#bookingButton').on( 'click', function() {
     openTab( 'detail-tab', 'Book Now' );
   });
-	var calendar:any = jQuery('#form-field-kl-booking-date');
-	if ( calendar.flatpickr ) {
-		calendar.ready( function(){
-			calendarMng = new DatePickerManager( 1 );
-			let config: flatpickr.Options.Options = {
-				disableMobile: true,
-			  onMonthChange: setDisabledDates,
-				onOpen: setDisabledDates,
-// 				onChange: dateSet
-			}
-			calendar.flatpickr( config );
+	let bookingForm = jQuery('#kl-booking-form');
+	if ( bookingForm.length ) {
+		bookingForm.ready( ()=>{
+			new DatePickerManager( 1 )
+				.setPeople( '#form-field-kl-adults', '#form-field-kl-children' )
+				.setCalendar('#form-field-kl-booking-date')
+				.addTimeOption( '19:00', '#form-field-kl-booking-time-0' )
+				.addTimeOption( '21:00', '#form-field-kl-booking-time-1' );
 		});
 	}
 });
-
-function setDisabledDates( _selectedDates, _dateStr, instance: flatpickr.Instance ) {
-	calendarMng.updateDates( instance );
-}
-
-// 	dateSet( selectedDates, dateStr, instance ) {
-// 		calendarMng.bookingSumary( dateStr, function( bookingSumary ) {
-// 			var time19 = $( '#form-field-kl-booking-time-0');
-// 			var time21 = $( '#form-field-kl-booking-time-1');
-
-// 			if ( bookingSumary[ '19:00:00' ] ) {
-
-// 			} else {
-
-// 			}
-// 			if ( bookingSumary[ '21:00:00' ] ) {
-
-// 			} else {
-
-// 			}
-
-// 		});
-// 	}
 
 /**
  * @description Opens a tab from the Elementor Tab widget
