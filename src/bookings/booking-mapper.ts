@@ -158,11 +158,10 @@ export class BookingMapper {
 				this._availableGuide[ day ] = guide;
 			}
 		});
-
-		this._lastBookingMapDate = date;
+		this._lastBookingMapDate = new Date( date );
 	}
 
   private isAvailMapFresh( date: Date ):boolean {
-		return this._lastBookingMapDate.getMonth() == date.getMonth();
+		return this._lastBookingMapDate.getMonth() === date.getMonth();
   }
 }

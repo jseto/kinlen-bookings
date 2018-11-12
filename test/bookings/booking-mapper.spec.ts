@@ -237,4 +237,15 @@ describe( 'BookingMapper is a class providing the following services:', ()=> {
 			})
 		})
 	});
+
+	describe( 'fix bugs', ()=>{
+		it( 'should refresh cache when month go back and forward', async ()=>{
+			let spy = jest.spyOn( mapper, 'buildBookingMapCache');
+			let map = await mapper.getUnavailableDays( new Date( '2018-9-1' ), 6 );
+			await mapper.getUnavailableDays( new Date( '2018-8-1' ), 6 );
+			let map3 = await mapper.getUnavailableDays( new Date( '2018-9-1' ), 6 );
+			expect( map ).toEqual( map3 );
+			expect( spy ).toHaveBeenCalledTimes( 3 );
+		});
+	})
 });

@@ -1,6 +1,5 @@
 import flatpickr from 'flatpickr';
 import { BookingMapper, BookingSummary } from "../bookings/booking-mapper";
-import { Utils } from "../utils/utils";
 
 export class DatePickerManager {
 	private _mapper: BookingMapper;
