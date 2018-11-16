@@ -6,6 +6,17 @@ interface TimeOption {
 	element: JQuery<HTMLElement>
 }
 
+// interface State {
+// 	adults: number;
+// 	children: number;
+// 	date: string;
+// 	time: string;
+// 	coupon: string;
+// 	name: string;
+// 	email: string;
+// 	requirements: string;
+// }
+
 export class BookingFormManager {
 	private _mapper: BookingMapper;
   private _timeOption: TimeOption[];
@@ -16,15 +27,20 @@ export class BookingFormManager {
 		this._timeOption = [];
 		this._mapper = new BookingMapper( restaurantId );
 		this._mapper.buildBookingMapCache( new Date() );
+		this._childrenElement.change()
 	}
 
-	setPeople( adultsElem: string, childrenElem: string ) {
+	setPeopleElem( adultsElem: string, childrenElem: string ) {
     this._adultsElement = jQuery( adultsElem );
 		this._childrenElement = jQuery( childrenElem );
 		return this;
   }
 
-	setCalendar( element: string ) {
+	// setNameElem( element: string) {
+  //   return this;
+  // }
+
+	setCalendarElem( element: string ) {
 		let calendar: any = jQuery( element );
 		calendar.flatpickr({
 			disableMobile: true,
@@ -35,7 +51,7 @@ export class BookingFormManager {
 		return this;
 	}
 
-	addTimeOption( time: string, element: string ) {
+	addTimeOptionElem( time: string, element: string ) {
 		this._timeOption.push({
 			time: time + ':00',
 			element: jQuery( element )
@@ -66,10 +82,14 @@ export class BookingFormManager {
 	}
 
 	private dateSet( date: Date ) {
+		let first = true;
 		this._timeOption.forEach( async timeOpt => {
 			let isAvailable = await this._mapper.isTimeSlotAvailable( date, timeOpt.time, this.requiredSeats() );
-			timeOpt.element.prop( 'checked', false );
-			timeOpt.element.prop( 'disabled', !isAvailable );
+			isAvailable? timeOpt.element.parent().show() : timeOpt.element.parent().hide();
+			if ( first && isAvailable ) {
+				timeOpt.element.prop( 'checked', true );
+				first = false;
+			}
 		})
 	}
 

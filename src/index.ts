@@ -9,10 +9,15 @@ jQuery( document ).ready( function(){
 	if ( bookingForm.length ) {
 		bookingForm.ready( ()=>{
 			new BookingFormManager( 1 )
-				.setPeople( '#form-field-kl-adults', '#form-field-kl-children' )
-				.setCalendar('#form-field-kl-booking-date')
-				.addTimeOption( '19:00', '#form-field-kl-booking-time-0' )
-				.addTimeOption( '21:00', '#form-field-kl-booking-time-1' );
+				.setPeopleElem( '#form-field-kl-adults', '#form-field-kl-children' )
+				.setCalendarElem('#form-field-kl-booking-date')
+				.addTimeOptionElem( '19:00', '#form-field-kl-booking-time-0' )
+				.addTimeOptionElem( '21:00', '#form-field-kl-booking-time-1' )
+				// .setNameElem( '#form-field-kl-name' )
+				// .setEmailElem( '#form-field-kl-email' )
+				// .setCoupon( '#form-field-kl-coupon' )
+				// .setRequirements( '#form-field-kl-requirements' );
+
 		});
 	}
 });
