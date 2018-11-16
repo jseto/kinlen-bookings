@@ -8,16 +8,22 @@ jQuery( document ).ready( function(){
 	let bookingForm = jQuery('#kl-booking-form');
 	if ( bookingForm.length ) {
 		bookingForm.ready( ()=>{
+			jQuery('#form-field-kl-booking-date').attr('autocomplete', 'off')
 			new BookingFormManager( 1 )
-				.setPeopleElem( '#form-field-kl-adults', '#form-field-kl-children' )
-				.setCalendarElem('#form-field-kl-booking-date')
-				.addTimeOptionElem( '19:00', '#form-field-kl-booking-time-0' )
-				.addTimeOptionElem( '21:00', '#form-field-kl-booking-time-1' )
-				// .setNameElem( '#form-field-kl-name' )
-				// .setEmailElem( '#form-field-kl-email' )
-				// .setCoupon( '#form-field-kl-coupon' )
-				// .setRequirements( '#form-field-kl-requirements' );
-
+			.registerNumericElements({
+				adults: 'form-field-kl-adults',
+				children: 'form-field-kl-children',
+			})
+			.registerStringElements({
+				date: 'form-field-kl-booking-date',
+				name: 'form-field-kl-name',
+				email: 'form-field-kl-email',
+				coupon: 'form-field-kl-coupon',
+				requirements: 'form-field-kl-requirements'
+			})
+			.addTimeOption( '19:00:00', 'form-field-kl-booking-time-0' )
+			.addTimeOption( '21:00:00', 'form-field-kl-booking-time-1' )
+			.setCalendar( (<any>document.getElementById( 'form-field-kl-booking-date' ))._flatpickr )
 		});
 	}
 });

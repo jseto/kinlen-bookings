@@ -1,76 +1,72 @@
 import flatpickr from 'flatpickr';
 import { BookingMapper } from "../bookings/booking-mapper";
+import { Observer, ObservableField, ObservableRadio } from '../utils/observer';
 
 interface TimeOption {
   time: string,
-	element: JQuery<HTMLElement>
+	observable: ObservableRadio
 }
 
-// interface State {
-// 	adults: number;
-// 	children: number;
-// 	date: string;
-// 	time: string;
-// 	coupon: string;
-// 	name: string;
-// 	email: string;
-// 	requirements: string;
-// }
+interface State {
+	adults?: number;
+	children?: number;
+	date?: string;
+	time?: string;
+	coupon?: string;
+	name?: string;
+	email?: string;
+	requirements?: string;
+}
 
-export class BookingFormManager {
+export class BookingFormManager extends Observer< State > {
 	private _mapper: BookingMapper;
   private _timeOption: TimeOption[];
-  private _adultsElement: JQuery<HTMLElement>;
-  private _childrenElement: JQuery<HTMLElement>;
 
 	constructor( restaurantId: number ) {
+		super();
 		this._timeOption = [];
 		this._mapper = new BookingMapper( restaurantId );
 		this._mapper.buildBookingMapCache( new Date() );
-		this._childrenElement.change()
 	}
 
-	setPeopleElem( adultsElem: string, childrenElem: string ) {
-    this._adultsElement = jQuery( adultsElem );
-		this._childrenElement = jQuery( childrenElem );
-		return this;
-  }
-
-	// setNameElem( element: string) {
-  //   return this;
-  // }
-
-	setCalendarElem( element: string ) {
-		let calendar: any = jQuery( element );
-		calendar.flatpickr({
-			disableMobile: true,
-			onMonthChange: ( _selectedDates, _dateStr, instance )=> this.updateDates(instance),
-			onOpen: ( _selectedDates, _dateStr, instance )=>this.updateDates(instance),
-			onChange: ( selectedDates )=> this.dateSet( selectedDates[0] )
-		});
+	registerNumericElements( elements: {}) {
+		for( let name in elements ) {
+			let observable = new ObservableField<number>( name, elements[ name ] );
+			observable.onChange = ()=>{ this.resetDate };
+			this.registerObservable( observable );
+		}
 		return this;
 	}
 
-	addTimeOptionElem( time: string, element: string ) {
+	registerStringElements( elements: {}) {
+		for( let name in elements ) {
+			this.registerObservable( new ObservableField<string>( name, elements[ name ] ) );
+		}
+		return this;
+	}
+
+	addTimeOption( time: string, element: string ) {
+		let radioButton = new ObservableRadio( time, element );
+		this.registerObservable( radioButton );
 		this._timeOption.push({
-			time: time + ':00',
-			element: jQuery( element )
+			time: time,
+			observable: radioButton
 		});
 		return this;
 	}
 
-	adults(): number {
-		let val: string = this._adultsElement.val() as string;
-		if ( val === '' ) {
-			return Number( this._adultsElement.attr('placeholder') );
-		}
-		else {
-			return Number( val );
-		}
+	setCalendar( calendar: flatpickr.Instance ) {
+		calendar.config.disableMobile = true;
+		calendar.config.onMonthChange = [( _selectedDates, _dateStr, instance )=> this.updateDates(instance)];
+		calendar.config.onOpen = [( _selectedDates, _dateStr, instance )=>this.updateDates(instance)];
+		calendar.config.onChange = [( selectedDates )=> this.dateSet( selectedDates[0] )];
+
+		return this;
 	}
 
-	children(): number {
-		return Number( this._childrenElement.val() );
+	private resetDate() {
+		console.log('resetDate');
+		this.setState({date: ''});
 	}
 
 	private async updateDates( instance: flatpickr.Instance ) {
@@ -85,15 +81,15 @@ export class BookingFormManager {
 		let first = true;
 		this._timeOption.forEach( async timeOpt => {
 			let isAvailable = await this._mapper.isTimeSlotAvailable( date, timeOpt.time, this.requiredSeats() );
-			isAvailable? timeOpt.element.parent().show() : timeOpt.element.parent().hide();
+			isAvailable? timeOpt.observable.show() : timeOpt.observable.hide();
 			if ( first && isAvailable ) {
-				timeOpt.element.prop( 'checked', true );
+				timeOpt.observable.value = true;
 				first = false;
 			}
 		})
 	}
 
 	private requiredSeats(): number {
-    return this.adults() + this.children();
+    return this.state.adults + this.state.children;
   }
 }

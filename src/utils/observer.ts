@@ -2,41 +2,52 @@ abstract class ObserverBase {
 	abstract change< T >( propName: string, value: T );
 }
 
+type ObservableMap = {
+  [ index: string ]: ObservableBase
+};
+
 export class Observer< StateType extends {} > extends ObserverBase{
 	private _state: StateType;
-	private _observables: Map< string, AnyObservable >;
+	private _observables: ObservableMap;
 
 	constructor() {
 		super();
-		this._observables = new Map< string, AnyObservable >();
+		this._observables = {};
 		this._state = {} as StateType;//initialState;
 	}
 
-	registerObservable( observable: AnyObservable ) {
+	registerObservable( observable: ObservableBase ) {
 		this._observables[ observable.name ] = observable.setObserver( this );
+		return this;
 	}
 
 	setState( val: StateType ) {
 		for ( let key in val as {} ) {
 			if ( this._state[ key ] != val[ key ] ) {
-				this._observables[ key ].value = val[ key ];
+				this._observables[ key ].setValue( val[ key ] );
 			}
 		}
 	}
 
-	state(): StateType {
+	get state(): StateType {
 		return this._state as StateType;
 	}
 
 	change< T >( propName: string, value: T ) {
-		this.state()[ propName ] = value;
+		this._state[ propName ] = value;
+	}
+
+	get observables() {
+		return this._observables;
 	}
 
 }
 
-abstract class AnyObservable {
+abstract class ObservableBase {
 	private _observer: ObserverBase;
 	private _name;
+	protected _element: HTMLElement;
+	private _onChange: () => void;
 
 	setObserver( observer: ObserverBase ) {
 		this._observer = observer;
@@ -56,19 +67,43 @@ abstract class AnyObservable {
 		return this._name;
 	}
 
+	get element() {
+		return this._element;
+	}
+
+	set onChange( callBack: ()=>void ) {
+		this._onChange = callBack;
+	}
+
+	get onChange() {
+		return this._onChange;
+	}
+
+	hide() {
+		this._element.style.display = 'none';
+	}
+
+	show() {
+		this._element.style.display = 'block';
+	}
+
+	abstract setValue< T >( val: T );
+	abstract getValue< T >(): T;
+
 	protected abstract _change();
 }
 
-export abstract class Observable< T > extends AnyObservable {
+export abstract class Observable< T > extends ObservableBase {
 	private _value: T;
-	private _element: HTMLElement;
-	private _onChange: () => void;
 
 	constructor( name: string, element: string ) {
 		super();
 		this.name = name;
 		this._element = document.getElementById( element );
-		this._element.onchange = this._change;
+		if ( !this._element ){
+			throw new Error('Error: Element ' + element + ' not found' );
+		}
+		this._element.onchange = ()=> this._change;
 	}
 
 	set value( val: T ) {
@@ -79,24 +114,7 @@ export abstract class Observable< T > extends AnyObservable {
 		return this.getValue<T>();
 	}
 
-	protected abstract setValue< T >( val: T );
-	protected abstract getValue< T >(): T;
-
-	set onChange( callBack: ()=>void ) {
-		console.log( this )
-		this._onChange = callBack;
-	}
-
-	get onChange() {
-		return this._onChange;
-	}
-
-	protected get element() {
-		return this._element;
-	}
-
 	protected _change() {
-		console.log( this, this.onChange );
 		this._value = this.value;
 		this.observer.change( this.name, this._value );
 		if ( this.onChange ) {
@@ -116,11 +134,30 @@ export abstract class Observable< T > extends AnyObservable {
 }
 
 export class ObservableField< T > extends Observable< T > {
-  protected setValue< T >( val: T ) {
+  setValue< T >( val: T ) {
 		(<HTMLInputElement>this.element ).value = String( val );
 	}
 
-	protected getValue< T >(): T {
+	getValue< T >(): T {
 		return this.convert<T>( (<HTMLInputElement>this.element ).value );
+	}
+}
+
+export class ObservableRadio< T = boolean > extends Observable< T > {
+
+	hide() {
+		this._element.parentElement.style.display = 'none';
+	}
+
+	show() {
+		this._element.parentElement.style.display = 'block';
+	}
+
+	setValue< T >( val: T ) {
+		(<HTMLInputElement>this.element ).checked = val as any;
+	}
+
+	getValue< T >(): T {
+		return this.convert<T>( (<HTMLInputElement>this.element ).checked );
 	}
 }
