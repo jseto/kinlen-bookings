@@ -1,5 +1,5 @@
 import { Observer, ObservableField } from "../../src/utils/observer";
-import { SimInput } from "../sim-input";
+import { SimInput } from "../mocks/sim-input";
 
 describe( 'Observable is Observed by Observer', ()=>{
 
