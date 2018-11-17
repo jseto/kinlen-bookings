@@ -116,10 +116,8 @@ export abstract class Observable< T > extends ObservableBase {
 
 	protected _change() {
 		this._value = this.value;
-		this.observer.change( this.name, this._value );
-		if ( this.onChange ) {
-			this.onChange();
-		}
+		if ( this.observer ) this.observer.change( this.name, this._value );
+		if ( this.onChange ) this.onChange();
 	}
 
 	protected convert<T>( val: any ): T {

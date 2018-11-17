@@ -1,4 +1,5 @@
 import { Observer, ObservableField } from "../../src/utils/observer";
+import { SimInput } from "../sim-input";
 
 describe( 'Observable is Observed by Observer', ()=>{
 
@@ -28,12 +29,16 @@ describe( 'Observable is Observed by Observer', ()=>{
 				expect( (<HTMLInputElement>document.getElementById( 'test-id' )).value ).toBe( '3278' );
 			});
 
-			xit( 'should call onchange handler in observer', ()=> {
+			it( 'should call onchange handler in observable', ()=> {
 				let mockFn = jest.fn();
 				let observable = new ObservableField<number>( 'thaiYear', 'test-id' );
+
 				observable.onChange = mockFn;
-				(<HTMLInputElement>document.getElementById( 'test-id' )).value = 'should change';
+				SimInput.setValue( (<HTMLInputElement>document.getElementById( 'test-id' )), '31415' );
+
 				expect( mockFn ).toBeCalled();
+				expect( (<HTMLInputElement>document.getElementById( 'test-id' )).value ).toEqual( '31415' );
+				expect( observable.value ).toBe( 31415 );
 			});
 
 		});
@@ -55,8 +60,20 @@ describe( 'Observable is Observed by Observer', ()=>{
 				expect( (<HTMLInputElement>document.getElementById( 'test-id' )).value ).toBe( '4528' );
 			});
 
-			xit( 'should call onchange handler in observer', ()=> {
+			it( 'should call onchange handler in observer', ()=> {
+				let mockFn = jest.fn();
 
+				let observer = new Observer<FormFields>();
+				observer.registerObservable( new ObservableField<number>( 'thaiYear', 'test-id' ) );
+				observer.observables.thaiYear.onChange = mockFn;
+
+				expect( mockFn ).not.toHaveBeenCalled();
+
+				SimInput.setValue( (<HTMLInputElement>document.getElementById( 'test-id' )), '31415' );
+
+				expect( mockFn ).toHaveBeenCalled();
+				expect( (<HTMLInputElement>document.getElementById( 'test-id' )).value ).toEqual( '31415' );
+				expect( observer.state.thaiYear ).toBe( 31415 );
 			});
 	});
 	});
