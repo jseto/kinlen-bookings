@@ -6,6 +6,7 @@ describe( 'Observable is Observed by Observer', ()=>{
 	describe ( 'for an observable of type <input />', ()=>{
 
 		let thaiYearInput = '<input type="text" name="thaiYear" value="2568" id="test-id" placeholder="year placeholder">';
+		let dateInput = '<input type="text" name="thaiYear" value="2008-08-02" id="date-id" placeholder="year placeholder">';
 
 		interface FormFields {
 			thaiYear?: number;
@@ -13,10 +14,26 @@ describe( 'Observable is Observed by Observer', ()=>{
 		}
 
 		beforeEach(()=>{
-			document.body.innerHTML = '<form>' + thaiYearInput + '</form>';
+			document.body.innerHTML = '<form>' + thaiYearInput + dateInput + '</form>';
 		})
 
 		describe( 'Observable works alone', ()=> {
+
+			it( 'should return as string for strings containing numbers', ()=> {
+				let observable = new ObservableField<string>( 'date', 'date-id' );
+				expect( observable.value ).toBe( '2008-08-02' );
+			});
+
+			it( 'should return as numbers for numbers as numbers', ()=> {
+				let observable = new ObservableField<number>( 'thaiYear', 'test-id' );
+				expect( observable.value ).toBe( 2568 );
+			});
+
+			xit( 'should return as string for number as strings', ()=> {
+				let observable = new ObservableField<string>( 'thaiYear', 'test-id' );
+				expect( observable.value ).toBe( '2568' );
+			});
+
 
 			it( 'should read the input field value from observable', ()=> {
 				let observable = new ObservableField<number>( 'thaiYear', 'test-id' );

@@ -1,19 +1,17 @@
 import * as fetchMock from 'fetch-mock';
 import { MockData } from './../mock-data/db-sql';
 import * as fs from "fs";
-import { BookingFormManager } from "../../src/frontend/booking-form-manager";
 import { setupBookingFormManager } from "../../src";
 import { SimInput } from "../mocks/sim-input";
 
 describe( 'BookingFormManager is in charge to manage the DOM form elements and their relationships', ()=> {
-	let html = fs.readFileSync('test/frontend/mock-page.html', 'utf8');
-	let formManager: BookingFormManager;
-	let dateField;
-	let mockData;
+	let formManager;
+	let dateField: any;
 
-	beforeEach(()=>{
-		mockData = new MockData();
+	beforeAll(async()=>{
+		let mockData = new MockData();
 		fetchMock.mock('*', ( url, opts )=>{ return mockData.response( url, opts ) } );
+		let html = fs.readFileSync('test/frontend/mock-page.html', 'utf8');
 
 		let postIdHtml = [
 			'<div id="kl-post-id">																			',
@@ -29,12 +27,7 @@ describe( 'BookingFormManager is in charge to manage the DOM form elements and t
 
 		dateField = document.getElementById( 'form-field-kl-booking-date' );
 		dateField['_flatpickr'] = { config:{} };
-		formManager = setupBookingFormManager();
-	});
-
-	afterEach(()=>{
-		fetchMock.restore();
-		mockData.close();
+		formManager = await setupBookingFormManager();
 	});
 
 	describe( 'on startup', ()=> {
@@ -52,10 +45,10 @@ describe( 'BookingFormManager is in charge to manage the DOM form elements and t
 
 	});
 
-	xdescribe( 'on date set', ()=> {
-		SimInput.setValue( <HTMLInputElement>document.getElementById( 'form-field-kl-booking-date' ), '2018-09-05' )
+	describe( 'on date set', ()=> {
 
-		xit( 'should set visibility of time options', ()=> {
+		it( 'should set visibility of time options', async ()=> {
+			await SimInput.setValue( dateField, '2018-10-05' )
 			expect( SimInput.isRadioShown( 'form-field-kl-booking-time-0' ) ).toBeFalsy();
 		});
 

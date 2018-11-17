@@ -121,8 +121,7 @@ export abstract class Observable< T > extends ObservableBase {
 	}
 
 	protected convert<T>( val: any ): T {
-		let a: T = 0 as any as T;
-		if ( typeof( a ) === 'string' ) {
+		if ( isNaN( val*2 ) ) {
 			return String( val ) as any as T;
 		}
 		else {

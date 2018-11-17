@@ -14,9 +14,9 @@ jQuery( document ).ready( function(){
 	}
 });
 
-export function setupBookingFormManager() {
+export async function setupBookingFormManager() {
 	let postId = document.getElementById( 'kl-post-id' ).firstElementChild.firstElementChild.innerHTML
-	return new BookingFormManager( Number( postId) )
+	let bookingFormManager = await new BookingFormManager()
 								.registerNumericElements({
 									adults: 'form-field-kl-adults',
 									children: 'form-field-kl-children',
@@ -31,6 +31,7 @@ export function setupBookingFormManager() {
 								.addTimeOption( '19:00:00', 'form-field-kl-booking-time-0' )
 								.addTimeOption( '21:00:00', 'form-field-kl-booking-time-1' )
 								.setCalendar( (<any>document.getElementById( 'form-field-kl-booking-date' ))._flatpickr )
+	return bookingFormManager.setRestaurant( Number( postId ) );
 }
 
 /**

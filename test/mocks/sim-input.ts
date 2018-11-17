@@ -1,5 +1,5 @@
 export class SimInput {
-  static setValue( element: HTMLInputElement, value: string ) {
+  static setValue( element: HTMLInputElement, value: string, timeout_ms: number = 1 ): Promise<{}> {
 		element.value = '';
 		for( let letter of value ) {
 			element.value += letter;
@@ -7,7 +7,10 @@ export class SimInput {
 			ev.data = element.value;
 			element.dispatchEvent( ev );
 		}
-		element.onchange(new Event('change') );
+		element.dispatchEvent( new Event( 'change' ) );
+		return new Promise(resolve =>{
+			setTimeout( ()=> resolve(), timeout_ms );
+		});
 	}
 
 	static getInputElementById( element: string ):HTMLInputElement {

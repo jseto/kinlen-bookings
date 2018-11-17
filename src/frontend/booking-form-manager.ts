@@ -22,15 +22,14 @@ export class BookingFormManager extends Observer< State > {
 	private _mapper: BookingMapper;
   private _timeOption: TimeOption[];
 
-	constructor( restaurantId?: number ) {
+	constructor() {
 		super();
 		this._timeOption = [];
-		if ( restaurantId ) this.setRestaurant( restaurantId );
 	}
 
-	setRestaurant( restaurantId: number ) {
+	async setRestaurant( restaurantId: number ) {
 		this._mapper = new BookingMapper( restaurantId );
-		this._mapper.buildBookingMapCache( new Date() );
+		await this._mapper.buildBookingMapCache( new Date() );
 		return this;
 	}
 
@@ -70,6 +69,9 @@ export class BookingFormManager extends Observer< State > {
 		calendar.config.onOpen = [( _selectedDates, _dateStr, instance )=>this.updateDates(instance)];
 		calendar.config.onChange = [( selectedDates )=> this.dateSet( selectedDates[0] )];
 
+		this.observables.date.onChange = ()=> this.dateSet( new Date( this.state.date ) );
+		(<HTMLInputElement>this.observables.date.element).readOnly = true;
+
 		return this;
 	}
 
@@ -86,7 +88,6 @@ export class BookingFormManager extends Observer< State > {
 	}
 
 	private dateSet( date: Date )  {
-		console.log('pasa----------------')
 		let first = true;
 		this._timeOption.forEach( async timeOpt => {
 			let isAvailable = await this._mapper.isTimeSlotAvailable( date, timeOpt.time, this.requiredSeats() );
