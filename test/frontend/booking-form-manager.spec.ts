@@ -48,9 +48,14 @@ describe( 'BookingFormManager is in charge to manage the DOM form elements and t
 	describe( 'on date set', ()=> {
 
 		it( 'should set visibility of time options', async ()=> {
+			expect( SimInput.isRadioShown( 'form-field-kl-booking-time-0' ) ).toBeTruthy();
 			await SimInput.setValue( dateField, '2018-10-05' )
 			expect( SimInput.isRadioShown( 'form-field-kl-booking-time-0' ) ).toBeFalsy();
 		});
+
+		it( 'shoud be readOnly', ()=>{
+			expect( SimInput.getInputElementById('form-field-kl-booking-date').readOnly ).toBeTruthy();
+		})
 
 		xit( 'should auto check a time option', ()=> {
 
