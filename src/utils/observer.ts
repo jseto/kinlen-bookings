@@ -103,7 +103,7 @@ export abstract class Observable< T > extends ObservableBase {
 		if ( !this._element ){
 			throw new Error('Error: Element ' + element + ' not found' );
 		}
-		this._element.onchange = ()=> this._change;
+		this._element.onchange = ()=> this._change();
 	}
 
 	set value( val: T ) {

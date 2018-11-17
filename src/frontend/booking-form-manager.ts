@@ -32,8 +32,8 @@ export class BookingFormManager extends Observer< State > {
 	registerNumericElements( elements: {}) {
 		for( let name in elements ) {
 			let observable = new ObservableField<number>( name, elements[ name ] );
-			observable.onChange = ()=>{ this.resetDate };
 			this.registerObservable( observable );
+			observable.onChange = ()=> this.resetDate();
 		}
 		return this;
 	}
@@ -65,7 +65,6 @@ export class BookingFormManager extends Observer< State > {
 	}
 
 	private resetDate() {
-		console.log('resetDate');
 		this.setState({date: ''});
 	}
 
