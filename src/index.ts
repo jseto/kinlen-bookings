@@ -9,24 +9,29 @@ jQuery( document ).ready( function(){
 	if ( bookingForm.length ) {
 		bookingForm.ready( ()=>{
 			jQuery('#form-field-kl-booking-date').attr('autocomplete', 'off')
-			new BookingFormManager( 1 )
-			.registerNumericElements({
-				adults: 'form-field-kl-adults',
-				children: 'form-field-kl-children',
-			})
-			.registerStringElements({
-				date: 'form-field-kl-booking-date',
-				name: 'form-field-kl-name',
-				email: 'form-field-kl-email',
-				coupon: 'form-field-kl-coupon',
-				requirements: 'form-field-kl-requirements'
-			})
-			.addTimeOption( '19:00:00', 'form-field-kl-booking-time-0' )
-			.addTimeOption( '21:00:00', 'form-field-kl-booking-time-1' )
-			.setCalendar( (<any>document.getElementById( 'form-field-kl-booking-date' ))._flatpickr )
+			setupBookingFormManager();
 		});
 	}
 });
+
+export function setupBookingFormManager() {
+	let postId = document.getElementById( 'kl-post-id' ).firstElementChild.firstElementChild.innerHTML
+	return new BookingFormManager( Number( postId) )
+								.registerNumericElements({
+									adults: 'form-field-kl-adults',
+									children: 'form-field-kl-children',
+								})
+								.registerStringElements({
+									date: 'form-field-kl-booking-date',
+									name: 'form-field-kl-name',
+									email: 'form-field-kl-email',
+									coupon: 'form-field-kl-coupon',
+									requirements: 'form-field-kl-requirements'
+								})
+								.addTimeOption( '19:00:00', 'form-field-kl-booking-time-0' )
+								.addTimeOption( '21:00:00', 'form-field-kl-booking-time-1' )
+								.setCalendar( (<any>document.getElementById( 'form-field-kl-booking-date' ))._flatpickr )
+}
 
 /**
  * @description Opens a tab from the Elementor Tab widget

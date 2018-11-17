@@ -22,11 +22,20 @@ export class BookingFormManager extends Observer< State > {
 	private _mapper: BookingMapper;
   private _timeOption: TimeOption[];
 
-	constructor( restaurantId: number ) {
+	constructor( restaurantId?: number ) {
 		super();
 		this._timeOption = [];
+		if ( restaurantId ) this.setRestaurant( restaurantId );
+	}
+
+	setRestaurant( restaurantId: number ) {
 		this._mapper = new BookingMapper( restaurantId );
 		this._mapper.buildBookingMapCache( new Date() );
+		return this;
+	}
+
+	get restaurant() {
+		return this._mapper.restaurantId;
 	}
 
 	registerNumericElements( elements: {}) {
@@ -76,7 +85,8 @@ export class BookingFormManager extends Observer< State > {
 		instance.redraw();
 	}
 
-	private dateSet( date: Date ) {
+	private dateSet( date: Date )  {
+		console.log('pasa----------------')
 		let first = true;
 		this._timeOption.forEach( async timeOpt => {
 			let isAvailable = await this._mapper.isTimeSlotAvailable( date, timeOpt.time, this.requiredSeats() );

@@ -9,4 +9,13 @@ export class SimInput {
 		}
 		element.onchange(new Event('change') );
 	}
+
+	static getInputElementById( element: string ):HTMLInputElement {
+		return < HTMLInputElement >document.getElementById( element );
+	}
+
+	static isRadioShown( element: string ) {
+		let display = document.getElementById( element ).parentElement.style.display;
+		return display === 'undefined' || display !== 'none';
+	}
 }

@@ -5,7 +5,8 @@ function pathsToIgnore( extraPaths=[] ) {
 	var paths = [
 		"/node_modules/",
 		"/dest/",
-		"/out/"
+		"/out/",
+		"/coverage/"
 	];
 	return paths.concat( extraPaths );
 };

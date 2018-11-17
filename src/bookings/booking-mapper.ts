@@ -22,8 +22,11 @@ export class BookingMapper {
 		this._availableGuide = [];
     this._lastBookingMapDate = new Date( 0 );
 		this._db = new BookingData();
-
   }
+
+	get restaurantId(): number {
+		return this._restaurantId;
+	}
 
 	async dayBookingSummary( date: Date ): Promise<BookingSummary[]> {
 		if ( !this.isAvailMapFresh( date ) ) {
