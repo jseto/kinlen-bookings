@@ -36,8 +36,6 @@ describe( 'BookingFormManager is in charge to manage the DOM form elements and t
 		formManager = await setupBookingFormManager();
 	});
 
-
-
 	describe( 'on startup', ()=> {
 
 		it( 'should get restaurant id from kl-post-id <div>', ()=> {
