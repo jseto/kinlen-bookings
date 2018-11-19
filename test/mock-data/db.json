@@ -438,5 +438,49 @@
 			"id":"1",
 			"date":"2018-10-01"
 		}
+	],
+	"wp_kinlen_restaurant": [
+		{
+			"id":"1",
+			"name": "Pop&Mom Restaurant",
+			"adultPrice": "2000",
+			"childrenPrice": "1000",
+			"description": "This food taste is in a small but cosy restaurant. You can eat inside, enjoying the air conditioning  or outside by the tiny terrace. All ingredients are fresh from daily marked and dishes cooked at your requirements. Here you can taste a wide variety of specialities, from north east papaya salad to southern curries. Even if one of your party does want to venture on thai food, westerner meat and pasta is also available. Children are more than welcome and can eat their favourite food as if they are at home. The owner is the cook and his wife is the casual metre. If you are friendly enough she will sit next to you and have a chat in her limited English.",
+			"excerpt": "Fresh food in a family atmosphere",
+			"services": "Air Conditioning, Best Value, Children friendly",
+			"foodTypes": "Seafood",
+			"dishSpecials": "",
+			"valoration": "5",
+			"numberOfReviews": "23",
+			"includes": "",
+			"excludes": "",
+			"phone": "",
+			"staffNames": "",
+			"address": "",
+			"googleMaps": "",
+			"images": "",
+			"paypal": ""
+		},
+		{
+			"id":"2",
+			"name": "Shrimp Fishing",
+			"adultPrice": "2500",
+			"childrenPrice": "1000",
+			"description": "We said already that, for thai people, eating is a game. Here you can get a fishing rod, provided in the restaurant, to catch your own river prawns while eating with thai live music in the background. The cook specials are seafood dishes, catch daily and cook on your order. You can eat either inside enjoying air conditioning or in the huge private terrace around the fish pond.",
+			"excerpt": "Catch your own prawns from the pond",
+			"services": "Air Conditioning, Catch your own food, Children friendly, Live Music, Terrace",
+			"foodTypes": "Seafood",
+			"dishSpecials": "",
+			"valoration": "4.5",
+			"numberOfReviews": "12",
+			"includes": "",
+			"excludes": "",
+			"phone": "",
+			"staffNames": "",
+			"address": "",
+			"googleMaps": "",
+			"images": "",
+			"paypal": ""
+		}
 	]
 }

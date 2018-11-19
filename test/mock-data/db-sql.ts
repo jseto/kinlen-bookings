@@ -10,6 +10,7 @@ export class MockData {
 	readonly guideTable = this.tablePrefix + 'guide';
 	readonly guideHolidaysTable = this.tablePrefix + 'guide_holiday';
 	readonly restaurantHolidaysTable = this.tablePrefix + 'restaurant_holiday';
+	readonly restaurantTable = this.tablePrefix + 'restaurant';
 	private _db: Sql.Database;
   private _insertStatement: string[];
 
@@ -85,6 +86,34 @@ export class MockData {
 		];
 		this._db.run( sqlArr.join('') );
 		this.fillData( this.restaurantHolidaysTable );
+
+		sqlArr = [
+			'CREATE TABLE IF NOT EXISTS ',
+			this.restaurantTable,
+			' ( ',
+			'id int(10), ', // NOT NULL
+			'name varchar(255), ',
+			'adultPrice int(10), ',
+			'childrenPrice int(10), ',
+			'description text, ',
+			'excerpt varchar(255), ',
+			'services varchar(255), ',
+			'foodTypes varchar(255), ',
+			'dishSpecials varchar(255), ',
+			'valoration float(2,2), ',
+			'numberOfReviews int(10), ',
+			'includes varchar(255), ',
+			'excludes varchar(255), ',
+			'phone varchar(255), ',
+			'staffNames varchar(255), ',
+			'address varchar(255), ',
+			'googleMaps varchar(255), ',
+			'images varchar(255), ',
+			'paypal varchar(255) ',
+			');'
+		];
+		this._db.run( sqlArr.join('') );
+		this.fillData( this.restaurantTable );
 	}
 
 	close() {

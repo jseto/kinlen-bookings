@@ -95,7 +95,6 @@ export class BookingFormManager extends Observer< State > {
 		let options: string[] = [];
 		let maxChildren = MAX_SEATS_PER_GUIDE - this.state.adults + 1;
 		for ( let i = 0; i < maxChildren; i++ ){  options[ i ] = String( i ) }
-		console.log(options)
 		children.setOptions( options )
 		this.setState({date: ''});
   }

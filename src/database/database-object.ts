@@ -14,7 +14,7 @@ export abstract class DatabaseObject {
 		if ( p.id ) {
 			this._id = Number( p.id );
 			this._fromObject( p );
-		}
+		}23
 	}
 
 	toObject() {
