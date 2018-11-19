@@ -1,6 +1,7 @@
 import flatpickr from 'flatpickr';
 import { BookingMapper } from "../bookings/booking-mapper";
-import { Observer, ObservableField, ObservableRadio } from '../utils/observer';
+import { Observer, ObservableField, ObservableRadio, ObservableSelect } from '../utils/observer';
+import { MAX_SEATS_PER_GUIDE } from '../bookings/guide';
 
 interface TimeOption {
   time: string,
@@ -18,12 +19,24 @@ interface State {
 	requirements?: string;
 }
 
+export const initialState: State = {
+	adults: 0,
+	children: 0,
+	date: '',
+	time: '',
+	coupon: '',
+	name: '',
+	email: '',
+	requirements: '',
+}
+
+
 export class BookingFormManager extends Observer< State > {
 	private _mapper: BookingMapper;
   private _timeOption: TimeOption[];
 
-	constructor() {
-		super();
+	constructor(initialState: State) {
+		super( initialState );
 		this._timeOption = [];
 	}
 
@@ -37,24 +50,26 @@ export class BookingFormManager extends Observer< State > {
 		return this._mapper.restaurantId;
 	}
 
-	registerNumericElements( elements: {}) {
+	registerSelectElements( elements: {}) {
 		for( let name in elements ) {
-			let observable = new ObservableField<number>( name, elements[ name ] );
+			let observable = new ObservableSelect<number>( name, elements[ name ], 0 );
 			this.registerObservable( observable );
-			observable.onChange = ()=> this.resetDate();
 		}
+		this.observables.adults.onChange = ()=> this.adultsChanged();
+		this.observables.children.onChange = ()=> this.resetDate();
 		return this;
 	}
 
 	registerStringElements( elements: {}) {
 		for( let name in elements ) {
-			this.registerObservable( new ObservableField<string>( name, elements[ name ] ) );
+			this.registerObservable( new ObservableField<string>( name, elements[ name ], '' ) );
 		}
 		return this;
 	}
 
 	addTimeOption( time: string, element: string ) {
-		let radioButton = new ObservableRadio( time, element );
+		let radioButton = new ObservableRadio( time, element, false );
+		radioButton.onChange = ()=>	this.observables.name.focus();
 		this.registerObservable( radioButton );
 		this._timeOption.push({
 			time: time,
@@ -75,13 +90,19 @@ export class BookingFormManager extends Observer< State > {
 		return this;
 	}
 
-	private resetDate() {
+	private adultsChanged(): void {
+		let children = (<ObservableSelect<number>>this.observables.children);
+		let options: string[] = [];
+		let maxChildren = MAX_SEATS_PER_GUIDE - this.state.adults + 1;
+		for ( let i = 0; i < maxChildren; i++ ){  options[ i ] = String( i ) }
+		console.log(options)
+		children.setOptions( options )
 		this.setState({date: ''});
-	}
+  }
 
 	private async updateDates( instance: flatpickr.Instance ) {
 		let date = new Date( instance.currentYear, instance.currentMonth, 1)
-		let map = await this._mapper.getUnavailableDays( date, 2 );
+		let map = await this._mapper.getUnavailableDays( date, this.requiredSeats() );
 		instance.config.disable = map;
 		console.log( map );
 		instance.redraw();
@@ -97,6 +118,13 @@ export class BookingFormManager extends Observer< State > {
 				first = false;
 			}
 		})
+		this.observables.name.focus();
+	}
+
+	private resetDate() {
+		this.setState({date: ''})
+		this._timeOption.forEach( timeOpt => timeOpt.observable.show() );
+		this._timeOption[0].observable.value = true;
 	}
 
 	private requiredSeats(): number {

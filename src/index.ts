@@ -1,5 +1,5 @@
 import * as jQuery from "jquery";
-import { BookingFormManager } from "./frontend/booking-form-manager";
+import { BookingFormManager, initialState } from "./frontend/booking-form-manager";
 
 jQuery( document ).ready( function(){
   jQuery('#bookingButton').on( 'click', function() {
@@ -16,8 +16,8 @@ jQuery( document ).ready( function(){
 
 export async function setupBookingFormManager() {
 	let postId = document.getElementById( 'kl-post-id' ).firstElementChild.firstElementChild.innerHTML
-	let bookingFormManager = await new BookingFormManager()
-								.registerNumericElements({
+	let bookingFormManager = await new BookingFormManager( initialState )
+								.registerSelectElements({
 									adults: 'form-field-kl-adults',
 									children: 'form-field-kl-children',
 								})

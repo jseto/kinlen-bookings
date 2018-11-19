@@ -10,10 +10,10 @@ export class Observer< StateType extends {} > extends ObserverBase{
 	private _state: StateType;
 	private _observables: ObservableMap;
 
-	constructor() {
+	constructor( initialState: StateType ) {
 		super();
 		this._observables = {};
-		this._state = {} as StateType;//initialState;
+		this._state = initialState; //should be past with initilized values so it remembers the type
 	}
 
 	registerObservable( observable: ObservableBase ) {
@@ -87,6 +87,10 @@ abstract class ObservableBase {
 		this._element.style.display = 'block';
 	}
 
+	focus() {
+		this._element.focus();
+	}
+
 	abstract setValue< T >( val: T );
 	abstract getValue< T >(): T;
 
@@ -96,8 +100,9 @@ abstract class ObservableBase {
 export abstract class Observable< T > extends ObservableBase {
 	private _value: T;
 
-	constructor( name: string, element: string ) {
+	constructor( name: string, element: string, initialValue: T ) {
 		super();
+		this._value = initialValue; 		// to remember type
 		this.name = name;
 		this._element = document.getElementById( element );
 		if ( !this._element ){
@@ -121,7 +126,8 @@ export abstract class Observable< T > extends ObservableBase {
 	}
 
 	protected convert<T>( val: any ): T {
-		if ( isNaN( val*2 ) ) {
+		if ( typeof(this._value)==='string' ) {
+//		if ( isNaN( val*2 ) && typeof( val )==='string' && val.slice ) {
 			return String( val ) as any as T;
 		}
 		else {
@@ -141,7 +147,7 @@ export class ObservableField< T > extends Observable< T > {
 }
 
 export class ObservableRadio< T = boolean > extends Observable< T > {
-
+	
 	hide() {
 		this._element.parentElement.style.display = 'none';
 	}
@@ -156,5 +162,13 @@ export class ObservableRadio< T = boolean > extends Observable< T > {
 
 	getValue< T >(): T {
 		return this.convert<T>( (<HTMLInputElement>this.element ).checked );
+	}
+}
+
+export class ObservableSelect< T > extends ObservableField< T > {
+	setOptions( options: string[] ) {
+		let select = <HTMLSelectElement>this.element;
+		select.options.length = 0;
+		options.forEach( (item)=>	select.insertAdjacentHTML('beforeend','<option>' + item + '</option>') );
 	}
 }
