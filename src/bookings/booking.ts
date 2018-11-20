@@ -12,7 +12,14 @@ export class Booking extends DatabaseObject {
 	private _comment: string;
   private _restaurant: Restaurant;
   private _assignedGuide: Guide;
-  private _bookedSeats: number;
+	private _adults: number;
+	private _children: number;
+	private _coupon: string;
+	private _adultPrice: number;
+	private _childrenPrice: number;
+	private _couponValue: number;
+	private _paidAmount: number;
+	private _paid: boolean;
 
   _fromObject( obj: any ){
     this._date = new Date( obj.date );
@@ -21,7 +28,14 @@ export class Booking extends DatabaseObject {
 		this._comment = obj.comment;
     this._restaurant = new Restaurant( Number( obj.restaurant_id ) );
     this._assignedGuide = new Guide( Number( obj.guide_id ) );
-    this._bookedSeats = Number( obj.booked_seats );
+		this._adults = Number( obj.adults );
+		this._children = Number( obj.children );
+		this._coupon = obj.coupon;
+		this._adultPrice = Number( obj.adultPrice );
+		this._childrenPrice = Number( obj.childrenPrice );
+		this._couponValue = Number( obj.couponValue );
+		this._paidAmount = Number( obj.paidAmount );
+		this._paid = Boolean( obj.paid );
   }
 
   _toObject() {
@@ -32,7 +46,14 @@ export class Booking extends DatabaseObject {
 			comment: this.comment,
       restautant: this.restautant.toObject(),
       assigned_guide: this.assignedGuide.toObject(),
-      booked_seats: this.bookedSeats
+			adults: this.adults,
+			children: this.children,
+			coupon: this.coupon,
+			adultPrice: this.adultPrice,
+			childrenPrice: this.childrenPrice,
+			couponValue: this.couponValue,
+			paidAmount: this.paidAmount,
+			paid: this.paid
     };
   }
 
@@ -90,16 +111,83 @@ export class Booking extends DatabaseObject {
     return this._assignedGuide;
   }
 
-  setBookedSeats( seats: number ) {
-    this._bookedSeats = seats;
-    return this;
+  get bookedSeats() {
+    return this.adults + this.children;
   }
 
-  get bookedSeats() {
-    return this._bookedSeats;
-  }
+	setAdults( val: number ) {
+		this._adults = val;
+		return this;
+	}
+
+	get adults() {
+		return this._adults;
+	}
+
+	setChildren( val: number ) {
+		this._children = val;
+		return this;
+	}
+
+	get children() {
+		return this._children;
+	}
+
+	setCoupon( val: string ) {
+		this._coupon = val;
+		return this;
+	}
+
+	get coupon() {
+		return this._coupon;
+	}
+
+	setAdultPrice( val: number ) {
+		this._adultPrice = val;
+		return this;
+	}
+
+	get adultPrice() {
+		return this._adultPrice;
+	}
+
+	setChildrenPrice( val: number ) {
+		this._childrenPrice = val;
+		return this;
+	}
+
+	get childrenPrice() {
+		return this._childrenPrice;
+	}
+
+	setCouponValue( val: number ) {
+		this._couponValue = val;
+		return this;
+	}
+
+	get couponValue() {
+		return this._couponValue;
+	}
+
+	setPaidAmount	( val: number ) {
+		this._paidAmount = val;
+		return this;
+	}
+
+	get paidAmount() {
+		return this._paidAmount;
+	}
+
+	setPaid	( val: boolean ) {
+		this._paid = val;
+		return this;
+	}
+
+	get paid() {
+		return this._paid;
+	}
 
   availableSeats() {
-    return this._assignedGuide.maxSeats() - this._bookedSeats;
+    return this._assignedGuide.maxSeats() - this.bookedSeats;
   }
 }

@@ -12,14 +12,22 @@
     }
   ],
 	"wp_kinlen_booking": [
-		{"id":"1",
+		{
+			"id":"1",
 			"date":"2018-09-25",
 			"time":"19:00:00",
 			"time_length":"0",
 			"comment":"0",
 			"restaurant_id":"1",
 			"guide_id":"1",
-			"booked_seats":"2"
+			"adults":"2",
+			"children":"0",
+			"coupon":"0",
+			"adultPrice":"0",
+			"childrenPrice":"0",
+			"couponValue":"0",
+			"paidAmount":"0",
+			"paid":"0"
 		},
 		{
 			"id":"2",
@@ -29,7 +37,14 @@
 			"comment":"0",
 			"restaurant_id":"1",
 			"guide_id":"1",
-			"booked_seats":"2"
+			"adults":"2",
+			"children":"0",
+			"coupon":"0",
+			"adultPrice":"0",
+			"childrenPrice":"0",
+			"couponValue":"0",
+			"paidAmount":"0",
+			"paid":"0"
 		},
 		{
 			"id":"3",
@@ -39,7 +54,14 @@
 			"comment":"this is booking with id 3",
 			"restaurant_id":"1",
 			"guide_id":"1",
-			"booked_seats":"3"
+			"adults":"3",
+			"children":"0",
+			"coupon":"0",
+			"adultPrice":"0",
+			"childrenPrice":"0",
+			"couponValue":"0",
+			"paidAmount":"0",
+			"paid":"0"
 		},
 		{
 			"id":"4",
@@ -49,7 +71,14 @@
 			"comment":"0",
 			"restaurant_id":"2",
 			"guide_id":"1",
-			"booked_seats":"4"
+			"adults":"4",
+			"children":"0",
+			"coupon":"0",
+			"adultPrice":"0",
+			"childrenPrice":"0",
+			"couponValue":"0",
+			"paidAmount":"0",
+			"paid":"0"
 		},
 		{
 			"id":"5",
@@ -59,7 +88,14 @@
 			"comment":"0",
 			"restaurant_id":"1",
 			"guide_id":"1",
-			"booked_seats":"2"
+			"adults":"2",
+			"children":"0",
+			"coupon":"0",
+			"adultPrice":"0",
+			"childrenPrice":"0",
+			"couponValue":"0",
+			"paidAmount":"0",
+			"paid":"0"
 		},
 		{"id":"6",
 			"date":"2009-08-01",
@@ -68,7 +104,14 @@
 			"comment":"test getMonthBookings",
 			"restaurant_id":"1",
 			"guide_id":"1",
-			"booked_seats":"2"
+			"adults":"2",
+			"children":"0",
+			"coupon":"0",
+			"adultPrice":"0",
+			"childrenPrice":"0",
+			"couponValue":"0",
+			"paidAmount":"0",
+			"paid":"0"
 		},
 		{
 			"id":"7",
@@ -78,7 +121,14 @@
 			"comment":"test getMonthBookings",
 			"restaurant_id":"1",
 			"guide_id":"1",
-			"booked_seats":"2"
+			"adults":"2",
+			"children":"0",
+			"coupon":"0",
+			"adultPrice":"0",
+			"childrenPrice":"0",
+			"couponValue":"0",
+			"paidAmount":"0",
+			"paid":"0"
 		},
 		{
 			"id":"8",
@@ -88,7 +138,14 @@
 			"comment":"test getMonthBookings",
 			"restaurant_id":"1",
 			"guide_id":"1",
-			"booked_seats":"2"
+			"adults":"2",
+			"children":"0",
+			"coupon":"0",
+			"adultPrice":"0",
+			"childrenPrice":"0",
+			"couponValue":"0",
+			"paidAmount":"0",
+			"paid":"0"
 		},
 		{
 			"id":"9",
@@ -98,7 +155,14 @@
 			"comment":"test getMonthBookings",
 			"restaurant_id":"2",
 			"guide_id":"1",
-			"booked_seats":"4"
+			"adults":"4",
+			"children":"0",
+			"coupon":"0",
+			"adultPrice":"0",
+			"childrenPrice":"0",
+			"couponValue":"0",
+			"paidAmount":"0",
+			"paid":"0"
 		},
 		{
 			"id":"10",
@@ -108,7 +172,14 @@
 			"comment":"test getMonthBookings",
 			"restaurant_id":"1",
 			"guide_id":"1",
-			"booked_seats":"2"
+			"adults":"2",
+			"children":"0",
+			"coupon":"0",
+			"adultPrice":"0",
+			"childrenPrice":"0",
+			"couponValue":"0",
+			"paidAmount":"0",
+			"paid":"0"
 		},
 		{
 			"id":"11",
@@ -118,7 +189,14 @@
 			"comment":"test getMonthBookings",
 			"restaurant_id":"1",
 			"guide_id":"1",
-			"booked_seats":"2"
+			"adults":"2",
+			"children":"0",
+			"coupon":"0",
+			"adultPrice":"0",
+			"childrenPrice":"0",
+			"couponValue":"0",
+			"paidAmount":"0",
+			"paid":"0"
 		},
 		{
 			"id":"12",
@@ -128,7 +206,14 @@
 			"comment":"test getMonthBookings",
 			"restaurant_id":"2",
 			"guide_id":"1",
-			"booked_seats":"2"
+			"adults":"2",
+			"children":"0",
+			"coupon":"0",
+			"adultPrice":"0",
+			"childrenPrice":"0",
+			"couponValue":"0",
+			"paidAmount":"0",
+			"paid":"0"
 		},
 		{
 			"id":"106",
@@ -138,7 +223,14 @@
 			"comment":"test availableGuide",
 			"restaurant_id":"1",
 			"guide_id":"1",
-			"booked_seats":"2"
+			"adults":"2",
+			"children":"0",
+			"coupon":"0",
+			"adultPrice":"0",
+			"childrenPrice":"0",
+			"couponValue":"0",
+			"paidAmount":"0",
+			"paid":"0"
 		},
 		{
 			"id":"107",
@@ -148,7 +240,14 @@
 			"comment":"test availableGuide",
 			"restaurant_id":"1",
 			"guide_id":"1",
-			"booked_seats":"4"
+			"adults":"4",
+			"children":"0",
+			"coupon":"0",
+			"adultPrice":"0",
+			"childrenPrice":"0",
+			"couponValue":"0",
+			"paidAmount":"0",
+			"paid":"0"
 		},
 		{
 			"id":"108",
@@ -158,7 +257,14 @@
 			"comment":"test availableGuide",
 			"restaurant_id":"1",
 			"guide_id":"1",
-			"booked_seats":"6"
+			"adults":"6",
+			"children":"0",
+			"coupon":"0",
+			"adultPrice":"0",
+			"childrenPrice":"0",
+			"couponValue":"0",
+			"paidAmount":"0",
+			"paid":"0"
 		},
 		{
 			"id":"109",
@@ -168,7 +274,14 @@
 			"comment":"test availableGuide",
 			"restaurant_id":"2",
 			"guide_id":"2",
-			"booked_seats":"2"
+			"adults":"2",
+			"children":"0",
+			"coupon":"0",
+			"adultPrice":"0",
+			"childrenPrice":"0",
+			"couponValue":"0",
+			"paidAmount":"0",
+			"paid":"0"
 		},
 		{
 			"id":"110",
@@ -178,7 +291,14 @@
 			"comment":"test availableGuide",
 			"restaurant_id":"2",
 			"guide_id":"2",
-			"booked_seats":"6"
+			"adults":"6",
+			"children":"0",
+			"coupon":"0",
+			"adultPrice":"0",
+			"childrenPrice":"0",
+			"couponValue":"0",
+			"paidAmount":"0",
+			"paid":"0"
 		},
 		{
 			"id":"111",
@@ -188,7 +308,14 @@
 			"comment":"test availableGuide",
 			"restaurant_id":"1",
 			"guide_id":"1",
-			"booked_seats":"2"
+			"adults":"2",
+			"children":"0",
+			"coupon":"0",
+			"adultPrice":"0",
+			"childrenPrice":"0",
+			"couponValue":"0",
+			"paidAmount":"0",
+			"paid":"0"
 		},
 		{
 			"id":"112",
@@ -198,7 +325,14 @@
 			"comment":"test availableGuide",
 			"restaurant_id":"2",
 			"guide_id":"1",
-			"booked_seats":"2"
+			"adults":"2",
+			"children":"0",
+			"coupon":"0",
+			"adultPrice":"0",
+			"childrenPrice":"0",
+			"couponValue":"0",
+			"paidAmount":"0",
+			"paid":"0"
 		}
 		,
 		{
@@ -209,7 +343,14 @@
 			"comment":"test availableGuide",
 			"restaurant_id":"1",
 			"guide_id":"4",
-			"booked_seats":"6"
+			"adults":"6",
+			"children":"0",
+			"coupon":"0",
+			"adultPrice":"0",
+			"childrenPrice":"0",
+			"couponValue":"0",
+			"paidAmount":"0",
+			"paid":"0"
 		},
 		{
 			"id":"210",
@@ -219,7 +360,14 @@
 			"comment":"test isDayAvailable",
 			"restaurant_id":"1",
 			"guide_id":"1",
-			"booked_seats":"6"
+			"adults":"6",
+			"children":"0",
+			"coupon":"0",
+			"adultPrice":"0",
+			"childrenPrice":"0",
+			"couponValue":"0",
+			"paidAmount":"0",
+			"paid":"0"
 		},
 		{
 			"id":"211",
@@ -229,7 +377,14 @@
 			"comment":"test isDayAvailable",
 			"restaurant_id":"1",
 			"guide_id":"1",
-			"booked_seats":"2"
+			"adults":"2",
+			"children":"0",
+			"coupon":"0",
+			"adultPrice":"0",
+			"childrenPrice":"0",
+			"couponValue":"0",
+			"paidAmount":"0",
+			"paid":"0"
 		},
 		{
 			"id":"212",
@@ -239,7 +394,14 @@
 			"comment":"test isDayAvailable",
 			"restaurant_id":"1",
 			"guide_id":"1",
-			"booked_seats":"6"
+			"adults":"6",
+			"children":"0",
+			"coupon":"0",
+			"adultPrice":"0",
+			"childrenPrice":"0",
+			"couponValue":"0",
+			"paidAmount":"0",
+			"paid":"0"
 		},
 		{
 			"id":"213",
@@ -249,7 +411,14 @@
 			"comment":"test isDayAvailable",
 			"restaurant_id":"1",
 			"guide_id":"1",
-			"booked_seats":"6"
+			"adults":"6",
+			"children":"0",
+			"coupon":"0",
+			"adultPrice":"0",
+			"childrenPrice":"0",
+			"couponValue":"0",
+			"paidAmount":"0",
+			"paid":"0"
 		},
 		{
 			"id":"214",
@@ -259,7 +428,14 @@
 			"comment":"test isDayAvailable",
 			"restaurant_id":"1",
 			"guide_id":"1",
-			"booked_seats":"6"
+			"adults":"6",
+			"children":"0",
+			"coupon":"0",
+			"adultPrice":"0",
+			"childrenPrice":"0",
+			"couponValue":"0",
+			"paidAmount":"0",
+			"paid":"0"
 		},
 		{
 			"id":"310",
@@ -269,7 +445,14 @@
 			"comment":"live test",
 			"restaurant_id":"1",
 			"guide_id":"1",
-			"booked_seats":"6"
+			"adults":"6",
+			"children":"0",
+			"coupon":"0",
+			"adultPrice":"0",
+			"childrenPrice":"0",
+			"couponValue":"0",
+			"paidAmount":"0",
+			"paid":"0"
 		},
 		{
 			"id":"311",
@@ -279,7 +462,14 @@
 			"comment":"live test",
 			"restaurant_id":"1",
 			"guide_id":"1",
-			"booked_seats":"2"
+			"adults":"2",
+			"children":"0",
+			"coupon":"0",
+			"adultPrice":"0",
+			"childrenPrice":"0",
+			"couponValue":"0",
+			"paidAmount":"0",
+			"paid":"0"
 		},
 		{
 			"id":"312",
@@ -289,7 +479,14 @@
 			"comment":"live test",
 			"restaurant_id":"1",
 			"guide_id":"1",
-			"booked_seats":"6"
+			"adults":"6",
+			"children":"0",
+			"coupon":"0",
+			"adultPrice":"0",
+			"childrenPrice":"0",
+			"couponValue":"0",
+			"paidAmount":"0",
+			"paid":"0"
 		},
 		{
 			"id":"313",
@@ -299,7 +496,14 @@
 			"comment":"live test",
 			"restaurant_id":"1",
 			"guide_id":"1",
-			"booked_seats":"6"
+			"adults":"6",
+			"children":"0",
+			"coupon":"0",
+			"adultPrice":"0",
+			"childrenPrice":"0",
+			"couponValue":"0",
+			"paidAmount":"0",
+			"paid":"0"
 		},
 		{
 			"id":"314",
@@ -309,7 +513,14 @@
 			"comment":"live test",
 			"restaurant_id":"1",
 			"guide_id":"1",
-			"booked_seats":"6"
+			"adults":"6",
+			"children":"0",
+			"coupon":"0",
+			"adultPrice":"0",
+			"childrenPrice":"0",
+			"couponValue":"0",
+			"paidAmount":"0",
+			"paid":"0"
 		}
 	],
 	"wp_kinlen_guide": [
@@ -450,7 +661,7 @@
 			"services": "Air Conditioning, Best Value, Children friendly",
 			"foodTypes": "Seafood",
 			"dishSpecials": "",
-			"valoration": "5",
+			"valoration": "0",
 			"numberOfReviews": "23",
 			"includes": "",
 			"excludes": "",
@@ -471,7 +682,7 @@
 			"services": "Air Conditioning, Catch your own food, Children friendly, Live Music, Terrace",
 			"foodTypes": "Seafood",
 			"dishSpecials": "",
-			"valoration": "4.5",
+			"valoration": "0",
 			"numberOfReviews": "12",
 			"includes": "",
 			"excludes": "",

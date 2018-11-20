@@ -41,7 +41,14 @@ export class MockData {
 			'comment text, ',
 			'restaurant_id int(10), ',
 			'guide_id int(10), ',
-			'booked_seats int(10), ',
+			'adults int(10), ',
+			'children int(10), ',
+			'coupon varchar(15), ',
+			'adultPrice int(10), ',
+			'childrenPrice int(10), ',
+			'couponValue int(10), ',
+			'paidAmount int(10), ',
+			'paid int(1), ',
 			'PRIMARY KEY (id) ',
 			');'
 		]
