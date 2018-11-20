@@ -1,18 +1,17 @@
-import * as jQuery from "jquery";
+import Flatpickr from 'flatpickr'
 import { BookingFormManager, initialState } from "./frontend/booking-form-manager";
 
-jQuery( document ).ready( function(){
-  jQuery('#bookingButton').on( 'click', function() {
-    openTab( 'detail-tab', 'Book Now' );
-  });
-	let bookingForm = jQuery('#kl-booking-form');
-	if ( bookingForm.length ) {
-		bookingForm.ready( ()=>{
-			jQuery('#form-field-kl-booking-date').attr('autocomplete', 'off')
-			setupBookingFormManager();
-		});
+declare function flatpickr( element: HTMLElement, config:Flatpickr.Options.Options );
+
+document.addEventListener( 'DOMContentLoaded', function () {
+//  document.getElementById( 'bookingButton' ).onclick = ()=> openTab( 'detail-tab', 'Book Now' );
+	let bookingForm = document.getElementById('kl-booking-form');
+	if ( bookingForm ) {
+		flatpickr( document.getElementById( 'form-field-kl-booking-date' ), { disableMobile: true } );
+		document.getElementById('form-field-kl-booking-date').setAttribute('autocomplete', 'off');
+		setupBookingFormManager();
 	}
-});
+}, false );
 
 export async function setupBookingFormManager() {
 	let postId = document.getElementById( 'kl-post-id' ).firstElementChild.firstElementChild.innerHTML
@@ -41,15 +40,15 @@ export async function setupBookingFormManager() {
  * @param tabToOpen identifies the tab number or tab title to openTab
  */
 
-function openTab( tabWidgetId, tabToOpen ) {
-  var tabObject = jQuery( '#' + tabWidgetId );
-  var activeObject =  tabObject.find( '.elementor-active' );
-  if (typeof tabToOpen === 'string' || tabToOpen instanceof String) {
-    tabToOpen = tabObject.find( '.elementor-tab-title' ).filter( ':contains("' + tabToOpen + '")' ).attr('data-tab');
-  }
-  var tabObjectToOpen = tabObject.find( "[data-tab='" + tabToOpen + "']" );
-  activeObject.removeClass( 'elementor-active' );
-  tabObjectToOpen.addClass('elementor-active');
-  activeObject.filter('.elementor-tab-content').hide();
-  tabObjectToOpen.filter('.elementor-tab-content').show();
-}
+// function openTab( _tabWidgetId, _tabToOpen ) {
+//   var tabObject = jQuery( '#' + tabWidgetId );
+//   var activeObject =  tabObject.find( '.elementor-active' );
+//   if (typeof tabToOpen === 'string' || tabToOpen instanceof String) {
+//     tabToOpen = tabObject.find( '.elementor-tab-title' ).filter( ':contains("' + tabToOpen + '")' ).attr('data-tab');
+//   }
+//   var tabObjectToOpen = tabObject.find( "[data-tab='" + tabToOpen + "']" );
+//   activeObject.removeClass( 'elementor-active' );
+//   tabObjectToOpen.addClass('elementor-active');
+//   activeObject.filter('.elementor-tab-content').hide();
+//   tabObjectToOpen.filter('.elementor-tab-content').show();
+// }

@@ -19,10 +19,6 @@ const externals = [
 	{
 		globalName: 'flatpickr',
 		nodeModule: 'flatpickr'
-	},
-	{
-		globalName: 'jQuery',
-	 	nodeModule: 'jquery'
 	}
 ];
 

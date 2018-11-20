@@ -1,4 +1,4 @@
-import flatpickr from 'flatpickr';
+import { Instance as FlatpickrInstance} from "flatpickr/dist/types/instance";
 import { BookingMapper } from "../bookings/booking-mapper";
 import { Observer, ObservableField, ObservableRadio, ObservableSelect } from '../utils/observer';
 import { MAX_SEATS_PER_GUIDE } from '../bookings/guide';
@@ -78,7 +78,7 @@ export class BookingFormManager extends Observer< State > {
 		return this;
 	}
 
-	setCalendar( calendar: flatpickr.Instance ) {
+	setCalendar( calendar: FlatpickrInstance ) {
 		calendar.config.disableMobile = true;
 		calendar.config.onMonthChange = [( _selectedDates, _dateStr, instance )=> this.updateDates(instance)];
 		calendar.config.onOpen = [( _selectedDates, _dateStr, instance )=>this.updateDates(instance)];
@@ -99,7 +99,7 @@ export class BookingFormManager extends Observer< State > {
 		this.setState({date: ''});
   }
 
-	private async updateDates( instance: flatpickr.Instance ) {
+	private async updateDates( instance: FlatpickrInstance ) {
 		let date = new Date( instance.currentYear, instance.currentMonth, 1)
 		let map = await this._mapper.getUnavailableDays( date, this.requiredSeats() );
 		instance.config.disable = map;

@@ -37,6 +37,11 @@ describe( 'BookingFormManager is in charge to manage the DOM form elements and t
 	});
 
 	describe( 'on startup', ()=> {
+		xit( 'shoud not load booking system if page not have booking form', ()=>{
+			let formElement = document.getElementById( 'kl-booking-form' );
+			formElement.parentNode.removeChild( formElement );
+
+		})
 
 		it( 'should get restaurant id from kl-post-id <div>', ()=> {
 			expect( formManager.restaurant ).toBe( 1 );
@@ -129,10 +134,18 @@ describe( 'BookingFormManager is in charge to manage the DOM form elements and t
 	});
 
 	describe( 'on date reset', ()=>{
-		it( 'should restore time to visible state', async ()=>{
+		it( 'should restore time to visible state when children change', async ()=>{
 			await SimInput.setValue( 'form-field-kl-booking-date', '2018-10-05' )
 			expect( SimInput.isRadioShown( 'form-field-kl-booking-time-0' ) ).toBeFalsy();
 			await SimInput.setValue( 'form-field-kl-children', '2' );
+			expect( SimInput.isRadioShown( 'form-field-kl-booking-time-0' ) ).toBeTruthy();
+			expect( SimInput.isRadioShown( 'form-field-kl-booking-time-1' ) ).toBeTruthy();
+		})
+
+		it( 'should restore time to visible state when adults change', async ()=>{
+			await SimInput.setValue( 'form-field-kl-booking-date', '2018-10-05' )
+			expect( SimInput.isRadioShown( 'form-field-kl-booking-time-0' ) ).toBeFalsy();
+			await SimInput.setValue( 'form-field-kl-adults', '3' );
 			expect( SimInput.isRadioShown( 'form-field-kl-booking-time-0' ) ).toBeTruthy();
 			expect( SimInput.isRadioShown( 'form-field-kl-booking-time-1' ) ).toBeTruthy();
 		})
