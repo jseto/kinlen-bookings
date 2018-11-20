@@ -69,7 +69,7 @@ export class BookingFormManager extends Observer< State > {
 
 	addTimeOption( time: string, element: string ) {
 		let radioButton = new ObservableRadio( time, element, false );
-		radioButton.onChange = ()=>	this.observables.name.focus();
+//		radioButton.onChange = ()=>	this.observables.name.focus();
 		this.registerObservable( radioButton );
 		this._timeOption.push({
 			time: time,
@@ -96,7 +96,7 @@ export class BookingFormManager extends Observer< State > {
 		let maxChildren = MAX_SEATS_PER_GUIDE - this.state.adults + 1;
 		for ( let i = 0; i < maxChildren; i++ ){  options[ i ] = String( i ) }
 		children.setOptions( options )
-		this.setState({date: ''});
+		this.resetDate();
   }
 
 	private async updateDates( instance: FlatpickrInstance ) {
@@ -117,7 +117,7 @@ export class BookingFormManager extends Observer< State > {
 				first = false;
 			}
 		})
-		this.observables.name.focus();
+//		this.observables.name.focus();
 	}
 
 	private resetDate() {

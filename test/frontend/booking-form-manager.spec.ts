@@ -37,11 +37,6 @@ describe( 'BookingFormManager is in charge to manage the DOM form elements and t
 	});
 
 	describe( 'on startup', ()=> {
-		xit( 'shoud not load booking system if page not have booking form', ()=>{
-			let formElement = document.getElementById( 'kl-booking-form' );
-			formElement.parentNode.removeChild( formElement );
-
-		})
 
 		it( 'should get restaurant id from kl-post-id <div>', ()=> {
 			expect( formManager.restaurant ).toBe( 1 );
@@ -73,23 +68,23 @@ describe( 'BookingFormManager is in charge to manage the DOM form elements and t
 			expect( SimInput.isChecked('form-field-kl-booking-time-0') ).toBeTruthy();
 		});
 
-		it( 'should set focus on name field', async ()=> {
-			document.getElementById( 'form-field-kl-booking-date' ).focus();
-			expect( SimInput.hasFocus( 'form-field-kl-name' ) ).toBeFalsy();
-			await SimInput.setValue( 'form-field-kl-booking-date', '2018-10-08' )
-			expect( SimInput.hasFocus( 'form-field-kl-name' ) ).toBeTruthy();
-		});
+		// it( 'should not set focus on name field', async ()=> {
+		// 	document.getElementById( 'form-field-kl-booking-date' ).focus();
+		// 	expect( SimInput.hasFocus( 'form-field-kl-name' ) ).toBeFalsy();
+		// 	await SimInput.setValue( 'form-field-kl-booking-date', '2018-10-08' )
+		// 	expect( SimInput.hasFocus( 'form-field-kl-name' ) ).toBeFalsy();
+		// });
 
 	});
 
 	describe( 'on time set', ()=> {
 
-		it( 'should set focus on name field', async ()=> {
-			document.getElementById( 'form-field-kl-booking-date' ).focus();
-			expect( SimInput.hasFocus( 'form-field-kl-name' ) ).toBeFalsy();
-			await SimInput.check( 'form-field-kl-booking-time-0', true );
-			expect( SimInput.hasFocus( 'form-field-kl-name' ) ).toBeTruthy();
-		});
+		// it( 'should set not focus on name field', async ()=> {
+		// 	document.getElementById( 'form-field-kl-booking-date' ).focus();
+		// 	expect( SimInput.hasFocus( 'form-field-kl-name' ) ).toBeFalsy();
+		// 	await SimInput.check( 'form-field-kl-booking-time-0', true );
+		// 	expect( SimInput.hasFocus( 'form-field-kl-name' ) ).toBeFalsy();
+		// });
 
 	});
 
