@@ -20,7 +20,7 @@ export class Restaurant extends DatabaseObject {
 	private _images: string;
 	private _paypal: string;
 
-  _fromObject( p: any ) {
+  protected _fromObject( p: any ) {
 		this._name = p.name;
 		this._adultPrice = p.adultPrice;
 		this._childrenPrice = p.childrenPrice;
@@ -41,7 +41,7 @@ export class Restaurant extends DatabaseObject {
 		this._paypal = p.paypal;
   }
 
-  _toObject() {
+  protected _toObject() {
     return {
 			name: this._name,
 			adultPrice: this._adultPrice,

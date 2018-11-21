@@ -16,7 +16,7 @@ interface State {
 	coupon?: string;
 	name?: string;
 	email?: string;
-	requirements?: string;
+	comments?: string;
 }
 
 export const initialState: State = {
@@ -27,7 +27,7 @@ export const initialState: State = {
 	coupon: '',
 	name: '',
 	email: '',
-	requirements: '',
+	comments: '',
 }
 
 

@@ -25,7 +25,7 @@ export async function setupBookingFormManager() {
 									name: 'form-field-kl-name',
 									email: 'form-field-kl-email',
 									coupon: 'form-field-kl-coupon',
-									requirements: 'form-field-kl-requirements'
+									comments: 'form-field-kl-requirements'
 								})
 								.addTimeOption( '19:00:00', 'form-field-kl-booking-time-0' )
 								.addTimeOption( '21:00:00', 'form-field-kl-booking-time-1' )

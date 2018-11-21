@@ -4,14 +4,14 @@ import { Utils } from "../utils/utils";
 export class Holiday extends DatabaseObject{
   private _date: Date;
 
-	_toObject() {
+	protected _toObject() {
 		return {
 			id: this._id,
 			date: Utils.dateToString( this._date )
 		}
 	}
 
-	_fromObject( obj: any ) {
+	protected _fromObject( obj: any ) {
 			this._date = new Date( obj.date );
 	}
 

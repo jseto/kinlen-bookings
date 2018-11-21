@@ -23,6 +23,6 @@ export abstract class DatabaseObject {
 		return obj;
 	}
 
-  abstract _fromObject( p: any );
-  abstract _toObject();
+  protected abstract _fromObject( p: any );
+  protected abstract _toObject();
 }

@@ -20,7 +20,7 @@ export class Guide extends DatabaseObject{
 		}
   };
 
-  _toObject(){
+  protected _toObject(){
     return {
 			name: this._name,
 			score: this._score,
@@ -31,7 +31,7 @@ export class Guide extends DatabaseObject{
     };
   }
 
-  _fromObject( obj: any ) {
+  protected _fromObject( obj: any ) {
 		this._name = obj.name;
 		this._score = obj.score;
 		this._phone = obj.phone;

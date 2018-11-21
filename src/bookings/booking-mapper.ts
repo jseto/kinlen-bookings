@@ -148,7 +148,7 @@ export class BookingMapper {
 			else {
 				this._bookingMap[ day ][ booking.time ]= {
 					bookedSeats: booking.bookedSeats,
-					guideId: booking.assignedGuide.id
+					guideId: booking.assignedGuide
 				};
 			}
 		});

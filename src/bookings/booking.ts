@@ -1,6 +1,4 @@
 import { DatabaseObject } from "../database/database-object"
-import { Restaurant } from "./restaurant";
-import { Guide } from "./guide";
 import { Utils } from "../utils/utils";
 
 export const BOOKABLE_TIMES = [ '19:00:00', '21:00:00' ];
@@ -10,8 +8,8 @@ export class Booking extends DatabaseObject {
   private _time: string;
   private _timeLength: number;
 	private _comment: string;
-  private _restaurant: Restaurant;
-  private _assignedGuide: Guide;
+  private _restaurant: number;
+  private _assignedGuide: number;
 	private _adults: number;
 	private _children: number;
 	private _coupon: string;
@@ -21,13 +19,13 @@ export class Booking extends DatabaseObject {
 	private _paidAmount: number;
 	private _paid: boolean;
 
-  _fromObject( obj: any ){
+  protected _fromObject( obj: any ){
     this._date = new Date( obj.date );
     this._time = obj.time;
     this._timeLength = Number( obj.time_length );
 		this._comment = obj.comment;
-    this._restaurant = new Restaurant( Number( obj.restaurant_id ) );
-    this._assignedGuide = new Guide( Number( obj.guide_id ) );
+    this._restaurant = Number( obj.restaurant_id );
+    this._assignedGuide = Number( obj.guide_id );
 		this._adults = Number( obj.adults );
 		this._children = Number( obj.children );
 		this._coupon = obj.coupon;
@@ -38,14 +36,14 @@ export class Booking extends DatabaseObject {
 		this._paid = Boolean( obj.paid );
   }
 
-  _toObject() {
+  protected _toObject() {
     return{
       date: Utils.dateToString( this.date ),
       time: this.time,
       time_length: this.timeLength,
 			comment: this.comment,
-      restautant: this.restautant.toObject(),
-      assigned_guide: this.assignedGuide.toObject(),
+      restautant: this.restautant,
+      assigned_guide: this.assignedGuide,
 			adults: this.adults,
 			children: this.children,
 			coupon: this.coupon,
@@ -93,8 +91,8 @@ export class Booking extends DatabaseObject {
     return this._comment;
   }
 
-  setRestaurant( restaurant: Restaurant ) {
-    this._restaurant = restaurant;
+  setRestaurant( id: number ) {
+    this._restaurant = id;
     return this;
   }
 
@@ -102,12 +100,12 @@ export class Booking extends DatabaseObject {
     return this._restaurant;
   }
 
-  setAssignedGuide( assignedGuide: Guide ) {
-    this._assignedGuide = assignedGuide;
+  setAssignedGuide( id: number ) {
+    this._assignedGuide = id;
     return this;
   }
 
-  get assignedGuide(){
+  get assignedGuide() :number{
     return this._assignedGuide;
   }
 
@@ -187,7 +185,7 @@ export class Booking extends DatabaseObject {
 		return this._paid;
 	}
 
-  availableSeats() {
-    return this._assignedGuide.maxSeats() - this.bookedSeats;
-  }
+  // availableSeats() {
+  //   return this._assignedGuide.maxSeats() - this.bookedSeats;
+  // }
 }
