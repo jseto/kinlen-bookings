@@ -2,6 +2,7 @@ import { Booking } from "../../src/bookings/booking";
 import { BookingMapper } from "../../src/bookings/booking-mapper";
 import { Restaurant } from "./restaurant";
 import { Rest } from "../database/rest";
+import { Coupon } from "./coupon";
 
 export interface BookingData {
 	restautantId: number,
@@ -12,38 +13,51 @@ export interface BookingData {
 	name: string,
 	email: string,
 	coupon: string,
-	requirements: string
+	comments: string
 }
 
 export class BookingProcessor {
-	private _bookingData: BookingData;
 	private _restaurant: Restaurant;
+	private _coupon: Coupon;
+	private _booking: Booking;
 
 	constructor( bookingData: BookingData ) {
-		this._bookingData = bookingData;
+		this._booking = new Booking(-1);
+		this._booking.fromObject( bookingData );
 	}
 
-	async booking() {
-		let booking = new Booking(-1);
-		booking.fromObject( this._bookingData );
-		booking.setRestaurant( await this.restautant() );
+	async prepareBooking() {
+		let restaurant = await this.restautant();
+		let coupon = await this.coupon();
+		let beforeDiscount = await this.beforeDiscount();
+		this._booking.setRestaurant( restaurant.id );
+		this._booking.setCouponValue( coupon.discount( beforeDiscount ) );
+		this._booking.setAdultPrice( restaurant.adultPrice );
+		this._booking.setChildrenPrice( restaurant.childrenPrice );
+		return this._booking;
 	}
 
-	async totalAmount(): Promise<number> {
+	async totalToPay(): Promise<number> {
+		let coupon = await this.coupon();
+		let beforeDiscount = await this.beforeDiscount();
+		return beforeDiscount - coupon.discount( beforeDiscount );
+	}
+
+	async beforeDiscount(): Promise<number> {
 		let restautant = await this.restautant();
-		let couponValue = await this.couponValue();
-		let adultTotal = restautant.adultPrice * this._bookingData.adults;
-		let childrenTotal = restautant.childrenPrice * this._bookingData.children
-		return adultTotal + childrenTotal - couponValue;
+		let adultTotal = restautant.adultPrice * this._booking.adults;
+		let childrenTotal = restautant.childrenPrice * this._booking.children;
+		return adultTotal + childrenTotal;
 	}
 
-  async couponValue(): Promise<number> {
-    throw new Error("Method not implemented.");
-  }
+	async validCoupon() {
+		let c = await this.coupon();
+		return c.isValid();
+	}
 
 	async validateBooking(): Promise< boolean > {
-		let mapper = new BookingMapper( this._bookingData.restautantId );
-		return await mapper.isTimeSlotAvailable( this._bookingData.date, this._bookingData.time, this.bookedSeats() )
+		let mapper = new BookingMapper( this._booking.restautant );
+		return await mapper.isTimeSlotAvailable( this._booking.date, this._booking.time, this.bookedSeats() )
 	}
 
 	async validatePayment(): Promise<boolean> {
@@ -56,6 +70,7 @@ export class BookingProcessor {
 
 	async process():Promise<boolean> {
 		let valid: boolean = await this.validateBooking()
+								&& await this.validCoupon()
 								&& await this.validatePayment()
 								&& await this.bookingInserted();
 
@@ -63,14 +78,21 @@ export class BookingProcessor {
 	}
 
 	private bookedSeats() {
-		return this._bookingData.adults + this._bookingData.children;
+		return this._booking.adults + this._booking.children;
 	}
 
 	private async restautant(): Promise< Restaurant > {
 		if( !this._restaurant ) {
-			this._restaurant = await this.getRestaurant( this._bookingData.restautantId );
+			this._restaurant = await this.getRestaurant( this._booking.restautant );
 		}
 		return this._restaurant;
+	}
+
+	private async coupon(): Promise< Coupon > {
+		if( !this._coupon ) {
+			this._coupon = await this.getCoupon( this._booking.coupon );
+		}
+		return this._coupon;
 	}
 
 	private async getRestaurant(restautantId: number): Promise< Restaurant > {
@@ -79,6 +101,16 @@ export class BookingProcessor {
 				let restaurant = new Restaurant(-1);
 				restaurant.fromObject( data[0] );
 				resolve( restaurant );
+			})
+		});
+	}
+
+	private async getCoupon( code: string ): Promise< Coupon > {
+		return new Promise< Coupon >( ( resolve ) => {
+			Rest.getREST( 'coupon/', { code: code } ).then( ( data ) => {
+				let coupon = new Coupon(-1);
+				coupon.fromObject( data[0] );
+				resolve( coupon );
 			})
 		});
 	}

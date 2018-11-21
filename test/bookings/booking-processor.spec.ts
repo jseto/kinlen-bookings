@@ -2,7 +2,7 @@ import * as fetchMock from 'fetch-mock';
 import { MockData } from './../mock-data/db-sql';
 import { BookingProcessor, BookingData } from '../../src/bookings/booking-processor';
 
-describe( 'The BookingProcessor is in charge of place a booking in the System', ()=> {
+xdescribe( 'The BookingProcessor is in charge of place a booking in the System', ()=> {
 	let bookingData: BookingData;
 
 	beforeAll(()=>{
@@ -17,7 +17,7 @@ describe( 'The BookingProcessor is in charge of place a booking in the System', 
 			coupon: '',
 			name: 'pepito grillo',
 			email: 'p.grillo@gmail.com',
-			requirements: 'no special requirements',
+			comments: 'no special requirements',
 		}
 	});
 
@@ -35,20 +35,32 @@ describe( 'The BookingProcessor is in charge of place a booking in the System', 
 			expect( await processor.validateBooking() ).toBeFalsy()
 		});
 
-		xit( 'should create a booking object',()=>{
+		it( 'should fill booking data', async ()=>{
+			let processor = new BookingProcessor( bookingData );
+			let booking = await processor.prepareBooking();
 
+			expect( booking.date ).toEqual( new Date( '2018-10-10' ) );
+			expect( booking.time ).toEqual( '19:00:00' );
+			expect( booking.comment ).toEqual( 'no special requirements' );
+			expect( booking.restautant ).toBe( 1 );
+			expect( booking.adults ).toBe( 4 );
+			expect( booking.children ).toBe( 2 );
+			expect( booking.coupon ).toEqual( '' );
+			expect( booking.adultPrice ).toBe( 2000 );
+			expect( booking.childrenPrice ).toBe( 1000 );
+			expect( booking.couponValue ).toBe( 0 );
 		});
 
 	});
 
 	describe( 'the payment process', ()=> {
 
-		xit( 'should calculate the total amount', async ()=> {
+		it( 'should calculate the total amount', async ()=> {
 			let processor = new BookingProcessor( bookingData );
-			expect( await processor.totalAmount() ).toBe( 10000 );
+			expect( await processor.totalToPay() ).toBe( 10000 );
 			bookingData.adults = 2;
 			bookingData.children = 4;
-			expect( await processor.totalAmount() ).toBe( 8000 );
+			expect( await processor.totalToPay() ).toBe( 8000 );
 		});
 
 		xit( 'should discount coupon value for a valid coupon', async ()=> {
@@ -72,6 +84,26 @@ describe( 'The BookingProcessor is in charge of place a booking in the System', 
 		});
 
 		xit( 'should reject booking in any other case', ()=> {
+
+		});
+
+		describe( 'on reject booking a message with the reason', ()=> {
+			xit( 'should notify about booking slot already booked', ()=> {
+
+			});
+
+			xit( 'should notify about coupon not valid', ()=> {
+
+			});
+
+			xit( 'should notify about payment not fulfilled', ()=> {
+
+			});
+
+			xit( 'should notify about failure on inseting booking in database', ()=> {
+
+			});
+
 
 		});
 
