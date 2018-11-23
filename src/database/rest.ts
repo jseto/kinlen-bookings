@@ -26,9 +26,11 @@ export class Rest {
 		let list: DatabaseObject[] = [];
 		let i = 0;
 		while ( data[i] ) {
-			let element =  createInstance();
-			element.fromObject( data[i] );
-			list.push( element );
+			if ( data[i].id ) {
+				let element =  createInstance();
+				element.fromObject( data[i] );
+				list.push( element );
+			}
 			i++;
 		}
 		return list;

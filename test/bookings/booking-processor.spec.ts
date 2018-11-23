@@ -2,14 +2,17 @@ import * as fetchMock from 'fetch-mock';
 import { MockData } from './../mock-data/db-sql';
 import { BookingProcessor, BookingData } from '../../src/bookings/booking-processor';
 
-xdescribe( 'The BookingProcessor is in charge of place a booking in the System', ()=> {
+describe( 'The BookingProcessor is in charge of place a booking in the System', ()=> {
 	let bookingData: BookingData;
 
 	beforeAll(()=>{
 		let mockData = new MockData();
 		fetchMock.mock('*', ( url, opts )=>{ return mockData.response( url, opts ) } );
+	});
+
+	beforeEach(()=>{
 		bookingData = {
-			restautantId: 1,
+			restaurant_id: 1,
 			date: new Date( '2018-10-10' ),
 			time: '19:00:00',
 			adults: 4,
@@ -17,13 +20,13 @@ xdescribe( 'The BookingProcessor is in charge of place a booking in the System',
 			coupon: '',
 			name: 'pepito grillo',
 			email: 'p.grillo@gmail.com',
-			comments: 'no special requirements',
+			comment: 'no special requirements',
 		}
 	});
 
 	describe( 'the booking', ()=>{
 
-		it( 'should accept a booking that cannot be placed', async ()=> {
+		it( 'should accept a booking that can be placed', async ()=> {
 			bookingData.date = new Date( '2018-10-10' );
 			let processor = new BookingProcessor( bookingData );
 			expect( await processor.validateBooking() ).toBeTruthy()
@@ -42,7 +45,7 @@ xdescribe( 'The BookingProcessor is in charge of place a booking in the System',
 			expect( booking.date ).toEqual( new Date( '2018-10-10' ) );
 			expect( booking.time ).toEqual( '19:00:00' );
 			expect( booking.comment ).toEqual( 'no special requirements' );
-			expect( booking.restautant ).toBe( 1 );
+			expect( booking.restaurant ).toBe( 1 );
 			expect( booking.adults ).toBe( 4 );
 			expect( booking.children ).toBe( 2 );
 			expect( booking.coupon ).toEqual( '' );
@@ -60,6 +63,7 @@ xdescribe( 'The BookingProcessor is in charge of place a booking in the System',
 			expect( await processor.totalToPay() ).toBe( 10000 );
 			bookingData.adults = 2;
 			bookingData.children = 4;
+			processor = new BookingProcessor( bookingData );
 			expect( await processor.totalToPay() ).toBe( 8000 );
 		});
 

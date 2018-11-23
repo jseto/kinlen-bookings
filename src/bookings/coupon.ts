@@ -17,6 +17,7 @@ export class Coupon extends DatabaseObject{
 	}
 
 	discount( basePrice?: number ): number {
+		if ( this.id < 0 ) return 0;
 		if ( this._valueType !== 'percent' ) {
 			return this._value;
 		}

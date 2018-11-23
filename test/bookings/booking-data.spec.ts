@@ -47,7 +47,7 @@ describe( 'BookingData', function() {
 			let bookings: Booking[] = await db.getMonthBookings( 1, new Date( '2009-08-01' ) );
 
 			expect( bookings.length ).toBe( 4 );
-			expect( bookings[0].restautant ).toBe( 1 );
+			expect( bookings[0].restaurant ).toBe( 1 );
 		});
 
 		it( 'with query date in the end of the month', async ()=>{
@@ -55,7 +55,7 @@ describe( 'BookingData', function() {
 			let bookings: Booking[] = await db.getMonthBookings( 1, new Date( '2009-08-31' ) );
 
 			expect( bookings.length ).toBe( 4 );
-			expect( bookings[0].restautant ).toBe( 1 );
+			expect( bookings[0].restaurant ).toBe( 1 );
 		});
 
 		it( 'but NOT with query date out of the end of the month', async ()=>{

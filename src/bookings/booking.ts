@@ -42,7 +42,7 @@ export class Booking extends DatabaseObject {
       time: this.time,
       time_length: this.timeLength,
 			comment: this.comment,
-      restautant: this.restautant,
+      restaurant_id: this.restaurant,
       assigned_guide: this.assignedGuide,
 			adults: this.adults,
 			children: this.children,
@@ -96,7 +96,7 @@ export class Booking extends DatabaseObject {
     return this;
   }
 
-  get restautant() {
+  get restaurant() {
     return this._restaurant;
   }
 

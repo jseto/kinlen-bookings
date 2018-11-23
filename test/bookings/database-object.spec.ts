@@ -17,7 +17,7 @@ describe( 'DatabaseObject', function() {
     expect( obj.adults ).toBe( 5 );
     expect( obj.time_length ).toBe( 1800 );
     expect( obj.assigned_guide ).toBe( 2 );
-    expect( obj.restautant ).toBe( 34 );
+    expect( obj.restaurant_id ).toBe( 34 );
   });
 
 });

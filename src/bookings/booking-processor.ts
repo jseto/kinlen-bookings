@@ -5,7 +5,7 @@ import { Rest } from "../database/rest";
 import { Coupon } from "./coupon";
 
 export interface BookingData {
-	restautantId: number,
+	restaurant_id: number,
 	date: Date,
 	time: string,
 	adults: number,
@@ -13,7 +13,7 @@ export interface BookingData {
 	name: string,
 	email: string,
 	coupon: string,
-	comments: string
+	comment: string
 }
 
 export class BookingProcessor {
@@ -27,10 +27,9 @@ export class BookingProcessor {
 	}
 
 	async prepareBooking() {
-		let restaurant = await this.restautant();
+		let restaurant = await this.restaurant();
 		let coupon = await this.coupon();
 		let beforeDiscount = await this.beforeDiscount();
-		this._booking.setRestaurant( restaurant.id );
 		this._booking.setCouponValue( coupon.discount( beforeDiscount ) );
 		this._booking.setAdultPrice( restaurant.adultPrice );
 		this._booking.setChildrenPrice( restaurant.childrenPrice );
@@ -44,9 +43,9 @@ export class BookingProcessor {
 	}
 
 	async beforeDiscount(): Promise<number> {
-		let restautant = await this.restautant();
-		let adultTotal = restautant.adultPrice * this._booking.adults;
-		let childrenTotal = restautant.childrenPrice * this._booking.children;
+		let restaurant = await this.restaurant();
+		let adultTotal = restaurant.adultPrice * this._booking.adults;
+		let childrenTotal = restaurant.childrenPrice * this._booking.children;
 		return adultTotal + childrenTotal;
 	}
 
@@ -56,7 +55,7 @@ export class BookingProcessor {
 	}
 
 	async validateBooking(): Promise< boolean > {
-		let mapper = new BookingMapper( this._booking.restautant );
+		let mapper = new BookingMapper( this._booking.restaurant );
 		return await mapper.isTimeSlotAvailable( this._booking.date, this._booking.time, this.bookedSeats() )
 	}
 
@@ -81,9 +80,9 @@ export class BookingProcessor {
 		return this._booking.adults + this._booking.children;
 	}
 
-	private async restautant(): Promise< Restaurant > {
+	private async restaurant(): Promise< Restaurant > {
 		if( !this._restaurant ) {
-			this._restaurant = await this.getRestaurant( this._booking.restautant );
+			this._restaurant = await this.getRestaurant( this._booking.restaurant );
 		}
 		return this._restaurant;
 	}
@@ -95,11 +94,14 @@ export class BookingProcessor {
 		return this._coupon;
 	}
 
-	private async getRestaurant(restautantId: number): Promise< Restaurant > {
+	private async getRestaurant(restaurantId: number): Promise< Restaurant > {
 		return new Promise< Restaurant >( ( resolve ) => {
-			Rest.getREST( 'restaurant/', {id: restautantId } ).then( ( data ) => {
-				let restaurant = new Restaurant(-1);
-				restaurant.fromObject( data[0] );
+			Rest.getREST( 'restaurant/', {id: restaurantId } ).then( ( data ) => {
+				let restaurant = null;
+				if ( data[0] ) {
+					restaurant = new Restaurant(-1);
+					restaurant.fromObject( data[0] );
+				}
 				resolve( restaurant );
 			})
 		});
@@ -109,7 +111,9 @@ export class BookingProcessor {
 		return new Promise< Coupon >( ( resolve ) => {
 			Rest.getREST( 'coupon/', { code: code } ).then( ( data ) => {
 				let coupon = new Coupon(-1);
-				coupon.fromObject( data[0] );
+				if ( data[0] ) {
+					coupon.fromObject( data[0] );
+				}
 				resolve( coupon );
 			})
 		});
