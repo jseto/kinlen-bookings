@@ -17,7 +17,7 @@ export interface BookingData {
 }
 
 export class BookingProcessor {
-	private _restaurant: Restaurant;
+  private _restaurant: Restaurant;
 	private _coupon: Coupon;
 	private _booking: Booking;
 
@@ -109,7 +109,7 @@ export class BookingProcessor {
 
 	static async getCoupon( code: string ): Promise< Coupon > {
 		return new Promise< Coupon >( ( resolve ) => {
-			Rest.getREST( 'coupon/', { code: code } ).then( ( data ) => {
+			Rest.getREST( 'coupon/', { code: code.toUpperCase() } ).then( ( data ) => {
 				let coupon = new Coupon(-1);
 				if ( data[0] ) {
 					coupon.fromObject( data[0] );

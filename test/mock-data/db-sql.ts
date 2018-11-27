@@ -50,6 +50,10 @@ export class MockData {
 			'couponValue int(10), ',
 			'paidAmount int(10), ',
 			'paid int(1), ',
+			'name varchar(255), ',
+			'email varchar(255), ',
+			'paypalPaymentId varchar(255), ',
+			'trasactionTimeStamp timestamp, ',
 			'PRIMARY KEY (id) ',
 			');'
 		]

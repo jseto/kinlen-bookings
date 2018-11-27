@@ -19,7 +19,7 @@ describe( 'The BookingProcessor is in charge of place a booking in the System', 
 			adults: 4,
 			children: 2,
 			coupon: '',
-			name: 'pepito grillo',
+			name: 'Pepito Grillo',
 			email: 'p.grillo@gmail.com',
 			comment: 'no special requirements',
 		}
@@ -53,6 +53,8 @@ describe( 'The BookingProcessor is in charge of place a booking in the System', 
 			expect( booking.adultPrice ).toBe( 2000 );
 			expect( booking.childrenPrice ).toBe( 1000 );
 			expect( booking.couponValue ).toBe( 0 );
+			expect( booking.name ).toBe( 'Pepito Grillo' );
+			expect( booking.email ).toBe( 'p.grillo@gmail.com' );
 		});
 
 	});
@@ -101,6 +103,12 @@ describe( 'The BookingProcessor is in charge of place a booking in the System', 
 				expect( await processor.isCouponValid() ).toBeTruthy();
 			});
 
+			it( 'should discount coupon in any letter case for a valid coupon', async ()=> {
+				bookingData.coupon = "xxAaxX";
+				let processor = new BookingProcessor( bookingData );
+				expect( await processor.totalToPay() ).toBe( 9800 );
+			});
+
 			describe( 'around today', ()=>{
 				let realDateNow;
 
@@ -140,29 +148,31 @@ describe( 'The BookingProcessor is in charge of place a booking in the System', 
 
 			});
 
-			xit( 'should discount coupon value for a valid coupon', async ()=> {
+			it( 'should discount coupon value for a valid coupon', async ()=> {
 				bookingData.coupon = "XXAAXX";
 				let processor = new BookingProcessor( bookingData );
 				expect( await processor.totalToPay() ).toBe( 9800 );
 			});
 
-			xit( 'should discount coupon in any letter case for a valid coupon', async ()=> {
-				bookingData.coupon = "xxaaxx";
+			it( 'should NOT discount when NOT a valid coupon', async ()=> {
+				bookingData.coupon = "SDFGJKL";
 				let processor = new BookingProcessor( bookingData );
-				expect( await processor.totalToPay() ).toBe( 9800 );
+				expect( await processor.totalToPay() ).toBe( 10000 );
 			});
 
-			xit( 'should NOT discount when NOT a valid coupon', async ()=> {
-
-			});
-
-			xit( 'should NOT discount when expired coupon', async ()=> {
-
+			it( 'should NOT discount when expired coupon', async ()=> {
+				bookingData.coupon = "EXPIRED";
+				let processor = new BookingProcessor( bookingData );
+				expect( await processor.totalToPay() ).toBe( 10000 );
 			});
 
 		});
 
-		xit( 'should collect financial data', async ()=> {
+		describe( 'collects financial data', async ()=> {
+			xit( 'prepares a paypal payment object', ()=>{
+				let processor = new BookingProcessor( bookingData );
+				expect(0).toBe(1)
+			})
 
 		});
 
@@ -174,23 +184,30 @@ describe( 'The BookingProcessor is in charge of place a booking in the System', 
 
 		});
 
-		describe( 'on reject booking a message with the reason', ()=> {
-			xit( 'should notify about booking slot already booked', ()=> {
+		describe( 'on reject booking', ()=> {
+
+			xit( 'should be stored in cancelled table for future reference', ()=>{
 
 			});
 
-			xit( 'should notify about coupon not valid', ()=> {
+			describe( 'a message with the reason', ()=> {
+				xit( 'should notify about booking slot already booked', ()=> {
+
+				});
+
+				xit( 'should notify about coupon not valid', ()=> {
+
+				});
+
+				xit( 'should notify about payment not fulfilled', ()=> {
+
+				});
+
+				xit( 'should notify about failure on inseting booking in database', ()=> {
+
+				});
 
 			});
-
-			xit( 'should notify about payment not fulfilled', ()=> {
-
-			});
-
-			xit( 'should notify about failure on inseting booking in database', ()=> {
-
-			});
-
 
 		});
 

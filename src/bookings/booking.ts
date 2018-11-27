@@ -18,6 +18,12 @@ export class Booking extends DatabaseObject {
 	private _couponValue: number;
 	private _paidAmount: number;
 	private _paid: boolean;
+  private _name: string;
+	private _email: string;
+	private _paypalPaymentId: string;
+	private _trasactionTimeStamp: Date;
+	private _cancelledBy: string;
+	private _paypalRefundId: string;
 
   protected _fromObject( obj: any ){
     this._date = new Date( obj.date );
@@ -34,6 +40,12 @@ export class Booking extends DatabaseObject {
 		this._couponValue = Number( obj.couponValue );
 		this._paidAmount = Number( obj.paidAmount );
 		this._paid = Boolean( obj.paid );
+ 		this._name = obj.name;
+ 		this._email = obj.email;
+ 		this._paypalPaymentId = obj.paypalPaymentId;
+ 		this._trasactionTimeStamp = new Date( obj.trasactionTimeStamp );
+ 		this._cancelledBy = obj.cancelledBy;
+ 		this._paypalRefundId = obj.paypalRefundId;
   }
 
   protected _toObject() {
@@ -51,8 +63,12 @@ export class Booking extends DatabaseObject {
 			childrenPrice: this.childrenPrice,
 			couponValue: this.couponValue,
 			paidAmount: this.paidAmount,
-			paid: this.paid
-    };
+			paid: this.paid,
+			name: this._name,
+			email: this._email,
+			paypalPaymentId: this._paypalPaymentId,
+			trasactionTimeStamp: this._trasactionTimeStamp,
+		};
   }
 
   setDate( date: Date ) {
@@ -185,7 +201,39 @@ export class Booking extends DatabaseObject {
 		return this._paid;
 	}
 
-  // availableSeats() {
-  //   return this._assignedGuide.maxSeats() - this.bookedSeats;
-  // }
+	setName( val: string ) {
+		this._name = val;
+		return this;
+	}
+
+	get name() {
+		return this._name;
+	}
+
+	setEmail( val: string ) {
+		this._email = val;
+		return this;
+	}
+
+	get email() {
+		return this._email;
+	}
+
+	setPaypalPaymentId( val: string ) {
+		this._paypalPaymentId = val;
+		return this;
+	}
+
+	get paypalPaymentId() {
+		return this._paypalPaymentId;
+	}
+
+	setTrasactionTimeStamp( val: Date ) {
+		this._trasactionTimeStamp = val;
+		return this;
+	}
+
+	get trasactionTimeStamp() {
+		return this._trasactionTimeStamp;
+	}
 }
