@@ -1,6 +1,7 @@
 import * as fetchMock from 'fetch-mock';
 import { MockData } from './../mock-data/db-sql';
 import { BookingProcessor, BookingData } from '../../src/bookings/booking-processor';
+import { Coupon } from '../../src/bookings/coupon';
 
 describe( 'The BookingProcessor is in charge of place a booking in the System', ()=> {
 	let bookingData: BookingData;
@@ -67,15 +68,97 @@ describe( 'The BookingProcessor is in charge of place a booking in the System', 
 			expect( await processor.totalToPay() ).toBe( 8000 );
 		});
 
-		xit( 'should discount coupon value for a valid coupon', async ()=> {
+		describe( 'Coupon', ()=>{
 
-		});
+			it( 'should not validate an empty coupon', async ()=>{
+				let processor = new BookingProcessor( bookingData );
+				expect( await processor.isCouponValid() ).toBeFalsy();
+			});
 
-		xit( 'should NOT discount when NOT a valid coupon', async ()=> {
+			it( 'should not validate a non existing coupon', async ()=>{
+				bookingData.coupon = "NON_EXISTING";
+				let processor = new BookingProcessor( bookingData );
+				expect( await processor.isCouponValid() ).toBeFalsy();
+			});
 
-		});
+			it( 'should validate a non expire coupon', async ()=> {
+				bookingData.coupon = "XXAAXX";
+				let processor = new BookingProcessor( bookingData );
+				expect( await processor.isCouponValid() ).toBeTruthy();
+			});
 
-		xit( 'should NOT discount when expired coupon', async ()=> {
+			it( 'should not validate an expired coupon', async ()=> {
+				bookingData.coupon = "EXPIRED";
+				let coupon: Coupon = await BookingProcessor.getCoupon( bookingData.coupon );
+				expect( coupon.id ).toBe( 2 )
+				let processor = new BookingProcessor( bookingData );
+				expect( await processor.isCouponValid() ).toBeFalsy();
+			});
+
+			it( 'should validate a non expired coupon', async ()=> {
+				bookingData.coupon = "NON_EXPIRED";
+				let processor = new BookingProcessor( bookingData );
+				expect( await processor.isCouponValid() ).toBeTruthy();
+			});
+
+			describe( 'around today', ()=>{
+				let realDateNow;
+
+				beforeAll(()=>{
+					realDateNow = Date.now.bind(global.Date);
+					const mockedNow = new Date( '2000-01-01' );
+				  global.Date.now = jest.fn( () => mockedNow );
+				});
+
+				afterAll(()=>{
+					global.Date.now = realDateNow;
+					jest.clearAllMocks();
+				});
+
+				it( 'should fake today', async ()=> {
+					let fakeToday = Date.now();
+					expect( fakeToday ).toEqual( new Date( '2000-01-01' ) );
+				});
+
+				it( 'should validate an expire today coupon', async ()=> {
+					bookingData.coupon = "EXPIRED";
+					let processor = new BookingProcessor( bookingData );
+					expect( await processor.isCouponValid() ).toBeTruthy();
+				});
+
+				it( 'should NOT validate an expire yesterday coupon', async ()=> {
+					bookingData.coupon = "EXPIRED_YESTERDAY";
+					let processor = new BookingProcessor( bookingData );
+					expect( await processor.isCouponValid() ).toBeFalsy();
+				});
+
+				it( 'should validate an expire tomorrow coupon', async ()=> {
+					bookingData.coupon = "EXPIRES_TOMORROW";
+					let processor = new BookingProcessor( bookingData );
+					expect( await processor.isCouponValid() ).toBeTruthy();
+				});
+
+			});
+
+			xit( 'should discount coupon value for a valid coupon', async ()=> {
+				bookingData.coupon = "XXAAXX";
+				let processor = new BookingProcessor( bookingData );
+				expect( await processor.totalToPay() ).toBe( 9800 );
+			});
+
+			xit( 'should discount coupon in any letter case for a valid coupon', async ()=> {
+				bookingData.coupon = "xxaaxx";
+				let processor = new BookingProcessor( bookingData );
+				expect( await processor.totalToPay() ).toBe( 9800 );
+			});
+
+			xit( 'should NOT discount when NOT a valid coupon', async ()=> {
+
+			});
+
+			xit( 'should NOT discount when expired coupon', async ()=> {
+
+			});
 
 		});
 

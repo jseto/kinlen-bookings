@@ -11,13 +11,14 @@ export class Coupon extends DatabaseObject{
 
 	isValid(): boolean {
 		if ( this.id < 0 ) return false;
-		let  today = new Date();
-		today.setTime( 24 );
+		if ( isNaN( this._validUntil.getMilliseconds() ) ) return true;
+		let  today = new Date( Date.now() );
+		today.setHours( 0 );
 		return this._validUntil >= today;
 	}
 
 	discount( basePrice?: number ): number {
-		if ( this.id < 0 ) return 0;
+		if ( !this.isValid() ) return 0;
 		if ( this._valueType !== 'percent' ) {
 			return this._value;
 		}

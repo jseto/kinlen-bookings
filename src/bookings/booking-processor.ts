@@ -49,7 +49,7 @@ export class BookingProcessor {
 		return adultTotal + childrenTotal;
 	}
 
-	async validCoupon() {
+	async isCouponValid() {
 		let c = await this.coupon();
 		return c.isValid();
 	}
@@ -69,7 +69,7 @@ export class BookingProcessor {
 
 	async process():Promise<boolean> {
 		let valid: boolean = await this.validateBooking()
-								&& await this.validCoupon()
+								&& await this.isCouponValid()
 								&& await this.validatePayment()
 								&& await this.bookingInserted();
 
@@ -82,19 +82,19 @@ export class BookingProcessor {
 
 	private async restaurant(): Promise< Restaurant > {
 		if( !this._restaurant ) {
-			this._restaurant = await this.getRestaurant( this._booking.restaurant );
+			this._restaurant = await BookingProcessor.getRestaurant( this._booking.restaurant );
 		}
 		return this._restaurant;
 	}
 
 	private async coupon(): Promise< Coupon > {
 		if( !this._coupon ) {
-			this._coupon = await this.getCoupon( this._booking.coupon );
+			this._coupon = await BookingProcessor.getCoupon( this._booking.coupon );
 		}
 		return this._coupon;
 	}
 
-	private async getRestaurant(restaurantId: number): Promise< Restaurant > {
+	static async getRestaurant(restaurantId: number): Promise< Restaurant > {
 		return new Promise< Restaurant >( ( resolve ) => {
 			Rest.getREST( 'restaurant/', {id: restaurantId } ).then( ( data ) => {
 				let restaurant = null;
@@ -107,7 +107,7 @@ export class BookingProcessor {
 		});
 	}
 
-	private async getCoupon( code: string ): Promise< Coupon > {
+	static async getCoupon( code: string ): Promise< Coupon > {
 		return new Promise< Coupon >( ( resolve ) => {
 			Rest.getREST( 'coupon/', { code: code } ).then( ( data ) => {
 				let coupon = new Coupon(-1);
