@@ -81,4 +81,8 @@ export class Restaurant extends DatabaseObject {
 	get adultPrice() {
 		return this._adultPrice;
 	}
+
+	get name(): string {
+		return this._name;
+	}
 }

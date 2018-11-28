@@ -80,7 +80,7 @@ export class BookingProcessor {
 		return this._booking.adults + this._booking.children;
 	}
 
-	private async restaurant(): Promise< Restaurant > {
+	async restaurant(): Promise< Restaurant > {
 		if( !this._restaurant ) {
 			this._restaurant = await BookingProcessor.getRestaurant( this._booking.restaurant );
 		}

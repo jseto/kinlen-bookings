@@ -22,8 +22,6 @@ export class Booking extends DatabaseObject {
 	private _email: string;
 	private _paypalPaymentId: string;
 	private _trasactionTimeStamp: Date;
-	private _cancelledBy: string;
-	private _paypalRefundId: string;
 
   protected _fromObject( obj: any ){
     this._date = new Date( obj.date );
@@ -44,8 +42,6 @@ export class Booking extends DatabaseObject {
  		this._email = obj.email;
  		this._paypalPaymentId = obj.paypalPaymentId;
  		this._trasactionTimeStamp = new Date( obj.trasactionTimeStamp );
- 		this._cancelledBy = obj.cancelledBy;
- 		this._paypalRefundId = obj.paypalRefundId;
   }
 
   protected _toObject() {

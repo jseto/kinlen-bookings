@@ -19,6 +19,10 @@ const externals = [
 	{
 		globalName: 'flatpickr',
 		nodeModule: 'flatpickr'
+	},
+	{
+		globalName: 'paypal',
+		nodeModule: 'paypal-checkout'
 	}
 ];
 
