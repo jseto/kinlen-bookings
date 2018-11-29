@@ -2,13 +2,14 @@ import { Instance as FlatpickrInstance} from "flatpickr/dist/types/instance";
 import { BookingMapper } from "../bookings/booking-mapper";
 import { Observer, ObservableField, ObservableRadio, ObservableSelect } from '../utils/observer';
 import { MAX_SEATS_PER_GUIDE } from '../bookings/guide';
+import { Booking } from "../bookings/booking";
 
 interface TimeOption {
   time: string,
 	observable: ObservableRadio
 }
 
-interface State {
+export interface FormState {
 	adults?: number;
 	children?: number;
 	date?: string;
@@ -16,10 +17,10 @@ interface State {
 	coupon?: string;
 	name?: string;
 	email?: string;
-	comments?: string;
+	comment?: string;
 }
 
-export const initialState: State = {
+export const initialState: FormState = {
 	adults: 0,
 	children: 0,
 	date: '',
@@ -27,17 +28,23 @@ export const initialState: State = {
 	coupon: '',
 	name: '',
 	email: '',
-	comments: '',
+	comment: '',
 }
 
-
-export class BookingFormManager extends Observer< State > {
+export class BookingFormManager extends Observer< FormState > {
 	private _mapper: BookingMapper;
   private _timeOption: TimeOption[];
 
-	constructor(initialState: State) {
+	constructor(initialState: FormState) {
 		super( initialState );
 		this._timeOption = [];
+	}
+
+	getBooking() {
+		let booking = new Booking(-1)
+		booking.fromObject( this.state );
+		booking.setRestaurant( this._mapper.restaurantId );
+		return booking;
 	}
 
 	async setRestaurant( restaurantId: number ) {

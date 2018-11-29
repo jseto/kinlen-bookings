@@ -1,5 +1,7 @@
 import Flatpickr from 'flatpickr'
 import { BookingFormManager, initialState } from "./frontend/booking-form-manager";
+import { BookingProcessor } from './bookings/booking-processor';
+import { Paypal } from './utils/paypal';
 
 declare function flatpickr( element: HTMLElement, config:Flatpickr.Options.Options );
 
@@ -30,7 +32,11 @@ export async function setupBookingFormManager() {
 								.addTimeOption( '19:00:00', 'form-field-kl-booking-time-0' )
 								.addTimeOption( '21:00:00', 'form-field-kl-booking-time-1' )
 								.setCalendar( (<any>document.getElementById( 'form-field-kl-booking-date' ))._flatpickr )
-	return bookingFormManager.setRestaurant( Number( postId ) );
+	bookingFormManager.setRestaurant( Number( postId ) );
+	let processor = new BookingProcessor( await bookingFormManager.getBooking() )
+	let paypal = new Paypal( processor );
+	// paypal.renderButton( 'paypal-button' );
+	return bookingFormManager;
 }
 
 /**

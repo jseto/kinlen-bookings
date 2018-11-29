@@ -1,10 +1,11 @@
 import * as fetchMock from 'fetch-mock';
 import { MockData } from './../mock-data/db-sql';
-import { BookingProcessor, BookingData } from '../../src/bookings/booking-processor';
+import { BookingProcessor } from '../../src/bookings/booking-processor';
 import { Coupon } from '../../src/bookings/coupon';
+import { Booking } from '../../src/bookings/booking';
 
 describe( 'The BookingProcessor is in charge of place a booking in the System', ()=> {
-	let bookingData: BookingData;
+	let booking: Booking;
 
 	beforeAll(()=>{
 		let mockData = new MockData();
@@ -12,7 +13,8 @@ describe( 'The BookingProcessor is in charge of place a booking in the System', 
 	});
 
 	beforeEach(()=>{
-		bookingData = {
+		booking = new Booking(-1);
+		booking.fromObject({
 			restaurant_id: 1,
 			date: new Date( '2018-10-10' ),
 			time: '19:00:00',
@@ -22,26 +24,26 @@ describe( 'The BookingProcessor is in charge of place a booking in the System', 
 			name: 'Pepito Grillo',
 			email: 'p.grillo@gmail.com',
 			comment: 'no special requirements',
-		}
+		});
 	});
 
 	describe( 'the booking', ()=>{
 
 		it( 'should accept a booking that can be placed', async ()=> {
-			bookingData.date = new Date( '2018-10-10' );
-			let processor = new BookingProcessor( bookingData );
+			booking.setDate( new Date( '2018-10-10' ) );
+			let processor = new BookingProcessor( booking );
 			expect( await processor.validateBooking() ).toBeTruthy()
 		});
 
 		it( 'should reject a booking that cannot be placed', async()=> {
-			bookingData.date = new Date( '2018-10-05' );
-			let processor = new BookingProcessor( bookingData );
+			booking.setDate( new Date( '2018-10-05' ) );
+			let processor = new BookingProcessor( booking );
 			expect( await processor.validateBooking() ).toBeFalsy()
 		});
 
 		it( 'should fill booking data', async ()=>{
-			let processor = new BookingProcessor( bookingData );
-			let booking = await processor.prepareBooking();
+			let processor = new BookingProcessor( booking );
+			booking = await processor.prepareBooking();
 
 			expect( booking.date ).toEqual( new Date( '2018-10-10' ) );
 			expect( booking.time ).toEqual( '19:00:00' );
@@ -62,50 +64,50 @@ describe( 'The BookingProcessor is in charge of place a booking in the System', 
 	describe( 'the payment process', ()=> {
 
 		it( 'should calculate the total amount', async ()=> {
-			let processor = new BookingProcessor( bookingData );
+			let processor = new BookingProcessor( booking );
 			expect( await processor.totalToPay() ).toBe( 10000 );
-			bookingData.adults = 2;
-			bookingData.children = 4;
-			processor = new BookingProcessor( bookingData );
+			booking.setAdults( 2 );
+			booking.setChildren( 4 );
+			processor = new BookingProcessor( booking );
 			expect( await processor.totalToPay() ).toBe( 8000 );
 		});
 
 		describe( 'Coupon', ()=>{
 
 			it( 'should not validate an empty coupon', async ()=>{
-				let processor = new BookingProcessor( bookingData );
+				let processor = new BookingProcessor( booking );
 				expect( await processor.isCouponValid() ).toBeFalsy();
 			});
 
 			it( 'should not validate a non existing coupon', async ()=>{
-				bookingData.coupon = "NON_EXISTING";
-				let processor = new BookingProcessor( bookingData );
+				booking.setCoupon( "NON_EXISTING" );
+				let processor = new BookingProcessor( booking );
 				expect( await processor.isCouponValid() ).toBeFalsy();
 			});
 
 			it( 'should validate a non expire coupon', async ()=> {
-				bookingData.coupon = "XXAAXX";
-				let processor = new BookingProcessor( bookingData );
+				booking.setCoupon( "XXAAXX" );
+				let processor = new BookingProcessor( booking );
 				expect( await processor.isCouponValid() ).toBeTruthy();
 			});
 
 			it( 'should not validate an expired coupon', async ()=> {
-				bookingData.coupon = "EXPIRED";
-				let coupon: Coupon = await BookingProcessor.getCoupon( bookingData.coupon );
+				booking.setCoupon( "EXPIRED" );
+				let coupon: Coupon = await BookingProcessor.getCoupon( booking.coupon );
 				expect( coupon.id ).toBe( 2 )
-				let processor = new BookingProcessor( bookingData );
+				let processor = new BookingProcessor( booking );
 				expect( await processor.isCouponValid() ).toBeFalsy();
 			});
 
 			it( 'should validate a non expired coupon', async ()=> {
-				bookingData.coupon = "NON_EXPIRED";
-				let processor = new BookingProcessor( bookingData );
+				booking.setCoupon( "NON_EXPIRED" );
+				let processor = new BookingProcessor( booking );
 				expect( await processor.isCouponValid() ).toBeTruthy();
 			});
 
 			it( 'should discount coupon in any letter case for a valid coupon', async ()=> {
-				bookingData.coupon = "xxAaxX";
-				let processor = new BookingProcessor( bookingData );
+				booking.setCoupon( "xxAaxX" );
+				let processor = new BookingProcessor( booking );
 				expect( await processor.totalToPay() ).toBe( 9800 );
 			});
 
@@ -129,40 +131,40 @@ describe( 'The BookingProcessor is in charge of place a booking in the System', 
 				});
 
 				it( 'should validate an expire today coupon', async ()=> {
-					bookingData.coupon = "EXPIRED";
-					let processor = new BookingProcessor( bookingData );
+					booking.setCoupon( "EXPIRED" );
+					let processor = new BookingProcessor( booking );
 					expect( await processor.isCouponValid() ).toBeTruthy();
 				});
 
 				it( 'should NOT validate an expire yesterday coupon', async ()=> {
-					bookingData.coupon = "EXPIRED_YESTERDAY";
-					let processor = new BookingProcessor( bookingData );
+					booking.setCoupon( "EXPIRED_YESTERDAY" );
+					let processor = new BookingProcessor( booking );
 					expect( await processor.isCouponValid() ).toBeFalsy();
 				});
 
 				it( 'should validate an expire tomorrow coupon', async ()=> {
-					bookingData.coupon = "EXPIRES_TOMORROW";
-					let processor = new BookingProcessor( bookingData );
+					booking.setCoupon( "EXPIRES_TOMORROW" );
+					let processor = new BookingProcessor( booking );
 					expect( await processor.isCouponValid() ).toBeTruthy();
 				});
 
 			});
 
 			it( 'should discount coupon value for a valid coupon', async ()=> {
-				bookingData.coupon = "XXAAXX";
-				let processor = new BookingProcessor( bookingData );
+				booking.setCoupon( "XXAAXX" );
+				let processor = new BookingProcessor( booking );
 				expect( await processor.totalToPay() ).toBe( 9800 );
 			});
 
 			it( 'should NOT discount when NOT a valid coupon', async ()=> {
-				bookingData.coupon = "SDFGJKL";
-				let processor = new BookingProcessor( bookingData );
+				booking.setCoupon( "SDFGJKL" );
+				let processor = new BookingProcessor( booking );
 				expect( await processor.totalToPay() ).toBe( 10000 );
 			});
 
 			it( 'should NOT discount when expired coupon', async ()=> {
-				bookingData.coupon = "EXPIRED";
-				let processor = new BookingProcessor( bookingData );
+				booking.setCoupon( "EXPIRED" );
+				let processor = new BookingProcessor( booking );
 				expect( await processor.totalToPay() ).toBe( 10000 );
 			});
 
@@ -170,7 +172,7 @@ describe( 'The BookingProcessor is in charge of place a booking in the System', 
 
 		describe( 'collects financial data', async ()=> {
 			xit( 'prepares a paypal payment object', ()=>{
-				let processor = new BookingProcessor( bookingData );
+				let processor = new BookingProcessor( booking );
 				expect(0).toBe(1)
 			})
 

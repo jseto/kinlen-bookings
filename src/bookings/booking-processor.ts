@@ -4,26 +4,25 @@ import { Restaurant } from "./restaurant";
 import { Rest } from "../database/rest";
 import { Coupon } from "./coupon";
 
-export interface BookingData {
-	restaurant_id: number,
-	date: Date,
-	time: string,
-	adults: number,
-	children: number,
-	name: string,
-	email: string,
-	coupon: string,
-	comment: string
-}
+// export interface BookingData {
+// 	restaurant_id: number,
+// 	date: Date,
+// 	time: string,
+// 	adults: number,
+// 	children: number,
+// 	name: string,
+// 	email: string,
+// 	coupon: string,
+// 	comment: string
+// }
 
 export class BookingProcessor {
   private _restaurant: Restaurant;
 	private _coupon: Coupon;
 	private _booking: Booking;
 
-	constructor( bookingData: BookingData ) {
-		this._booking = new Booking(-1);
-		this._booking.fromObject( bookingData );
+	constructor( booking: Booking ) {
+		this._booking = booking;
 	}
 
 	async prepareBooking() {

@@ -1,3 +1,4 @@
+import '../mocks/match-media'
 import * as fetchMock from 'fetch-mock';
 import { MockData } from './../mock-data/db-sql';
 import * as fs from "fs";

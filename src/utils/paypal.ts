@@ -21,11 +21,15 @@ export class Paypal {
     					});
 	}
 
-	renderButton( anchor: HTMLElement ) {
-		paypal.Button.render( this.buttonConfig(), anchor );
+	renderButton( anchorElement: string ): Promise< void > {
+		let cfg = this.buttonConfig()
+		console.log('Button Rendered -----------------',paypal.Button.render )
+		return new Promise< void >( resolve => {
+			paypal.Button.render( cfg, anchorElement ).then(()=>resolve() );
+		})
 	}
 
-	async buttonConfig() {
+	buttonConfig() {
 		return {
 			env: 'sandbox', // sandbox | production
 			style: this.buttonStyle(),
@@ -34,7 +38,8 @@ export class Paypal {
 			commit: true,
 			client: this.secrets(),
 			payment: this.payment,
-			onAutorize: this.autorized
+			onAuthorize: this.autorized,
+			onRender: ()=> console.log('reeeendered---------->>>>>>>>>>', document.body.innerHTML)
 		}
 	}
 
