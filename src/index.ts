@@ -11,9 +11,14 @@ document.addEventListener( 'DOMContentLoaded', function () {
 	if ( bookingForm ) {
 		flatpickr( document.getElementById( 'form-field-kl-booking-date' ), { disableMobile: true } );
 		document.getElementById('form-field-kl-booking-date').setAttribute('autocomplete', 'off');
-		setupBookingFormManager();
+		setup();
 	}
 }, false );
+
+async function setup() {
+	let formManager = await setupBookingFormManager();
+	setupPaypalButton( formManager );
+}
 
 export async function setupBookingFormManager() {
 	let postId = document.getElementById( 'kl-post-id' ).firstElementChild.firstElementChild.innerHTML
@@ -32,11 +37,13 @@ export async function setupBookingFormManager() {
 								.addTimeOption( '19:00:00', 'form-field-kl-booking-time-0' )
 								.addTimeOption( '21:00:00', 'form-field-kl-booking-time-1' )
 								.setCalendar( (<any>document.getElementById( 'form-field-kl-booking-date' ))._flatpickr )
-	bookingFormManager.setRestaurant( Number( postId ) );
-	let processor = new BookingProcessor( await bookingFormManager.getBooking() )
+	return bookingFormManager.setRestaurant( Number( postId ) );
+}
+
+async function setupPaypalButton( formManager: BookingFormManager ) {
+	let processor = new BookingProcessor( await formManager.getBooking() )
 	let paypal = new Paypal( processor );
-	// paypal.renderButton( 'paypal-button' );
-	return bookingFormManager;
+	paypal.renderButton( '#paypal-button' );
 }
 
 /**

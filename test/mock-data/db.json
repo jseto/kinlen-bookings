@@ -706,7 +706,7 @@
 		{
 			"id":"1",
 			"code":"XXAAXX",
-			"validUntil":"",
+			"validUntil":"9999-12-31",
 			"value":"200",
 			"valueType":"absolute",
 			"commission":"100",

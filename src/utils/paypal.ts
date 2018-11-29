@@ -22,14 +22,13 @@ export class Paypal {
 	}
 
 	renderButton( anchorElement: string ): Promise< void > {
-		let cfg = this.buttonConfig()
-		console.log('Button Rendered -----------------',paypal.Button.render )
 		return new Promise< void >( resolve => {
+			let cfg = this.buttonConfig( resolve )
 			paypal.Button.render( cfg, anchorElement ).then(()=>resolve() );
 		})
 	}
 
-	buttonConfig() {
+	buttonConfig( resolve: () => void ) {
 		return {
 			env: 'sandbox', // sandbox | production
 			style: this.buttonStyle(),
@@ -37,9 +36,9 @@ export class Paypal {
 			// Enable Pay Now checkout flow (optional)
 			commit: true,
 			client: this.secrets(),
-			payment: this.payment,
+			payment: ( data, actions ) => this.payment( data, actions ),
 			onAuthorize: this.autorized,
-			onRender: ()=> console.log('reeeendered---------->>>>>>>>>>', document.body.innerHTML)
+			onRender: ()=> resolve()
 		}
 	}
 

@@ -5,7 +5,7 @@ import { MockData } from './../mock-data/db-sql';
 import { BookingProcessor } from '../../src/bookings/booking-processor';
 import { Booking } from '../../src/bookings/booking';
 
-xdescribe( 'paypal checkout button', ()=>{
+describe( 'paypal checkout button', ()=>{
 	let booking: Booking;
 
 	beforeAll(()=>{
@@ -34,8 +34,7 @@ xdescribe( 'paypal checkout button', ()=>{
 		let bookingProcessor = new BookingProcessor( booking )
 		let paypal = new Paypal( bookingProcessor );
 		await paypal.renderButton( '#paypal-button' )
-		console.log('----------', document.body.outerHTML)
-		// expect( document.getElementById( 'paypal-button' ) ).toContain(0);
+		expect( document.getElementById( 'paypal-button' ).firstElementChild.classList ).toContain( 'paypal-button' );
 	});
 
 	xit( 'should create a payment', async ()=>{

@@ -132,7 +132,7 @@ export class MockData {
 			this.couponTable,
 			' ( ',
 			'id int(10), ', // NOT NULL
-			'code varchar(15), ',
+			'code varchar(20), ',
 			'validUntil date, ',
 			'value int(10), ',
 			'valueType varchar(10), ', //percent, absolute
