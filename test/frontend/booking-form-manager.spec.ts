@@ -176,7 +176,7 @@ describe( 'BookingFormManager is in charge to manage the DOM form elements and t
 			let totalData = document.getElementById( 'kl-summary-total-to-pay' ).innerHTML;
 
 			expect( genericData ).toContain( (new Date('2018-10-05')).toDateString() );
-			expect( genericData ).toContain( '19:00' );
+			expect( genericData ).toContain( ' 19:00 ' );
 			expect( emailData ).toContain( 'test@test.com' );
 			expect( adultsData ).toContain( '2 ' );
 			expect( adultsData ).toContain( ' ฿2000 ' );

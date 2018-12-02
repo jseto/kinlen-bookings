@@ -109,7 +109,7 @@ export class BookingFormManager extends Observer< FormState > {
 		let restaurant = await p.restaurant()
 		let element: string[] = [];
 		element.push( '	<h3>Please, review the details of your booking</h3>' );
-		element.push( '		<p id="kl-summary-generic-data">You will book on ' + b.date.toDateString() + ' at ' + b.time + ' in restaurant ' + restaurant.name + '</p>' );
+		element.push( '		<p id="kl-summary-generic-data">You will book on ' + b.date.toDateString() + ' at ' + b.time.slice( 0, 5 ) + ' in restaurant ' + restaurant.name + '</p>' );
 		element.push( '		<p id="kl-summary-email">In case we need to contact you, we will send an email to: ' + b.email + '</p>' );
 		element.push( '		<p id="kl-summary-adults">' + b.adults + ' adults at ฿' + b.adultPrice + ' each</p>' );
 		if ( b.children ) {
