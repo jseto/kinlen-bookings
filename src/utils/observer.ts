@@ -200,15 +200,12 @@ export class ObservableRadioGroup extends Observable< string > {
 	constructor( name: string, initialValue: string ) {
 		super( name, '', initialValue );
 		this._radioList = [];
-		this._initialValue = String(initialValue);
+		this._initialValue = initialValue;
 	}
 
 	addRadioButton( radio: ObservableRadio ) {
-		radio.value = this._initialValue === radio.name
+		radio.value = this.value === radio.name
 		radio.setRadioGroup( this );
-		// radio.element.addEventListener('change', ()=>{
-		// 	this._change();
-		// });
 		this._radioList.push( radio );
 	}
 
@@ -231,8 +228,8 @@ export class ObservableRadioGroup extends Observable< string > {
 			}
 			return item.value;
 		});
-		return value;
+		return value || <T>( this._initialValue as any );
 	}
 
-	get element(){return null}; // hidding since not have element
+	get element(){return null}; // not have element
 }
