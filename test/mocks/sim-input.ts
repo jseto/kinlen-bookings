@@ -1,7 +1,11 @@
 export class SimInput {
   static setValue( elementId: string, value: string, timeout_ms: number = 1 ): Promise<{}> {
 		let element = SimInput.getInputElementById( elementId );
-		if ( element.value !== value ) {
+		if ( element instanceof HTMLSelectElement ) {
+			element.value = value;
+			element.dispatchEvent( new Event( 'change' ) );
+		}
+		else if ( element.value !== value ) {
 			element.value = '';
 			for( let letter of value ) {
 				element.value += letter;

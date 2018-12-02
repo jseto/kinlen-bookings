@@ -104,11 +104,13 @@ export abstract class Observable< T > extends ObservableBase {
 		super();
 		this._value = initialValue; 		// to remember type
 		this.name = name;
-		this._element = document.getElementById( element );
-		if ( !this._element ){
+		this._element = element? document.getElementById( element ) : null;
+		if ( element && !this._element ){
 			throw new Error('Error: Element ' + element + ' not found' );
 		}
-		this._element.onchange = ()=> this._change();
+		if ( this._element ) {
+			this._element.onchange = ()=> this._change();
+		}
 	}
 
 	set value( val: T ) {
@@ -147,7 +149,10 @@ export class ObservableField< T > extends Observable< T > {
 }
 
 export class ObservableRadio< T = boolean > extends Observable< T > {
-	
+	constructor( name: string, element: string ) {
+		super( name, element, null );
+	}
+
 	hide() {
 		this._element.parentElement.style.display = 'none';
 	}
@@ -171,4 +176,44 @@ export class ObservableSelect< T > extends ObservableField< T > {
 		select.options.length = 0;
 		options.forEach( (item)=>	select.insertAdjacentHTML('beforeend','<option>' + item + '</option>') );
 	}
+}
+
+export class ObservableRadioGroup< T = string > extends Observable< T > {
+	private _radioList: ObservableRadio[];
+	private _initialValue: string;
+
+	constructor( name: string, initialValue: T ) {
+		super( name, '', initialValue );
+		this._radioList = [];
+		this._initialValue = String(initialValue);
+	}
+
+	addRadioButton( radio: ObservableRadio ) {
+		radio.value = this._initialValue === radio.name;
+		this._radioList.push( radio );
+	}
+
+	get radioButtons() {
+		return this._radioList;
+	}
+
+	setValue< T >( val: T ) {
+		this._radioList.forEach((item)=>{
+			item.value = (<HTMLInputElement>item.element).value === String( val );
+		});
+	}
+
+	getValue< T >(): T {
+		let value:T;
+
+		this._radioList.some((item)=>{
+			if ( item.value ) {
+				value = this.convert<T>( (<HTMLInputElement>item.element).value );
+			}
+			return item.value;
+		});
+		return value;
+	}
+
+	get element(){return null}; // hidding since not have element
 }

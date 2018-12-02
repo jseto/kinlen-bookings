@@ -1,4 +1,4 @@
-import { Observer, ObservableField } from "../../src/utils/observer";
+import { Observer, ObservableField, ObservableRadioGroup, ObservableRadio } from "../../src/utils/observer";
 import { SimInput } from "../mocks/sim-input";
 
 describe( 'Observable is Observed by Observer', ()=>{
@@ -38,7 +38,6 @@ describe( 'Observable is Observed by Observer', ()=>{
 				let observable = new ObservableField<string>( 'thaiYear', 'test-id', '' );
 				expect( observable.value ).toBe( '2568' );
 			});
-
 
 			it( 'should read the input field value from observable', ()=> {
 				let observable = new ObservableField<number>( 'thaiYear', 'test-id', 0 );
@@ -126,5 +125,49 @@ describe( 'Observable is Observed by Observer', ()=>{
 			expect( observer.observables['thaiYear'].element ).toBe( document.getElementById( 'test-id' ) );
 		});
 	});
+
+	describe( 'for an ObservableRadioGroup', ()=>{
+		let group;
+		let radio19: ObservableRadio, radio21: ObservableRadio, radio23: ObservableRadio;
+
+		beforeEach(()=>{
+			document.body.innerHTML = ' \
+				<input type="radio" value="19:00" id="time-0" name="group[time]"/> \
+				<input type="radio" value="21:00" id="time-1" name="group[time]"/> \
+				<input type="radio" value="23:00" id="time-2" name="group[time]"/> \
+			';
+
+			group = new ObservableRadioGroup( 'radioGroup', '19:00' );
+			radio19 = new ObservableRadio( '19:00', 'time-0' );
+			radio21 = new ObservableRadio( '21:00', 'time-1' );
+			radio23 = new ObservableRadio( '23:00', 'time-2' );
+			group.addRadioButton( radio19 );
+			group.addRadioButton( radio21 );
+			group.addRadioButton( radio23 );
+		});
+
+		it( 'should check the radio of initial value', ()=>{
+			expect( radio19.value ).toBeTruthy();
+			expect( radio21.value ).toBeFalsy();
+			expect( radio23.value ).toBeFalsy();
+		})
+
+		it( 'should set checked property of radioButton on set value', ()=>{
+			expect( radio21.value ).toBeFalsy();
+			group.value = '21:00';
+
+			expect( radio19.value ).toBeFalsy();
+			expect( radio21.value ).toBeTruthy();
+			expect( radio23.value ).toBeFalsy();
+		});
+
+		it( 'shoud retrieve the value from a check radioButton', ()=>{
+			radio19.value = false;
+			radio21.value = false;
+			radio23.value = true;
+
+			expect( group.value ).toEqual( '23:00' );
+		})
+	})
 
 });
