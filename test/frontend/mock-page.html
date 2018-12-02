@@ -1,52 +1,67 @@
-	<form class="elementor-form" method="post" name="Booking">
-			<input type="hidden" name="post_id" value="359"/>
-			<input type="hidden" name="form_id" value="0e6659d">
+<form class="elementor-form" id="kl-booking-form" method="post" name="Booking">
+  <input type="hidden" name="post_id" value="359" />
+  <input type="hidden" name="form_id" value="0e6659d">
 
-			<div class="elementor-form-fields-wrapper elementor-labels-above">
-								<div class="elementor-field-type-select elementor-field-group elementor-column elementor-field-group-kl-adults elementor-col-50 elementor-field-required elementor-mark-required">
-					<label for="form-field-kl-adults" class="elementor-field-label">Adults</label>		<div class="elementor-field elementor-select-wrapper ">
-			<select name="form_fields[kl-adults]" id="form-field-kl-adults" class="elementor-field-textual elementor-size-sm" required="required" aria-required="true">
-										<option value="2">2</option>
-												<option value="3">3</option>
-												<option value="4">4</option>
-												<option value="5">5</option>
-												<option value="6">6</option>
-									</select>
-		</div>
-						</div>
-								<div class="elementor-field-type-select elementor-field-group elementor-column elementor-field-group-kl-children elementor-col-50 elementor-field-required elementor-mark-required">
-					<label for="form-field-kl-children" class="elementor-field-label">Children</label>		<div class="elementor-field elementor-select-wrapper ">
-			<select name="form_fields[kl-children]" id="form-field-kl-children" class="elementor-field-textual elementor-size-sm" required="required" aria-required="true">
-										<option value="0">0</option>
-												<option value="1">1</option>
-												<option value="2">2</option>
-												<option value="3">3</option>
-												<option value="4">4</option>
-									</select>
-		</div>
-						</div>
-								<div class="elementor-field-type-date elementor-field-group elementor-column elementor-field-group-kl-booking-date elementor-col-50 elementor-field-required elementor-mark-required">
-					<label for="form-field-kl-booking-date" class="elementor-field-label">Select Date</label><input type="text" name="form_fields[kl-booking-date]" id="form-field-kl-booking-date" class="elementor-field elementor-size-sm elementor-field-textual elementor-date-field flatpickr-input" placeholder="Date" required="required" aria-required="true" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}" min="2018-09-21" autocomplete="off">				</div>
-								<div class="elementor-field-type-radio elementor-field-group elementor-column elementor-field-group-kl-booking-time elementor-col-50 elementor-field-required elementor-mark-required">
-					<label for="form-field-kl-booking-time" class="elementor-field-label">Available Hours</label><div class="elementor-field-subgroup  elementor-subgroup-inline"><span class="elementor-field-option" style="display: block;"><input type="radio" value="19:00" id="form-field-kl-booking-time-0" name="form_fields[kl-booking-time]" required="required" aria-required="true"> <label for="form-field-kl-booking-time-0">19:00</label></span><span class="elementor-field-option" style="display: block;"><input type="radio" value="21:00" id="form-field-kl-booking-time-1" name="form_fields[kl-booking-time]" required="required" aria-required="true"> <label for="form-field-kl-booking-time-1">21:00</label></span></div>				</div>
-								<div class="elementor-field-type-text elementor-field-group elementor-column elementor-field-group-kl-coupon elementor-col-100">
-					<label for="form-field-kl-coupon" class="elementor-field-label">Discount Coupon</label><input size="1" type="text" name="form_fields[kl-coupon]" id="form-field-kl-coupon" class="elementor-field elementor-size-sm  elementor-field-textual" placeholder="Enter the coupon code">				</div>
-								<div class="elementor-field-type-text elementor-field-group elementor-column elementor-field-group-kl-name elementor-col-100">
-					<label for="form-field-kl-name" class="elementor-field-label">Name</label><input size="1" type="text" name="form_fields[kl-name]" id="form-field-kl-name" class="elementor-field elementor-size-sm  elementor-field-textual" placeholder="Name">				</div>
-								<div class="elementor-field-type-email elementor-field-group elementor-column elementor-field-group-kl-email elementor-col-100 elementor-field-required elementor-mark-required">
-					<label for="form-field-kl-email" class="elementor-field-label">E-Mail</label><input size="1" type="email" name="form_fields[kl-email]" id="form-field-kl-email" class="elementor-field elementor-size-sm  elementor-field-textual" placeholder="e-mail" required="required" aria-required="true">				</div>
-								<div class="elementor-field-type-textarea elementor-field-group elementor-column elementor-field-group-kl-requirements elementor-col-100">
-					<label for="form-field-kl-requirements" class="elementor-field-label">Special requirements</label><textarea class="elementor-field-textual elementor-field  elementor-size-sm" name="form_fields[kl-requirements]" id="form-field-kl-requirements" rows="3" placeholder="Please, let us know about any special requirement"></textarea>				</div>
-								<div class="elementor-field-group elementor-column elementor-field-type-submit elementor-col-100">
-					<button type="submit" class="elementor-button elementor-size-sm" id="kl-book-btn">
-						<span>
+  <div class="elementor-form-fields-wrapper elementor-labels-above">
+    <div class="elementor-field-type-select elementor-field-group elementor-column elementor-field-group-kl-adults elementor-col-50 elementor-field-required elementor-mark-required">
+      <label for="form-field-kl-adults" class="elementor-field-label">Adults</label>
+      <div class="elementor-field elementor-select-wrapper ">
+        <select name="form_fields[kl-adults]" id="form-field-kl-adults" class="elementor-field-textual elementor-size-sm" required="required" aria-required="true">
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+        </select>
+      </div>
+    </div>
+    <div class="elementor-field-type-select elementor-field-group elementor-column elementor-field-group-kl-children elementor-col-50 elementor-field-required elementor-mark-required">
+      <label for="form-field-kl-children" class="elementor-field-label">Children</label>
+      <div class="elementor-field elementor-select-wrapper ">
+        <select name="form_fields[kl-children]" id="form-field-kl-children" class="elementor-field-textual elementor-size-sm" required="required" aria-required="true">
+          <option value="0">0</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+        </select>
+      </div>
+    </div>
+    <div class="elementor-field-type-date elementor-field-group elementor-column elementor-field-group-kl-booking-date elementor-col-50 elementor-field-required elementor-mark-required">
+      <label for="form-field-kl-booking-date" class="elementor-field-label">Select Date</label>
+      <input type="text" name="form_fields[kl-booking-date]" id="form-field-kl-booking-date" class="elementor-field elementor-size-sm elementor-field-textual elementor-date-field flatpickr-input" placeholder="Date" required="required" aria-required="true" pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}"
+      min="2018-09-21" autocomplete="off"> </div>
+    <div class="elementor-field-type-radio elementor-field-group elementor-column elementor-field-group-kl-booking-time elementor-col-50 elementor-field-required elementor-mark-required">
+      <label for="form-field-kl-booking-time" class="elementor-field-label">Available Hours</label>
+      <div class="elementor-field-subgroup  elementor-subgroup-inline"><span class="elementor-field-option" style="display: block;"><input type="radio" value="19:00" id="form-field-kl-booking-time-0" name="form_fields[kl-booking-time]" required="required" aria-required="true"> <label for="form-field-kl-booking-time-0">19:00</label></span>
+        <span class="elementor-field-option" style="display: block;">
+          <input type="radio" value="21:00" id="form-field-kl-booking-time-1" name="form_fields[kl-booking-time]" required="required" aria-required="true">
+          <label for="form-field-kl-booking-time-1">21:00</label>
+          </span>
+      </div>
+    </div>
+    <div class="elementor-field-type-text elementor-field-group elementor-column elementor-field-group-kl-coupon elementor-col-100">
+      <label for="form-field-kl-coupon" class="elementor-field-label">Discount Coupon</label>
+      <input size="1" type="text" name="form_fields[kl-coupon]" id="form-field-kl-coupon" class="elementor-field elementor-size-sm  elementor-field-textual" placeholder="Enter the coupon code"> </div>
+    <div class="elementor-field-type-text elementor-field-group elementor-column elementor-field-group-kl-name elementor-col-100">
+      <label for="form-field-kl-name" class="elementor-field-label">Name</label>
+      <input size="1" type="text" name="form_fields[kl-name]" id="form-field-kl-name" class="elementor-field elementor-size-sm  elementor-field-textual" placeholder="Name"> </div>
+    <div class="elementor-field-type-email elementor-field-group elementor-column elementor-field-group-kl-email elementor-col-100 elementor-field-required elementor-mark-required">
+      <label for="form-field-kl-email" class="elementor-field-label">E-Mail</label>
+      <input size="1" type="email" name="form_fields[kl-email]" id="form-field-kl-email" class="elementor-field elementor-size-sm  elementor-field-textual" placeholder="e-mail" required="required" aria-required="true"> </div>
+    <div class="elementor-field-type-textarea elementor-field-group elementor-column elementor-field-group-kl-requirements elementor-col-100">
+      <label for="form-field-kl-requirements" class="elementor-field-label">Special requirements</label>
+      <textarea class="elementor-field-textual elementor-field  elementor-size-sm" name="form_fields[kl-requirements]" id="form-field-kl-requirements" rows="3" placeholder="Please, let us know about any special requirement"></textarea>
+    </div>
+    <div class="elementor-field-group elementor-column elementor-field-type-submit elementor-col-100">
+      <button type="submit" class="elementor-button elementor-size-sm" id="kl-book-btn">
+        <span>
 															<span class="elementor-align-icon-right elementor-button-icon">
 									<i class="fa fa-address-card"></i>
 								</span>
-																						<span class="elementor-button-text">Book Now</span>
-													</span>
-					</button>
-				</div>
-			</div>
-		</form>
-		</div>
+        <span class="elementor-button-text">Book Now</span>
+        </span>
+      </button>
+    </div>
+  </div>
+</form>

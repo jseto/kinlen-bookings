@@ -10,6 +10,8 @@ import { BookingFormManager } from '../../src/frontend/booking-form-manager';
 describe( 'BookingFormManager is in charge to manage the DOM form elements and their relationships', ()=> {
 	let postIdHtml;
 	let html;
+	let summaryBoxHtml;
+	let paypalContainerHtml;
 	let formManager: BookingFormManager;
 	let dateField: any;
 
@@ -27,10 +29,12 @@ describe( 'BookingFormManager is in charge to manage the DOM form elements and t
 			'	</div>																					',
 			'</div>																						'
 		];
+		summaryBoxHtml = '<div id="kl-summary-box"></div>'
+		paypalContainerHtml = '<div id="paypal-button-container"></div>';
 	});
 
 	beforeEach(async()=>{
-		document.body.innerHTML = html + postIdHtml.join(' ');
+		document.body.innerHTML = html + summaryBoxHtml + paypalContainerHtml + postIdHtml.join(' ');
 
 		dateField = document.getElementById( 'form-field-kl-booking-date' );
 		dateField['_flatpickr'] = { config:{} };
@@ -67,6 +71,7 @@ describe( 'BookingFormManager is in charge to manage the DOM form elements and t
 			expect( SimInput.isChecked('form-field-kl-booking-time-0') ).toBeFalsy();
 			await SimInput.setValue( 'form-field-kl-booking-date', '2018-10-08' )
 			expect( SimInput.isChecked('form-field-kl-booking-time-0') ).toBeTruthy();
+			expect( formManager.state.time ).toEqual( '19:00' );
 		});
 
 		// it( 'should not set focus on name field', async ()=> {
@@ -78,20 +83,20 @@ describe( 'BookingFormManager is in charge to manage the DOM form elements and t
 
 	});
 
-	describe( 'on time set', ()=> {
-
-		// it( 'should set not focus on name field', async ()=> {
-		// 	document.getElementById( 'form-field-kl-booking-date' ).focus();
-		// 	expect( SimInput.hasFocus( 'form-field-kl-name' ) ).toBeFalsy();
-		// 	await SimInput.check( 'form-field-kl-booking-time-0', true );
-		// 	expect( SimInput.hasFocus( 'form-field-kl-name' ) ).toBeFalsy();
-		// });
-
-	});
+	// describe( 'on time set', ()=> {
+	//
+	// 	it( 'should set not focus on name field', async ()=> {
+	// 		document.getElementById( 'form-field-kl-booking-date' ).focus();
+	// 		expect( SimInput.hasFocus( 'form-field-kl-name' ) ).toBeFalsy();
+	// 		await SimInput.check( 'form-field-kl-booking-time-0', true );
+	// 		expect( SimInput.hasFocus( 'form-field-kl-name' ) ).toBeFalsy();
+	// 	});
+	//
+	// });
 
 	describe( 'on adult select', ()=> {
 
-		xit( 'should set children select option so no more than allowed people can book', async ()=> {
+		it( 'should set children select option so no more than allowed people can book', async ()=> {
 			let maxPeople = MAX_SEATS_PER_GUIDE;
 			let adults;
 			let select = <HTMLSelectElement>document.getElementById( 'form-field-kl-children' );
@@ -108,6 +113,11 @@ describe( 'BookingFormManager is in charge to manage the DOM form elements and t
 			await SimInput.setValue( 'form-field-kl-adults', String( adults ) );
 			expect( select.options.length ).toBe( maxPeople - adults + 1 );
 		});
+
+		it( 'shoud change formManager state', async()=>{
+			await SimInput.setValue( 'form-field-kl-adults', '5' );
+			expect( formManager.state.adults ).toBe( 5 );
+		})
 
 		it( 'should reset date', async ()=> {
 			formManager.setState({date:'2018-10-10'});
@@ -147,9 +157,60 @@ describe( 'BookingFormManager is in charge to manage the DOM form elements and t
 		})
 	});
 
-	describe( 'on submit button', ()=> {
+	describe( 'on valid button submit event', ()=> {
 
-		xit( 'should perform a booking', ()=> {
+		beforeEach( async ()=>{
+			await SimInput.setValue( 'form-field-kl-children', '3' );
+			await SimInput.setValue( 'form-field-kl-booking-date', '2018-10-05' );
+			await SimInput.setValue( 'form-field-kl-coupon', 'xxaaxx' );
+			await SimInput.setValue( 'form-field-kl-email', 'test@test.com' );
+		});
+
+		it( 'should show a booking summary for user to review', async ()=> {
+			await formManager.formSubmited();
+			let genericData = document.getElementById( 'kl-summary-generic-data' ).innerHTML;
+			let emailData = document.getElementById( 'kl-summary-email' ).innerHTML;
+			let adultsData = document.getElementById( 'kl-summary-adults' ).innerHTML;
+			let childrenData = document.getElementById( 'kl-summary-children' ).innerHTML;
+			let couponData = document.getElementById( 'kl-summary-discount' ).innerHTML;
+			let totalData = document.getElementById( 'kl-summary-total-to-pay' ).innerHTML;
+
+			expect( genericData ).toContain( (new Date('2018-10-05')).toDateString() );
+			expect( genericData ).toContain( '19:00' );
+			expect( emailData ).toContain( 'test@test.com' );
+			expect( adultsData ).toContain( '2 ' );
+			expect( adultsData ).toContain( ' ฿2000 ' );
+			expect( childrenData ).toContain( '3 ' );
+			expect( childrenData ).toContain( ' ฿1000 ' );
+			expect( couponData ).toContain( ' ฿200' );
+			expect( totalData ).toContain( ' ฿6800' );
+		});
+
+		xit( 'should show paypal button', ()=> {
+
+		});
+
+		describe( 'in case payment succesfull', ()=> {
+
+			xit( 'should perform a booking', ()=> {
+
+			});
+
+			xit( 'should take user to a thanks page', ()=> {
+
+			});
+
+		});
+
+		describe( 'in case payment failed', ()=> {
+
+			xit( 'inform the user and persuade to pay again', ()=> {
+
+			});
+
+			xit( 'store record of failed transaction', ()=> {
+
+			});
 
 		});
 

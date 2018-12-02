@@ -5,16 +5,17 @@ import { MockData } from './../mock-data/db-sql';
 import { BookingProcessor } from '../../src/bookings/booking-processor';
 import { Booking } from '../../src/bookings/booking';
 
-describe( 'paypal checkout button', ()=>{
+xdescribe( 'paypal checkout button', ()=>{
 	let booking: Booking;
+	let paypalElement: HTMLElement;
 
 	beforeAll(()=>{
 		let mockData = new MockData();
 		fetchMock.mock('*', ( url, opts )=>{ return mockData.response( url, opts ) } );
 	});
 
-	beforeEach(()=>{
-		document.body.innerHTML = '<div id="paypal-button"></div>';
+	beforeEach( async()=>{
+		document.body.innerHTML = '<div id="paypal-button-container"></div>';
 
 		booking = new Booking( -1 );
 		booking.fromObject({
@@ -28,13 +29,14 @@ describe( 'paypal checkout button', ()=>{
 			email: 'p.grillo@gmail.com',
 			comment: 'no special requirements',
 		});
+		let bookingProcessor = new BookingProcessor( booking )
+		let paypal = new Paypal( bookingProcessor );
+		await paypal.renderButton( '#paypal-button-container' )
+		paypalElement = document.getElementById( 'paypal-button-container' );
 	});
 
 	it( 'should display button', async ()=>{
-		let bookingProcessor = new BookingProcessor( booking )
-		let paypal = new Paypal( bookingProcessor );
-		await paypal.renderButton( '#paypal-button' )
-		expect( document.getElementById( 'paypal-button' ).firstElementChild.classList ).toContain( 'paypal-button' );
+		expect( paypalElement.firstElementChild.classList ).toContain( 'paypal-button' );
 	});
 
 	xit( 'should create a payment', async ()=>{

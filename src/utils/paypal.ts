@@ -66,7 +66,7 @@ export class Paypal {
 	private buttonStyle() {
 		return {
 			layout: 'vertical',  // horizontal | vertical
-			size:   'medium',    // medium | large | responsive
+			size:   'responsive',    // medium | large | responsive
 			shape:  'rect',      // pill | rect
 			color:  'gold'       // gold | blue | silver | white | black
 		}

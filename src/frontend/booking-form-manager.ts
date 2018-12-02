@@ -1,13 +1,9 @@
 import { Instance as FlatpickrInstance} from "flatpickr/dist/types/instance";
 import { BookingMapper } from "../bookings/booking-mapper";
-import { Observer, ObservableField, ObservableRadio, ObservableSelect } from '../utils/observer';
+import { Observer, ObservableField, ObservableRadio, ObservableSelect, ObservableRadioGroup } from '../utils/observer';
 import { MAX_SEATS_PER_GUIDE } from '../bookings/guide';
 import { Booking } from "../bookings/booking";
-
-interface TimeOption {
-  time: string,
-	observable: ObservableRadio
-}
+import { BookingProcessor } from "../bookings/booking-processor";
 
 export interface FormState {
 	adults?: number;
@@ -32,17 +28,20 @@ export const initialState: FormState = {
 }
 
 export class BookingFormManager extends Observer< FormState > {
+	private _formElement: HTMLFormElement;
 	private _mapper: BookingMapper;
-  private _timeOption: TimeOption[];
+  private _summary: HTMLElement;
 
-	constructor(initialState: FormState) {
+	constructor( formElementId: string, initialState: FormState) {
 		super( initialState );
-		this._timeOption = [];
+		this._formElement = <HTMLFormElement>document.getElementById( formElementId );
+		this._formElement.onsubmit = ()=>this.formSubmited();
 	}
 
 	getBooking() {
 		let booking = new Booking(-1)
 		booking.fromObject( this.state );
+		booking.setTime( this.state.time + ':00' );
 		booking.setRestaurant( this._mapper.restaurantId );
 		return booking;
 	}
@@ -74,14 +73,12 @@ export class BookingFormManager extends Observer< FormState > {
 		return this;
 	}
 
-	addTimeOption( time: string, element: string ) {
-		let radioButton = new ObservableRadio( time, element, false );
-//		radioButton.onChange = ()=>	this.observables.name.focus();
-		this.registerObservable( radioButton );
-		this._timeOption.push({
-			time: time,
-			observable: radioButton
-		});
+	registerRadioGroup( name, radioButtons: {} ) {
+		let radioGroup = new ObservableRadioGroup( name, '' );
+		for ( let name in radioButtons ) {
+			radioGroup.addRadioButton( new ObservableRadio( name, radioButtons[ name ] ) );
+		}
+		this.registerObservable( radioGroup );
 		return this;
 	}
 
@@ -95,6 +92,34 @@ export class BookingFormManager extends Observer< FormState > {
 		(<HTMLInputElement>this.observables.date.element).readOnly = true;
 
 		return this;
+	}
+
+	setSummaryElement( element: string ) {
+		this._summary = document.getElementById( element );
+		return this;
+	}
+
+	async formSubmited() {
+		let processor = new BookingProcessor( this.getBooking() )
+		this._summary.innerHTML = await this.createSummaryHtml( processor );
+	}
+
+	private async createSummaryHtml( p: BookingProcessor ) {
+		let b = await p.prepareBooking();
+		let restaurant = await p.restaurant()
+		let element: string[] = [];
+		element.push( '	<h3>Please, review the details of your booking</h3>' );
+		element.push( '		<p id="kl-summary-generic-data">You will book on ' + b.date.toDateString() + ' at ' + b.time + ' in restaurant ' + restaurant.name + '</p>' );
+		element.push( '		<p id="kl-summary-email">In case we need to contact you, we will send an email to: ' + b.email + '</p>' );
+		element.push( '		<p id="kl-summary-adults">' + b.adults + ' adults at ฿' + b.adultPrice + ' each</p>' );
+		if ( b.children ) {
+			element.push( '	<p id="kl-summary-children">' + b.children + ' children at ฿' + b.childrenPrice + ' each</p>' );
+		}
+		if (b.couponValue ) {
+			element.push( '	<p id="kl-summary-discount">Discount coupon. Value ฿' + b.couponValue + '</p>');
+		}
+		element.push( '	<h4 id="kl-summary-total-to-pay">Total to pay: ฿' + await p.totalToPay() + '</h4>' )
+		return element.join('\n');
 	}
 
 	private adultsChanged(): void {
@@ -114,13 +139,17 @@ export class BookingFormManager extends Observer< FormState > {
 		instance.redraw();
 	}
 
+	private radioButtons() {
+		return ( <ObservableRadioGroup>this.observables.time ).radioButtons;
+	}
+
 	private dateSet( date: Date )  {
 		let first = true;
-		this._timeOption.forEach( async timeOpt => {
-			let isAvailable = await this._mapper.isTimeSlotAvailable( date, timeOpt.time, this.requiredSeats() );
-			isAvailable? timeOpt.observable.show() : timeOpt.observable.hide();
+		this.radioButtons().forEach( async timeOpt => {
+			let isAvailable = await this._mapper.isTimeSlotAvailable( date, timeOpt.name, this.requiredSeats() );
+			isAvailable? timeOpt.show() : timeOpt.hide();
 			if ( first && isAvailable ) {
-				timeOpt.observable.value = true;
+				timeOpt.value = true;
 				first = false;
 			}
 		})
@@ -129,8 +158,8 @@ export class BookingFormManager extends Observer< FormState > {
 
 	private resetDate() {
 		this.setState({date: ''})
-		this._timeOption.forEach( timeOpt => timeOpt.observable.show() );
-		this._timeOption[0].observable.value = true;
+		this.radioButtons().forEach( timeOpt => timeOpt.show() );
+		this.radioButtons()[0].value = true;
 	}
 
 	private requiredSeats(): number {

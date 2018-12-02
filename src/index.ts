@@ -22,7 +22,7 @@ async function setup() {
 
 export async function setupBookingFormManager() {
 	let postId = document.getElementById( 'kl-post-id' ).firstElementChild.firstElementChild.innerHTML
-	let bookingFormManager = await new BookingFormManager( initialState )
+	let bookingFormManager = await new BookingFormManager( 'kl-booking-form', initialState )
 								.registerSelectElements({
 									adults: 'form-field-kl-adults',
 									children: 'form-field-kl-children',
@@ -34,16 +34,19 @@ export async function setupBookingFormManager() {
 									coupon: 'form-field-kl-coupon',
 									comments: 'form-field-kl-requirements'
 								})
-								.addTimeOption( '19:00:00', 'form-field-kl-booking-time-0' )
-								.addTimeOption( '21:00:00', 'form-field-kl-booking-time-1' )
+								.registerRadioGroup( 'time', {
+									'19:00': 'form-field-kl-booking-time-0',
+									'21:00': 'form-field-kl-booking-time-1'
+								})
 								.setCalendar( (<any>document.getElementById( 'form-field-kl-booking-date' ))._flatpickr )
+								.setSummaryElement( 'kl-summary-box' )
 	return bookingFormManager.setRestaurant( Number( postId ) );
 }
 
 async function setupPaypalButton( formManager: BookingFormManager ) {
 	let processor = new BookingProcessor( await formManager.getBooking() )
 	let paypal = new Paypal( processor );
-	paypal.renderButton( '#paypal-button' );
+	paypal.renderButton( '#paypal-button-container' );
 }
 
 /**
