@@ -115,6 +115,7 @@ export abstract class Observable< T > extends ObservableBase {
 
 	set value( val: T ) {
 		this.setValue( val );
+		this._change();
 	}
 
 	get value(): T {
@@ -149,8 +150,22 @@ export class ObservableField< T > extends Observable< T > {
 }
 
 export class ObservableRadio< T = boolean > extends Observable< T > {
+	private _radioGroup: ObservableRadioGroup;
+
 	constructor( name: string, element: string ) {
 		super( name, element, null );
+	}
+
+	setRadioGroup( radioGroup: ObservableRadioGroup ) {
+		this._radioGroup = radioGroup;
+	}
+
+	protected _change() {
+		super._change();
+		if ( this._radioGroup ) {
+			if ( this._radioGroup.observer ) this._radioGroup.observer.change( this._radioGroup.name, this._radioGroup.value );
+			if ( this._radioGroup.onChange ) this.onChange();
+		}
 	}
 
 	hide() {
@@ -178,18 +193,22 @@ export class ObservableSelect< T > extends ObservableField< T > {
 	}
 }
 
-export class ObservableRadioGroup< T = string > extends Observable< T > {
+export class ObservableRadioGroup extends Observable< string > {
 	private _radioList: ObservableRadio[];
 	private _initialValue: string;
 
-	constructor( name: string, initialValue: T ) {
+	constructor( name: string, initialValue: string ) {
 		super( name, '', initialValue );
 		this._radioList = [];
 		this._initialValue = String(initialValue);
 	}
 
 	addRadioButton( radio: ObservableRadio ) {
-		radio.value = this._initialValue === radio.name;
+		radio.value = this._initialValue === radio.name
+		radio.setRadioGroup( this );
+		// radio.element.addEventListener('change', ()=>{
+		// 	this._change();
+		// });
 		this._radioList.push( radio );
 	}
 

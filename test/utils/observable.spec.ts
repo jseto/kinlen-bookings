@@ -73,12 +73,22 @@ describe( 'Observable is Observed by Observer', ()=>{
 				expect( observer.state.thaiYear ).toBe( 2568 );
 			});
 
+			it( 'should read the value from observer', ()=> {
+				let observer = new Observer<FormFields>( initialState );
+				let year = new ObservableField<number>( 'thaiYear', 'test-id', 0 );
+				observer.registerObservable( year );
+				year.value = 4085;
+				expect( observer.state.thaiYear ).toBe( 4085 );
+			});
+
 			it( 'should write the input field with value set in observer', ()=> {
 				let observer = new Observer<FormFields>( initialState );
-				observer.registerObservable( new ObservableField<number>( 'thaiYear', 'test-id', 0 ) );
+				let year = new ObservableField<number>( 'thaiYear', 'test-id', 0 );
+				observer.registerObservable( year );
 				observer.setState( { thaiYear: 4528 } );
 
 				expect( (<HTMLInputElement>document.getElementById( 'test-id' )).value ).toBe( '4528' );
+				expect( year.value ).toBe( 4528 );
 			});
 
 			it( 'should call onchange handler in observer', ()=> {
@@ -137,7 +147,7 @@ describe( 'Observable is Observed by Observer', ()=>{
 				<input type="radio" value="23:00" id="time-2" name="group[time]"/> \
 			';
 
-			group = new ObservableRadioGroup( 'radioGroup', '19:00' );
+			group = new ObservableRadioGroup( 'time', '19:00' );
 			radio19 = new ObservableRadio( '19:00', 'time-0' );
 			radio21 = new ObservableRadio( '21:00', 'time-1' );
 			radio23 = new ObservableRadio( '23:00', 'time-2' );
@@ -165,9 +175,36 @@ describe( 'Observable is Observed by Observer', ()=>{
 			radio19.value = false;
 			radio21.value = false;
 			radio23.value = true;
-
 			expect( group.value ).toEqual( '23:00' );
-		})
+
+			radio23.value = false;
+			radio21.value = true;
+			expect( group.value ).toEqual( '21:00' );
+		});
+
+		describe( 'working with observer', ()=>{
+			interface RadioField {
+				time: string;
+			}
+
+			let observer : Observer< RadioField >
+
+			beforeEach(()=>{
+				observer = new Observer< RadioField >({time:''});
+				observer.registerObservable( group );
+			});
+
+			it( 'should set observer value on observable change', ()=>{
+				expect( observer.state.time ).toEqual( '19:00' );
+
+				radio19.value = false;
+				radio21.value = false;
+				debugger
+				radio23.value = true;
+				expect( observer.state.time ).toEqual( '23:00' );
+			})
+		});
+
 	})
 
 });
