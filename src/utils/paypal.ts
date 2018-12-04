@@ -22,9 +22,12 @@ export class Paypal {
 	}
 
 	renderButton( anchorElement: string ): Promise< void > {
+		let element = document.getElementById( anchorElement );
+		while ( element.firstChild ) element.removeChild( element.firstChild );
+
 		return new Promise< void >( resolve => {
 			let cfg = this.buttonConfig( resolve )
-			paypal.Button.render( cfg, anchorElement ).then(()=>resolve() );
+			paypal.Button.render( cfg, '#' + anchorElement ).then(()=>resolve() );
 		})
 	}
 
@@ -98,7 +101,7 @@ export class Paypal {
 	}
 
 	private async getItemList(): Promise< Item[] > {
-		let booking = await this._bookingProcessor.prepareBooking();
+		let booking = await this._bookingProcessor.booking();
 		let items:Item[] = [];
 		let adultItem: Item = {
 			currency: 'THB',

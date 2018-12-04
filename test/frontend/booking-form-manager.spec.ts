@@ -158,16 +158,32 @@ describe( 'BookingFormManager is in charge to manage the DOM form elements and t
 	});
 
 	describe( 'on valid button submit event', ()=> {
+		let scrollMock: jest.Mock;
 
 		beforeEach( async ()=>{
+			scrollMock = jest.fn();
+			Element.prototype.scrollIntoView = scrollMock;
 			await SimInput.setValue( 'form-field-kl-children', '3' );
-			await SimInput.setValue( 'form-field-kl-booking-date', '2018-10-05' );
+			await SimInput.setValue( 'form-field-kl-booking-date', '2018-10-15' );
 			await SimInput.setValue( 'form-field-kl-coupon', 'xxaaxx' );
+			await SimInput.setValue( 'form-field-kl-name', 'Pepito Grillo' );
 			await SimInput.setValue( 'form-field-kl-email', 'test@test.com' );
+			await SimInput.setValue( 'form-field-kl-requirements', 'requirements test' );
+
+			// next SimInput statements simulate the fields being erased by the form submit
+			SimInput.getInputElementById( 'form-field-kl-adults' ).value = '';
+			SimInput.getInputElementById( 'form-field-kl-children' ).value = '';
+			SimInput.getInputElementById( 'form-field-kl-booking-date' ).value = '';
+			SimInput.getInputElementById( 'form-field-kl-booking-time-0' ).value = '';
+			SimInput.getInputElementById( 'form-field-kl-booking-time-1' ).value = '';
+			SimInput.getInputElementById( 'form-field-kl-coupon' ).value = '';
+			SimInput.getInputElementById( 'form-field-kl-name' ).value = '';
+			SimInput.getInputElementById( 'form-field-kl-email' ).value = '';
+			SimInput.getInputElementById( 'form-field-kl-requirements' ).value = '';
+			await formManager.formSubmited();
 		});
 
 		it( 'should show a booking summary for user to review', async ()=> {
-			await formManager.formSubmited();
 			let genericData = document.getElementById( 'kl-summary-generic-data' ).innerHTML;
 			let emailData = document.getElementById( 'kl-summary-email' ).innerHTML;
 			let adultsData = document.getElementById( 'kl-summary-adults' ).innerHTML;
@@ -175,7 +191,7 @@ describe( 'BookingFormManager is in charge to manage the DOM form elements and t
 			let couponData = document.getElementById( 'kl-summary-discount' ).innerHTML;
 			let totalData = document.getElementById( 'kl-summary-total-to-pay' ).innerHTML;
 
-			expect( genericData ).toContain( (new Date('2018-10-05')).toDateString() );
+			expect( genericData ).toContain( (new Date('2018-10-15')).toDateString() );
 			expect( genericData ).toContain( ' 19:00 ' );
 			expect( emailData ).toContain( 'test@test.com' );
 			expect( adultsData ).toContain( '2 ' );
@@ -186,8 +202,22 @@ describe( 'BookingFormManager is in charge to manage the DOM form elements and t
 			expect( totalData ).toContain( ' ฿6800' );
 		});
 
-		xit( 'should show paypal button', ()=> {
+		it( 'should show paypal button', async ()=> {
+			expect( document.getElementById( 'paypal-button-container').innerHTML ).toContain( 'zoid-paypal-button' );
+		});
 
+		it( 'should scroll into summary view', async ()=>{
+			expect( scrollMock ).toBeCalled();
+		});
+
+		it( 'shoul refill erased fields', async ()=>{
+			expect( SimInput.getInputElementById( 'form-field-kl-adults' ).value ).toEqual( '2' );
+			expect( SimInput.getInputElementById( 'form-field-kl-children' ).value ).toEqual( '3' );
+			expect( SimInput.getInputElementById( 'form-field-kl-booking-date' ).value ).toEqual( '2018-10-15' );
+			expect( SimInput.getInputElementById( 'form-field-kl-coupon' ).value ).toEqual( 'xxaaxx' );
+			expect( SimInput.getInputElementById( 'form-field-kl-name' ).value ).toEqual( 'Pepito Grillo' );
+			expect( SimInput.getInputElementById( 'form-field-kl-email' ).value ).toEqual( 'test@test.com' );
+			expect( SimInput.getInputElementById( 'form-field-kl-requirements' ).value ).toEqual( 'requirements test' );
 		});
 
 		describe( 'in case payment succesfull', ()=> {

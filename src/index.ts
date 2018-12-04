@@ -1,7 +1,5 @@
 import Flatpickr from 'flatpickr'
 import { BookingFormManager, initialState } from "./frontend/booking-form-manager";
-import { BookingProcessor } from './bookings/booking-processor';
-import { Paypal } from './utils/paypal';
 
 declare function flatpickr( element: HTMLElement, config:Flatpickr.Options.Options );
 
@@ -11,14 +9,9 @@ document.addEventListener( 'DOMContentLoaded', function () {
 	if ( bookingForm ) {
 		flatpickr( document.getElementById( 'form-field-kl-booking-date' ), { disableMobile: true } );
 		document.getElementById('form-field-kl-booking-date').setAttribute('autocomplete', 'off');
-		setup();
+		setupBookingFormManager();
 	}
 }, false );
-
-async function setup() {
-	let formManager = await setupBookingFormManager();
-	setupPaypalButton( formManager );
-}
 
 export async function setupBookingFormManager() {
 	let postId = document.getElementById( 'kl-post-id' ).firstElementChild.firstElementChild.innerHTML
@@ -32,7 +25,7 @@ export async function setupBookingFormManager() {
 									name: 'form-field-kl-name',
 									email: 'form-field-kl-email',
 									coupon: 'form-field-kl-coupon',
-									comments: 'form-field-kl-requirements'
+									comment: 'form-field-kl-requirements'
 								})
 								.registerRadioGroup( 'time', {
 									'19:00': 'form-field-kl-booking-time-0',
@@ -40,13 +33,8 @@ export async function setupBookingFormManager() {
 								})
 								.setCalendar( (<any>document.getElementById( 'form-field-kl-booking-date' ))._flatpickr )
 								.setSummaryElement( 'kl-summary-box' )
+								.setPaypalContainerElement( 'paypal-button-container' )
 	return bookingFormManager.setRestaurant( Number( postId ) );
-}
-
-async function setupPaypalButton( formManager: BookingFormManager ) {
-	let processor = new BookingProcessor( await formManager.getBooking() )
-	let paypal = new Paypal( processor );
-	paypal.renderButton( '#paypal-button-container' );
 }
 
 /**

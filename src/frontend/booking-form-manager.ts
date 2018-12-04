@@ -2,8 +2,8 @@ import { Instance as FlatpickrInstance} from "flatpickr/dist/types/instance";
 import { BookingMapper } from "../bookings/booking-mapper";
 import { Observer, ObservableField, ObservableRadio, ObservableSelect, ObservableRadioGroup } from '../utils/observer';
 import { MAX_SEATS_PER_GUIDE } from '../bookings/guide';
-import { Booking } from "../bookings/booking";
-import { BookingProcessor } from "../bookings/booking-processor";
+import { BookingProcessor, RawBooking } from "../bookings/booking-processor";
+import { Paypal } from "../utils/paypal";
 
 export interface FormState {
 	adults?: number;
@@ -31,6 +31,7 @@ export class BookingFormManager extends Observer< FormState > {
 	private _formElement: HTMLFormElement;
 	private _mapper: BookingMapper;
   private _summary: HTMLElement;
+  private _paypalContainerElement: string;
 
 	constructor( formElementId: string, initialState: FormState) {
 		super( initialState );
@@ -38,12 +39,12 @@ export class BookingFormManager extends Observer< FormState > {
 		this._formElement.onsubmit = ()=>this.formSubmited();
 	}
 
-	getBooking() {
-		let booking = new Booking(-1)
-		booking.fromObject( this.state );
-		booking.setTime( this.state.time + ':00' );
-		booking.setRestaurant( this._mapper.restaurantId );
-		return booking;
+	rawBooking(): RawBooking {
+		let booking: any = this.state;
+		booking.date = new Date( this.state.date );
+		booking.time = this.state.time + ':00';
+		booking.restaurant_id = this._mapper.restaurantId;
+		return booking as RawBooking;
 	}
 
 	async setRestaurant( restaurantId: number ) {
@@ -99,13 +100,41 @@ export class BookingFormManager extends Observer< FormState > {
 		return this;
 	}
 
+	setPaypalContainerElement( element: string ) {
+		this._paypalContainerElement = element;
+		return this;
+	}
+
 	async formSubmited() {
-		let processor = new BookingProcessor( this.getBooking() )
-		this._summary.innerHTML = await this.createSummaryHtml( processor );
+		let booking = this.rawBooking();
+		let processor = new BookingProcessor( booking );
+		let validBooking = await processor.validateBooking();
+
+		this.refillFields( booking );
+
+		if ( validBooking ) {
+			let paypal = new Paypal( processor );
+
+			this._summary.innerHTML = await this.createSummaryHtml( processor );
+			this._summary.scrollIntoView({
+				behavior: 'smooth',
+				block: 'start',
+				inline: 'nearest'
+			});
+
+			if ( document.getElementById( this._paypalContainerElement ) ) {
+				paypal.renderButton( this._paypalContainerElement );
+			}
+			else throw new Error( 'Paypal container element not found' );
+		}
+		else {
+			alert( 'There was a problem with your booking data. Please, check all required fields are correct.');
+		}
+
 	}
 
 	private async createSummaryHtml( p: BookingProcessor ) {
-		let b = await p.prepareBooking();
+		let b = await p.booking();
 		let restaurant = await p.restaurant()
 		let element: string[] = [];
 		element.push( '	<h3>Please, review the details of your booking</h3>' );
@@ -120,6 +149,16 @@ export class BookingFormManager extends Observer< FormState > {
 		}
 		element.push( '	<h4 id="kl-summary-total-to-pay">Total to pay: ฿' + await p.totalToPay() + '</h4>' )
 		return element.join('\n');
+	}
+
+	private refillFields( booking: RawBooking) {
+		(<HTMLInputElement>this.observables.adults.element).value = String( booking.adults );
+		(<HTMLInputElement>this.observables.children.element).value = String( booking.children );
+		(<HTMLInputElement>this.observables.date.element).value = String( booking.date.toISOString().slice( 0, 10 ) );
+		(<HTMLInputElement>this.observables.name.element).value = String( booking.name );
+		(<HTMLInputElement>this.observables.email.element).value = String( booking.email );
+		(<HTMLInputElement>this.observables.coupon.element).value = String( booking.coupon );
+		(<HTMLInputElement>this.observables.comment.element).value = String( booking.comment );
 	}
 
 	private adultsChanged(): void {

@@ -4,34 +4,39 @@ import { Restaurant } from "./restaurant";
 import { Rest } from "../database/rest";
 import { Coupon } from "./coupon";
 
-// export interface BookingData {
-// 	restaurant_id: number,
-// 	date: Date,
-// 	time: string,
-// 	adults: number,
-// 	children: number,
-// 	name: string,
-// 	email: string,
-// 	coupon: string,
-// 	comment: string
-// }
+export interface RawBooking {
+	restaurant_id: number,
+	date: Date,
+	time: string,
+	adults: number,
+	children: number,
+	name: string,
+	email: string,
+	coupon: string,
+	comment: string
+}
 
 export class BookingProcessor {
+	private _rawBooking: RawBooking;
   private _restaurant: Restaurant;
 	private _coupon: Coupon;
 	private _booking: Booking;
 
-	constructor( booking: Booking ) {
-		this._booking = booking;
+	constructor( booking: RawBooking ) {
+		this._rawBooking = booking;
 	}
 
-	async prepareBooking() {
-		let restaurant = await this.restaurant();
-		let coupon = await this.coupon();
-		let beforeDiscount = await this.beforeDiscount();
-		this._booking.setCouponValue( coupon.discount( beforeDiscount ) );
-		this._booking.setAdultPrice( restaurant.adultPrice );
-		this._booking.setChildrenPrice( restaurant.childrenPrice );
+	async booking() {
+		if ( !this._booking ) {
+			this._booking = new Booking( -1 );
+			this._booking.fromObject( this._rawBooking );
+			let restaurant = await this.restaurant();
+			let coupon = await this.coupon();
+			let beforeDiscount = await this.beforeDiscount();
+			this._booking.setCouponValue( coupon.discount( beforeDiscount ) );
+			this._booking.setAdultPrice( restaurant.adultPrice );
+			this._booking.setChildrenPrice( restaurant.childrenPrice );
+		}
 		return this._booking;
 	}
 
@@ -43,8 +48,8 @@ export class BookingProcessor {
 
 	async beforeDiscount(): Promise<number> {
 		let restaurant = await this.restaurant();
-		let adultTotal = restaurant.adultPrice * this._booking.adults;
-		let childrenTotal = restaurant.childrenPrice * this._booking.children;
+		let adultTotal = restaurant.adultPrice * this._rawBooking.adults;
+		let childrenTotal = restaurant.childrenPrice * this._rawBooking.children;
 		return adultTotal + childrenTotal;
 	}
 
@@ -54,8 +59,8 @@ export class BookingProcessor {
 	}
 
 	async validateBooking(): Promise< boolean > {
-		let mapper = new BookingMapper( this._booking.restaurant );
-		return await mapper.isTimeSlotAvailable( this._booking.date, this._booking.time, this.bookedSeats() )
+		let mapper = new BookingMapper( this._rawBooking.restaurant_id );
+		return await mapper.isTimeSlotAvailable( this._rawBooking.date, this._rawBooking.time, this.bookedSeats() );
 	}
 
 	async validatePayment(): Promise<boolean> {
@@ -76,19 +81,19 @@ export class BookingProcessor {
 	}
 
 	private bookedSeats() {
-		return this._booking.adults + this._booking.children;
+		return this._rawBooking.adults + this._rawBooking.children;
 	}
 
 	async restaurant(): Promise< Restaurant > {
 		if( !this._restaurant ) {
-			this._restaurant = await BookingProcessor.getRestaurant( this._booking.restaurant );
+			this._restaurant = await BookingProcessor.getRestaurant( this._rawBooking.restaurant_id );
 		}
 		return this._restaurant;
 	}
 
 	private async coupon(): Promise< Coupon > {
 		if( !this._coupon ) {
-			this._coupon = await BookingProcessor.getCoupon( this._booking.coupon );
+			this._coupon = await BookingProcessor.getCoupon( this._rawBooking.coupon );
 		}
 		return this._coupon;
 	}
