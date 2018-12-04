@@ -157,6 +157,50 @@ describe( 'BookingFormManager is in charge to manage the DOM form elements and t
 		})
 	});
 
+	describe( 'on bad booking data on submit button', ()=>{
+		let scrollMock: jest.Mock;
+		let alertMock: jest.Mock;
+
+		beforeEach( async ()=>{
+			scrollMock = jest.fn();
+			alertMock = jest.fn();
+			Element.prototype.scrollIntoView = scrollMock;
+			window.alert = alertMock;
+			await SimInput.setValue( 'form-field-kl-children', '3' );
+			await SimInput.setValue( 'form-field-kl-booking-date', '' );
+			await SimInput.setValue( 'form-field-kl-email', 'test@test.com' );
+
+			// next SimInput statements simulate the fields being erased by the form submit
+			SimInput.getInputElementById( 'form-field-kl-children' ).value = '';
+			SimInput.getInputElementById( 'form-field-kl-booking-date' ).value = '';
+			SimInput.getInputElementById( 'form-field-kl-email' ).value = '';
+			await formManager.formSubmited();
+		});
+
+		it( 'should NOT show a booking summary for user to review', async ()=> {
+			expect( document.getElementById( 'kl-summary-box' ).innerHTML ).toBeFalsy();
+		});
+
+		it( 'should NOT show paypal button', async ()=> {
+			expect( document.getElementById( 'paypal-button-container').innerHTML ).toBeFalsy();
+		});
+
+		it( 'should NOT scroll into summary view', async ()=>{
+			expect( scrollMock ).not.toBeCalled();
+		});
+
+		it( 'should show alert to user', async ()=>{
+			expect( alertMock ).toBeCalled();
+		});
+
+		it( 'shoul refill erased fields', async ()=>{
+			expect( SimInput.getInputElementById( 'form-field-kl-adults' ).value ).toEqual( '2' );
+			expect( SimInput.getInputElementById( 'form-field-kl-children' ).value ).toEqual( '3' );
+			expect( SimInput.getInputElementById( 'form-field-kl-booking-date' ).value ).toEqual( '' );
+			expect( SimInput.getInputElementById( 'form-field-kl-email' ).value ).toEqual( 'test@test.com' );
+		});
+	})
+
 	describe( 'on valid button submit event', ()=> {
 		let scrollMock: jest.Mock;
 

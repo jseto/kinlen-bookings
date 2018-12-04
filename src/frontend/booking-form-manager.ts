@@ -4,6 +4,7 @@ import { Observer, ObservableField, ObservableRadio, ObservableSelect, Observabl
 import { MAX_SEATS_PER_GUIDE } from '../bookings/guide';
 import { BookingProcessor, RawBooking } from "../bookings/booking-processor";
 import { Paypal } from "../utils/paypal";
+import { Utils } from "../utils/utils";
 
 export interface FormState {
 	adults?: number;
@@ -108,7 +109,11 @@ export class BookingFormManager extends Observer< FormState > {
 	async formSubmited() {
 		let booking = this.rawBooking();
 		let processor = new BookingProcessor( booking );
-		let validBooking = await processor.validateBooking();
+		let validBooking = false;
+
+		try {
+			validBooking = await processor.validateBooking();
+		} catch(_e){}
 
 		this.refillFields( booking );
 
@@ -154,7 +159,7 @@ export class BookingFormManager extends Observer< FormState > {
 	private refillFields( booking: RawBooking) {
 		(<HTMLInputElement>this.observables.adults.element).value = String( booking.adults );
 		(<HTMLInputElement>this.observables.children.element).value = String( booking.children );
-		(<HTMLInputElement>this.observables.date.element).value = String( booking.date.toISOString().slice( 0, 10 ) );
+		(<HTMLInputElement>this.observables.date.element).value = String( Utils.isInvalid( booking.date)? '' : booking.date.toISOString().slice( 0, 10 ) );
 		(<HTMLInputElement>this.observables.name.element).value = String( booking.name );
 		(<HTMLInputElement>this.observables.email.element).value = String( booking.email );
 		(<HTMLInputElement>this.observables.coupon.element).value = String( booking.coupon );

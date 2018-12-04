@@ -11,7 +11,7 @@ export class Coupon extends DatabaseObject{
 
 	isValid(): boolean {
 		if ( this.id < 0 ) return false;
-		if ( isNaN( this._validUntil.getMilliseconds() ) ) return true;
+		if ( Utils.isInvalid( this._validUntil ) ) return true;
 		let  today = new Date( Date.now() );
 		today.setHours( 0 );
 		return this._validUntil >= today;

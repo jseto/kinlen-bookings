@@ -30,4 +30,8 @@ export class Utils {
 		return str;
 	}
 
+	static isInvalid( date: Date ): boolean {
+		return isNaN( date.getMilliseconds() );
+	}
+
 }
