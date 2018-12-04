@@ -218,8 +218,8 @@ describe( 'BookingFormManager is in charge to manage the DOM form elements and t
 			SimInput.getInputElementById( 'form-field-kl-adults' ).value = '';
 			SimInput.getInputElementById( 'form-field-kl-children' ).value = '';
 			SimInput.getInputElementById( 'form-field-kl-booking-date' ).value = '';
-			SimInput.getInputElementById( 'form-field-kl-booking-time-0' ).value = '';
-			SimInput.getInputElementById( 'form-field-kl-booking-time-1' ).value = '';
+			SimInput.getInputElementById( 'form-field-kl-booking-time-0' ).checked = false;
+			SimInput.getInputElementById( 'form-field-kl-booking-time-1' ).checked = false;
 			SimInput.getInputElementById( 'form-field-kl-coupon' ).value = '';
 			SimInput.getInputElementById( 'form-field-kl-name' ).value = '';
 			SimInput.getInputElementById( 'form-field-kl-email' ).value = '';
@@ -258,6 +258,8 @@ describe( 'BookingFormManager is in charge to manage the DOM form elements and t
 			expect( SimInput.getInputElementById( 'form-field-kl-adults' ).value ).toEqual( '2' );
 			expect( SimInput.getInputElementById( 'form-field-kl-children' ).value ).toEqual( '3' );
 			expect( SimInput.getInputElementById( 'form-field-kl-booking-date' ).value ).toEqual( '2018-10-15' );
+			expect( SimInput.getInputElementById( 'form-field-kl-booking-time-0' ).checked ).toBeTruthy();
+			expect( SimInput.getInputElementById( 'form-field-kl-booking-time-1' ).checked ).toBeFalsy();
 			expect( SimInput.getInputElementById( 'form-field-kl-coupon' ).value ).toEqual( 'xxaaxx' );
 			expect( SimInput.getInputElementById( 'form-field-kl-name' ).value ).toEqual( 'Pepito Grillo' );
 			expect( SimInput.getInputElementById( 'form-field-kl-email' ).value ).toEqual( 'test@test.com' );

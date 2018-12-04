@@ -160,10 +160,11 @@ export class BookingFormManager extends Observer< FormState > {
 		(<HTMLInputElement>this.observables.adults.element).value = String( booking.adults );
 		(<HTMLInputElement>this.observables.children.element).value = String( booking.children );
 		(<HTMLInputElement>this.observables.date.element).value = String( Utils.isInvalid( booking.date)? '' : booking.date.toISOString().slice( 0, 10 ) );
-		(<HTMLInputElement>this.observables.name.element).value = String( booking.name );
-		(<HTMLInputElement>this.observables.email.element).value = String( booking.email );
-		(<HTMLInputElement>this.observables.coupon.element).value = String( booking.coupon );
-		(<HTMLInputElement>this.observables.comment.element).value = String( booking.comment );
+		(<ObservableRadioGroup>this.observables.time).checkRadioButtonElements( booking.time.slice( 0, 5 ) );
+		(<HTMLInputElement>this.observables.name.element).value = booking.name;
+		(<HTMLInputElement>this.observables.email.element).value = booking.email;
+		(<HTMLInputElement>this.observables.coupon.element).value = booking.coupon;
+		(<HTMLInputElement>this.observables.comment.element).value = booking.comment;
 	}
 
 	private adultsChanged(): void {

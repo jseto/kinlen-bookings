@@ -164,7 +164,7 @@ export class ObservableRadio< T = boolean > extends Observable< T > {
 		super._change();
 		if ( this._radioGroup ) {
 			if ( this._radioGroup.observer ) this._radioGroup.observer.change( this._radioGroup.name, this._radioGroup.value );
-			if ( this._radioGroup.onChange ) this.onChange();
+			if ( this._radioGroup.onChange ) this._radioGroup.onChange();
 		}
 	}
 
@@ -229,6 +229,12 @@ export class ObservableRadioGroup extends Observable< string > {
 			return item.value;
 		});
 		return value || <T>( this._initialValue as any );
+	}
+
+	checkRadioButtonElements( val: string ) {
+		this._radioList.forEach((item)=>{
+			(<HTMLInputElement>item.element ).checked = (<HTMLInputElement>item.element).value === String( val );
+		});
 	}
 
 	get element(){return null}; // not have element

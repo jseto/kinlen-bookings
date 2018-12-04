@@ -137,8 +137,9 @@ describe( 'Observable is Observed by Observer', ()=>{
 	});
 
 	describe( 'for an ObservableRadioGroup', ()=>{
-		let group;
+		let group: ObservableRadioGroup;
 		let radio19: ObservableRadio, radio21: ObservableRadio, radio23: ObservableRadio;
+		let mockOnChange:jest.Mock;
 
 		beforeEach(()=>{
 			document.body.innerHTML = ' \
@@ -154,7 +155,13 @@ describe( 'Observable is Observed by Observer', ()=>{
 			group.addRadioButton( radio19 );
 			group.addRadioButton( radio21 );
 			group.addRadioButton( radio23 );
+			mockOnChange = jest.fn();
+			group.onChange = mockOnChange;
 		});
+
+		afterEach(()=>{
+			mockOnChange.mockReset();
+		})
 
 		it( 'should check the radio of initial value', ()=>{
 			expect( radio19.value ).toBeTruthy();
@@ -169,6 +176,7 @@ describe( 'Observable is Observed by Observer', ()=>{
 			expect( radio19.value ).toBeFalsy();
 			expect( radio21.value ).toBeTruthy();
 			expect( radio23.value ).toBeFalsy();
+			expect( mockOnChange ).toBeCalled();
 		});
 
 		it( 'shoud retrieve the value from a check radioButton', ()=>{
@@ -181,6 +189,14 @@ describe( 'Observable is Observed by Observer', ()=>{
 			radio21.value = true;
 			expect( group.value ).toEqual( '21:00' );
 		});
+
+		it( 'shoul modify only element\'s checked value of radio button when using checkRadioButton', ()=>{
+			group.checkRadioButtonElements( '23:00' );
+			expect( (<HTMLInputElement>radio19.element).checked ).toBeFalsy();
+			expect( (<HTMLInputElement>radio21.element).checked ).toBeFalsy();
+			expect( (<HTMLInputElement>radio23.element).checked ).toBeTruthy();
+			expect( mockOnChange ).not.toBeCalled();
+		})
 
 		describe( 'working with observer', ()=>{
 			interface RadioField {
@@ -202,6 +218,7 @@ describe( 'Observable is Observed by Observer', ()=>{
 				debugger
 				radio23.value = true;
 				expect( observer.state.time ).toEqual( '23:00' );
+				expect( mockOnChange ).toBeCalled();
 			})
 		});
 
