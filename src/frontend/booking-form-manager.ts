@@ -107,36 +107,49 @@ export class BookingFormManager extends Observer< FormState > {
 	}
 
 	async formSubmited() {
+		let paypalContainer = document.getElementById( this._paypalContainerElement );
 		let booking = this.rawBooking();
 		let processor = new BookingProcessor( booking );
 		let validBooking = false;
 
 		try {
-			validBooking = await processor.validateBooking();
-		} catch(_e){}
-
-		this.refillFields( booking );
+			validBooking = await processor.validateBooking( true );
+		} catch( e ){
+			this._summary.innerHTML = this.createErrorHtml( e.message );
+		}
 
 		if ( validBooking ) {
 			let paypal = new Paypal( processor );
 
 			this._summary.innerHTML = await this.createSummaryHtml( processor );
-			this._summary.scrollIntoView({
-				behavior: 'smooth',
-				block: 'start',
-				inline: 'nearest'
-			});
 
-			if ( document.getElementById( this._paypalContainerElement ) ) {
+			if ( paypalContainer ) {
 				paypal.renderButton( this._paypalContainerElement );
 			}
 			else throw new Error( 'Paypal container element not found' );
-		}
-		else {
-			alert( 'There was a problem with your booking data. Please, check all required fields are correct.');
+
 		}
 
+		this.refillFields( booking );
+
+		paypalContainer.scrollIntoView({
+			behavior: 'smooth',
+			block: 'start',
+			inline: 'nearest'
+		});
+
 	}
+
+  createErrorHtml( message: string ): string {
+		let elementorSuccess: HTMLElement = <HTMLElement>this._formElement.getElementsByClassName( 'elementor-message-success' ).item(0);
+		if (elementorSuccess) elementorSuccess.style.display = 'none';
+
+		let element: string[] = [];
+		element.push( '<h3>An error occurred while processing you booking</h3>' );
+		element.push( '<p style="color:red;">' + message + '</p>' );
+		element.push( '<h4>Please, review the details of your booking</h4>' );
+    return element.join( '\n' );
+  }
 
 	private async createSummaryHtml( p: BookingProcessor ) {
 		let b = await p.booking();

@@ -215,7 +215,6 @@ describe( 'Observable is Observed by Observer', ()=>{
 
 				radio19.value = false;
 				radio21.value = false;
-				debugger
 				radio23.value = true;
 				expect( observer.state.time ).toEqual( '23:00' );
 				expect( mockOnChange ).toBeCalled();

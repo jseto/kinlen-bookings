@@ -13,7 +13,6 @@ export class Rest {
   }
 
 	static getMonthPeriod( endpoint: string, date: string, queryObject: {} ) {
-		Utils.checkValidDate( date );
 		let year_month = date.slice( 0, 8 );
 		let minDate = year_month + '01';
 		let maxDate = year_month + '31';

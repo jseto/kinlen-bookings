@@ -3,6 +3,8 @@ import { BookingMapper } from "../../src/bookings/booking-mapper";
 import { Restaurant } from "./restaurant";
 import { Rest } from "../database/rest";
 import { Coupon } from "./coupon";
+import { Utils } from "../utils/utils";
+import { BookingError } from "../../test/bookings/BookingError";
 
 export interface RawBooking {
 	restaurant_id: number,
@@ -54,30 +56,43 @@ export class BookingProcessor {
 	}
 
 	async isCouponValid() {
+		if ( this._rawBooking.coupon === '' ) return true;
 		let c = await this.coupon();
 		return c.isValid();
 	}
 
-	async validateBooking(): Promise< boolean > {
+	async validateBooking( doThrow: boolean = false ): Promise< boolean > {
+		if ( Utils.isInvalid( this._rawBooking.date ) ) {
+			if (doThrow) throw new BookingError( 'INVALID_DATE' );
+			return false;
+		}
+
+		let validCoupon = await this.isCouponValid();
+		if ( !validCoupon ) {
+			if (doThrow) throw new BookingError( 'INVALID_COUPON' );
+			return false;
+		}
+
 		let mapper = new BookingMapper( this._rawBooking.restaurant_id );
-		return await mapper.isTimeSlotAvailable( this._rawBooking.date, this._rawBooking.time, this.bookedSeats() );
+		let available = await mapper.isTimeSlotAvailable( this._rawBooking.date, this._rawBooking.time, this.bookedSeats() );
+		if ( !available && doThrow ) throw new BookingError( 'BOOKING_NOT_AVAILABLE' );
+		return available;
 	}
 
-	async validatePayment(): Promise<boolean> {
-		throw new Error("Method not implemented.");
+	async validatePayment( doThrow: boolean = false ): Promise<boolean> {
+		return false;
   }
 
-	async bookingInserted(): Promise<boolean> {
-    throw new Error("Method not implemented.");
+	async bookingInserted( doThrow: boolean = false ): Promise<boolean> {
+    return false;
   }
 
 	async process():Promise<boolean> {
-		let valid: boolean = await this.validateBooking()
-								&& await this.isCouponValid()
-								&& await this.validatePayment()
-								&& await this.bookingInserted();
+		let valid: boolean = await this.validateBooking( true )
+								&& await this.validatePayment( true )
+								&& await this.bookingInserted( true );
 
-		return new Promise<boolean>((resolve)=> resolve( valid ) );
+		return valid;
 	}
 
 	private bookedSeats() {

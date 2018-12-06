@@ -6,6 +6,7 @@ import { setupBookingFormManager } from "../../src";
 import { SimInput } from "../mocks/sim-input";
 import { MAX_SEATS_PER_GUIDE } from '../../src/bookings/guide';
 import { BookingFormManager } from '../../src/frontend/booking-form-manager';
+import { BookingError } from '../bookings/BookingError';
 
 describe( 'BookingFormManager is in charge to manage the DOM form elements and their relationships', ()=> {
 	let postIdHtml;
@@ -177,20 +178,12 @@ describe( 'BookingFormManager is in charge to manage the DOM form elements and t
 			await formManager.formSubmited();
 		});
 
-		it( 'should NOT show a booking summary for user to review', async ()=> {
-			expect( document.getElementById( 'kl-summary-box' ).innerHTML ).toBeFalsy();
-		});
-
 		it( 'should NOT show paypal button', async ()=> {
 			expect( document.getElementById( 'paypal-button-container').innerHTML ).toBeFalsy();
 		});
 
-		it( 'should NOT scroll into summary view', async ()=>{
-			expect( scrollMock ).not.toBeCalled();
-		});
-
 		it( 'should show alert to user', async ()=>{
-			expect( alertMock ).toBeCalled();
+			expect( alertMock ).not.toBeCalled();
 		});
 
 		it( 'shoul refill erased fields', async ()=>{
@@ -199,6 +192,11 @@ describe( 'BookingFormManager is in charge to manage the DOM form elements and t
 			expect( SimInput.getInputElementById( 'form-field-kl-booking-date' ).value ).toEqual( '' );
 			expect( SimInput.getInputElementById( 'form-field-kl-email' ).value ).toEqual( 'test@test.com' );
 		});
+
+		it( 'shoud show the user the reason of failure', ()=>{
+			let errorText = new BookingError( 'INVALID_DATE' ).message;
+			expect( document.getElementById( 'kl-summary-box' ).innerHTML ).toContain( errorText );
+		})
 	})
 
 	describe( 'on valid button submit event', ()=> {

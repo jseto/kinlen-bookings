@@ -2,6 +2,7 @@ import * as fetchMock from 'fetch-mock';
 import { MockData } from './../mock-data/db-sql';
 import { BookingProcessor, RawBooking } from '../../src/bookings/booking-processor';
 import { Coupon } from '../../src/bookings/coupon';
+import { BookingError } from './BookingError';
 
 describe( 'The BookingProcessor is in charge of place a booking in the System', ()=> {
 	let booking: RawBooking;
@@ -36,7 +37,7 @@ describe( 'The BookingProcessor is in charge of place a booking in the System', 
 		it( 'should reject a booking that cannot be placed', async()=> {
 			booking.date = new Date( '2018-10-05' );
 			let processor = new BookingProcessor( booking );
-			expect( await processor.validateBooking() ).toBeFalsy()
+			expect( await processor.validateBooking() ).toBeFalsy();
 		});
 
 		it( 'should fill booking data', async ()=>{
@@ -72,9 +73,9 @@ describe( 'The BookingProcessor is in charge of place a booking in the System', 
 
 		describe( 'Coupon', ()=>{
 
-			it( 'should not validate an empty coupon', async ()=>{
+			it( 'should validate an empty coupon', async ()=>{
 				let processor = new BookingProcessor( booking );
-				expect( await processor.isCouponValid() ).toBeFalsy();
+				expect( await processor.isCouponValid() ).toBeTruthy();
 			});
 
 			it( 'should not validate a non existing coupon', async ()=>{
@@ -189,12 +190,28 @@ describe( 'The BookingProcessor is in charge of place a booking in the System', 
 			});
 
 			describe( 'a message with the reason', ()=> {
-				xit( 'should notify about booking slot already booked', ()=> {
 
+				async function process( processor: BookingProcessor ) {
+					let error: BookingError;
+					try {
+						await processor.validateBooking( true );
+					}
+					catch( e ) {
+						error = e;
+					}
+					return error;
+				}
+
+				it( 'should notify about booking slot already booked', async ()=> {
+					booking.date = new Date( '2018-10-05' );
+					let error = await process( new BookingProcessor( booking ) );
+					expect( error ).toEqual( new BookingError( 'BOOKING_NOT_AVAILABLE' ) );
 				});
 
-				xit( 'should notify about coupon not valid', ()=> {
-
+				it( 'should notify about coupon not valid', async ()=> {
+					booking.coupon = 'pirate';
+					let error = await process( new BookingProcessor( booking ) );
+					expect( error ).toEqual( new BookingError( 'INVALID_COUPON' ) );
 				});
 
 				xit( 'should notify about payment not fulfilled', ()=> {
