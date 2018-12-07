@@ -2,9 +2,8 @@ import { Instance as FlatpickrInstance} from "flatpickr/dist/types/instance";
 import { BookingMapper } from "../bookings/booking-mapper";
 import { Observer, ObservableField, ObservableRadio, ObservableSelect, ObservableRadioGroup } from '../utils/observer';
 import { MAX_SEATS_PER_GUIDE } from '../bookings/guide';
-import { BookingProcessor, RawBooking } from "../bookings/booking-processor";
-import { Paypal } from "../utils/paypal";
-import { Utils } from "../utils/utils";
+import { RawBooking } from "../bookings/booking-processor";
+import { FormSubmiter } from "./form-submiter";
 
 export interface FormState {
 	adults?: number;
@@ -29,15 +28,12 @@ export const initialState: FormState = {
 }
 
 export class BookingFormManager extends Observer< FormState > {
-	private _formElement: HTMLFormElement;
 	private _mapper: BookingMapper;
-  private _summary: HTMLElement;
-  private _paypalContainerElement: string;
+	private _submiter: FormSubmiter;
 
 	constructor( formElementId: string, initialState: FormState) {
 		super( initialState );
-		this._formElement = <HTMLFormElement>document.getElementById( formElementId );
-		this._formElement.onsubmit = ()=>this.formSubmited();
+		this._submiter = new FormSubmiter( this, <HTMLFormElement>document.getElementById( formElementId ) );
 	}
 
 	rawBooking(): RawBooking {
@@ -97,87 +93,13 @@ export class BookingFormManager extends Observer< FormState > {
 	}
 
 	setSummaryElement( element: string ) {
-		this._summary = document.getElementById( element );
+		this._submiter.setSummaryElement( document.getElementById( element ) );
 		return this;
 	}
 
 	setPaypalContainerElement( element: string ) {
-		this._paypalContainerElement = element;
+		this._submiter.setPaypalContainerElement( element );
 		return this;
-	}
-
-	async formSubmited() {
-		let paypalContainer = document.getElementById( this._paypalContainerElement );
-		let booking = this.rawBooking();
-		let processor = new BookingProcessor( booking );
-		let validBooking = false;
-
-		try {
-			validBooking = await processor.validateBooking( true );
-		} catch( e ){
-			this._summary.innerHTML = this.createErrorHtml( e.message );
-		}
-
-		if ( validBooking ) {
-			let paypal = new Paypal( processor );
-
-			this._summary.innerHTML = await this.createSummaryHtml( processor );
-
-			if ( paypalContainer ) {
-				paypal.renderButton( this._paypalContainerElement );
-			}
-			else throw new Error( 'Paypal container element not found' );
-
-		}
-
-		this.refillFields( booking );
-
-		paypalContainer.scrollIntoView({
-			behavior: 'smooth',
-			block: 'start',
-			inline: 'nearest'
-		});
-
-	}
-
-  createErrorHtml( message: string ): string {
-		let elementorSuccess: HTMLElement = <HTMLElement>this._formElement.getElementsByClassName( 'elementor-message-success' ).item(0);
-		if (elementorSuccess) elementorSuccess.style.display = 'none';
-
-		let element: string[] = [];
-		element.push( '<h3>An error occurred while processing you booking</h3>' );
-		element.push( '<p style="color:red;">' + message + '</p>' );
-		element.push( '<h4>Please, review the details of your booking</h4>' );
-    return element.join( '\n' );
-  }
-
-	private async createSummaryHtml( p: BookingProcessor ) {
-		let b = await p.booking();
-		let restaurant = await p.restaurant()
-		let element: string[] = [];
-		element.push( '	<h3>Please, review the details of your booking</h3>' );
-		element.push( '		<p id="kl-summary-generic-data">You will book on ' + b.date.toDateString() + ' at ' + b.time.slice( 0, 5 ) + ' in restaurant ' + restaurant.name + '</p>' );
-		element.push( '		<p id="kl-summary-email">In case we need to contact you, we will send an email to: ' + b.email + '</p>' );
-		element.push( '		<p id="kl-summary-adults">' + b.adults + ' adults at ฿' + b.adultPrice + ' each</p>' );
-		if ( b.children ) {
-			element.push( '	<p id="kl-summary-children">' + b.children + ' children at ฿' + b.childrenPrice + ' each</p>' );
-		}
-		if (b.couponValue ) {
-			element.push( '	<p id="kl-summary-discount">Discount coupon. Value ฿' + b.couponValue + '</p>');
-		}
-		element.push( '	<h4 id="kl-summary-total-to-pay">Total to pay: ฿' + await p.totalToPay() + '</h4>' )
-		return element.join('\n');
-	}
-
-	private refillFields( booking: RawBooking) {
-		(<HTMLInputElement>this.observables.adults.element).value = String( booking.adults );
-		(<HTMLInputElement>this.observables.children.element).value = String( booking.children );
-		(<HTMLInputElement>this.observables.date.element).value = String( Utils.isInvalid( booking.date)? '' : booking.date.toISOString().slice( 0, 10 ) );
-		(<ObservableRadioGroup>this.observables.time).checkRadioButtonElements( booking.time.slice( 0, 5 ) );
-		(<HTMLInputElement>this.observables.name.element).value = booking.name;
-		(<HTMLInputElement>this.observables.email.element).value = booking.email;
-		(<HTMLInputElement>this.observables.coupon.element).value = booking.coupon;
-		(<HTMLInputElement>this.observables.comment.element).value = booking.comment;
 	}
 
 	private adultsChanged(): void {
