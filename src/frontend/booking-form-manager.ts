@@ -28,8 +28,6 @@ export const initialState: FormState = {
 }
 
 export class BookingFormManager extends Observer< FormState > {
-	private _mapper: BookingMapper;
-	private _submiter: FormSubmiter;
 
 	constructor( formElementId: string, initialState: FormState) {
 		super( initialState );
@@ -48,10 +46,6 @@ export class BookingFormManager extends Observer< FormState > {
 		this._mapper = new BookingMapper( restaurantId );
 		await this._mapper.buildBookingMapCache( new Date() );
 		return this;
-	}
-
-	get restaurant() {
-		return this._mapper.restaurantId;
 	}
 
 	registerSelectElements( elements: {}) {
@@ -145,4 +139,7 @@ export class BookingFormManager extends Observer< FormState > {
 	private requiredSeats(): number {
     return this.state.adults + this.state.children;
   }
+
+	private _mapper: BookingMapper;
+	private _submiter: FormSubmiter;
 }

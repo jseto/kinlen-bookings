@@ -11,6 +11,9 @@ export class Paypal {
 
 	async payment( _data, actions ) {
 		let obj = await this.getPayment();
+		obj[ 'application_context' ] = {
+			shipping_preference: 'NO_SHIPPING'
+		};
 		return actions.payment.create( obj );
 	}
 
@@ -34,6 +37,7 @@ export class Paypal {
 	buttonConfig( resolve: () => void ) {
 		return {
 			env: 'sandbox', // sandbox | production
+			locale: 'en_US',
 			style: this.buttonStyle(),
 			funding: this.funding(),
 			// Enable Pay Now checkout flow (optional)
@@ -60,9 +64,10 @@ export class Paypal {
 		return {
 			allowed: [
 				paypal.FUNDING.CARD,
-				paypal.FUNDING.CREDIT
 			],
-			disallowed: []
+			disallowed: [
+				paypal.FUNDING.CREDIT
+			]
 		}
 	}
 
@@ -96,7 +101,7 @@ export class Paypal {
 					items: items,
 				}
 			}],
-			note_to_payer: 'Contact us at bookings@bestthaifood.info for any questions on your booking.'
+			// note_to_payer: 'Contact us at bookings@bestthaifood.info for any questions on your booking.' !!!!!opens a window in paypal hiding important info
 		}
 	}
 
@@ -114,7 +119,7 @@ export class Paypal {
 		if ( booking.children ) {
 			let childrenItem: Item = {
 				currency: 'THB',
-		    name: 'Adults',
+		    name: 'Children',
 		    price: booking.childrenPrice.toString(),
 		    quantity: booking.children
 			}

@@ -43,10 +43,6 @@ describe( 'BookingFormManager is in charge to manage the DOM form elements and t
 
 	describe( 'on startup', ()=> {
 
-		it( 'should get restaurant id from kl-post-id <div>', ()=> {
-			expect( formManager.restaurant ).toBe( 1 );
-		});
-
 		it( 'should configure calendar ', ()=> {
 			expect( dateField._flatpickr.config.disableMobile ).toBeTruthy();
 			expect( dateField._flatpickr.config.onMonthChange ).toBeDefined();
