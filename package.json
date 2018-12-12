@@ -11,24 +11,24 @@
   "license": "MIT",
   "devDependencies": {
     "@types/fetch-mock": "^6.0.4",
-    "@types/jest": "^23.3.9",
-    "@types/node": "^10.12.9",
+    "@types/jest": "^23.3.10",
+    "@types/node": "^10.12.12",
     "@types/paypal-rest-sdk": "^1.7.4",
-    "@types/react": "^16.4.18",
-    "@types/react-dom": "^16.0.9",
+    "@types/react": "^16.7.13",
+    "@types/react-dom": "^16.0.11",
     "@types/sql.js": "0.0.29",
-    "fetch-mock": "^7.2.2",
+    "fetch-mock": "^7.2.5",
     "filemanager-webpack-plugin": "^2.0.5",
     "jest": "^23.6.0",
-    "node-fetch": "^2.2.0",
+    "node-fetch": "^2.3.0",
     "sql.js": "^0.5.0",
-    "ts-jest": "^23.10.4",
-    "ts-loader": "^5.3.0",
-    "typescript": "^3.1.6",
-    "webpack": "^4.24.0"
+    "ts-jest": "^23.10.5",
+    "ts-loader": "^5.3.1",
+    "typescript": "^3.2.2",
+    "webpack": "^4.27.1"
   },
   "dependencies": {
     "flatpickr": "^4.5.2",
-    "paypal-checkout": "^4.0.235"
+    "paypal-checkout": "^4.0.239"
   }
 }

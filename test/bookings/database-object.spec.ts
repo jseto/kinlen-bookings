@@ -16,7 +16,7 @@ describe( 'DatabaseObject', function() {
     expect( obj.time ).toEqual( "19:00:00" );
     expect( obj.adults ).toBe( 5 );
     expect( obj.time_length ).toBe( 1800 );
-    expect( obj.assigned_guide ).toBe( 2 );
+    expect( obj.guide_id ).toBe( 2 );
     expect( obj.restaurant_id ).toBe( 34 );
   });
 

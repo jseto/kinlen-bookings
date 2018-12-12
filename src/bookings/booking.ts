@@ -51,7 +51,7 @@ export class Booking extends DatabaseObject {
       time_length: this.timeLength,
 			comment: this.comment,
       restaurant_id: this.restaurant,
-      assigned_guide: this.assignedGuide,
+      guide_id: this.assignedGuide,
 			adults: this.adults,
 			children: this.children,
 			coupon: this.coupon,

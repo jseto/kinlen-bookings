@@ -9,7 +9,9 @@ export class Paypal {
 		this._bookingProcessor = bookingProcessor;
 	}
 
-	async payment( _data, actions ) {
+	async payment( _data: any, actions: any ) {
+		this._bookingProcessor.insertTempBooking();
+
 		let obj = await this.getPayment();
 		obj[ 'application_context' ] = {
 			shipping_preference: 'NO_SHIPPING'
@@ -17,7 +19,7 @@ export class Paypal {
 		return actions.payment.create( obj );
 	}
 
-	autorized( _data, actions ) {
+	autorized( _data: any, actions: any ) {
 		return actions.payment.execute()
 							.then( function () {
       					window.alert('Payment Complete!');
@@ -43,7 +45,7 @@ export class Paypal {
 			// Enable Pay Now checkout flow (optional)
 			commit: true,
 			client: this.secrets(),
-			payment: ( data, actions ) => this.payment( data, actions ),
+			payment: ( data: any, actions: any ) => this.payment( data, actions ),
 			onAuthorize: this.autorized,
 			onRender: ()=> resolve()
 		}

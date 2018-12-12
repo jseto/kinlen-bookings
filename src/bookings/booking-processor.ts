@@ -19,11 +19,6 @@ export interface RawBooking {
 }
 
 export class BookingProcessor {
-	private _rawBooking: RawBooking;
-  private _restaurant: Restaurant;
-	private _coupon: Coupon;
-	private _booking: Booking;
-
 	constructor( booking: RawBooking ) {
 		this._rawBooking = booking;
 	}
@@ -39,6 +34,11 @@ export class BookingProcessor {
 			this._booking.setAdultPrice( restaurant.adultPrice );
 			this._booking.setChildrenPrice( restaurant.childrenPrice );
 		}
+		return this._booking;
+	}
+
+	async insertTempBooking(): Promise< Booking > {
+		this._booking = await BookingProcessor.insertBooking( await this.booking() );
 		return this._booking;
 	}
 
@@ -79,11 +79,11 @@ export class BookingProcessor {
 		return available;
 	}
 
-	async validatePayment( doThrow: boolean = false ): Promise<boolean> {
+	async validatePayment( _doThrow: boolean = false ): Promise<boolean> {
 		return false;
   }
 
-	async bookingInserted( doThrow: boolean = false ): Promise<boolean> {
+	async bookingInserted( _doThrow: boolean = false ): Promise<boolean> {
     return false;
   }
 
@@ -138,4 +138,20 @@ export class BookingProcessor {
 		});
 	}
 
+	static async insertBooking( booking: Booking ): Promise< Booking > {
+		let obj = booking.toObject();
+		delete obj.id;
+		return new Promise< Booking >( resolve => {
+			Rest.postREST( 'booking/', obj ).then( data => {
+				// let retBooking = new Booking( -1 );
+				if ( data[0] )	booking.fromObject( data[0] );
+				resolve( booking );
+			})
+		});
+	}
+
+	private _rawBooking: RawBooking;
+  private _restaurant: Restaurant;
+	private _coupon: Coupon;
+	private _booking: Booking;
 }

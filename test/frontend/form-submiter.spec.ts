@@ -8,10 +8,10 @@ import { FormSubmiter } from "../../src/frontend/form-submiter";
 import { BookingError } from "../bookings/BookingError";
 
 describe( 'FormSubmiter', ()=>{
-	let postIdHtml;
-	let html;
-	let summaryBoxHtml;
-	let paypalContainerHtml;
+	let postIdHtml: string[];
+	let html: string;
+	let summaryBoxHtml: string;
+	let paypalContainerHtml: string;
 	let formSubmiter: FormSubmiter;
 	let dateField: any;
 
@@ -83,6 +83,11 @@ describe( 'FormSubmiter', ()=>{
 			let errorText = new BookingError( 'INVALID_DATE' ).message;
 			expect( document.getElementById( 'kl-summary-box' ).innerHTML ).toContain( errorText );
 		})
+
+		it( 'should make invisible elementor-message-success', ()=>{
+			let messageElement = document.getElementById( 'elementor-message-for-test');
+			expect( messageElement.style.display ).toEqual( 'none' );
+		});
 	})
 
 	describe( 'on valid button submit event', ()=> {
@@ -111,7 +116,7 @@ describe( 'FormSubmiter', ()=>{
 			await formSubmiter.formSubmited();
 		});
 
-		it( 'should show a booking summary for user to review', async ()=> {
+		it( 'should show a booking summary for user to review', ()=> {
 			let genericData = document.getElementById( 'kl-summary-generic-data' ).innerHTML;
 			let emailData = document.getElementById( 'kl-summary-email' ).innerHTML;
 			let adultsData = document.getElementById( 'kl-summary-adults' ).innerHTML;
@@ -130,15 +135,15 @@ describe( 'FormSubmiter', ()=>{
 			expect( totalData ).toContain( ' ฿6800' );
 		});
 
-		it( 'should show paypal button', async ()=> {
+		it( 'should show paypal button', ()=> {
 			expect( document.getElementById( 'paypal-button-container').innerHTML ).toContain( 'zoid-paypal-button' );
 		});
 
-		it( 'should scroll into summary view', async ()=>{
+		it( 'should scroll into summary view', ()=>{
 			expect( scrollMock ).toBeCalled();
 		});
 
-		it( 'shoul refill erased fields', async ()=>{
+		it( 'shoul refill erased fields', ()=>{
 			expect( SimInput.getInputElementById( 'form-field-kl-adults' ).value ).toEqual( '2' );
 			expect( SimInput.getInputElementById( 'form-field-kl-children' ).value ).toEqual( '3' );
 			expect( SimInput.getInputElementById( 'form-field-kl-booking-date' ).value ).toEqual( '2018-10-15' );

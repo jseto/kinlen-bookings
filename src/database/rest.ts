@@ -1,4 +1,3 @@
-import { Utils } from "../utils/utils";
 import { DatabaseObject } from "./database-object";
 
 export class Rest {
@@ -37,23 +36,27 @@ export class Rest {
 
 	static postREST( endpointCommand: string, dataObject: {} ) {
 		let fullURL = Rest._url + endpointCommand;
-		return fetch( fullURL, {
-	    method: 'POST',
-	    headers: {
-	      'Accept': 'application/json',
-	      'Content-Type': 'application/json'
-	    },
-	    body: JSON.stringify( dataObject )
-  	});
+		return new Promise( resolve => {
+			fetch( fullURL, {
+		    method: 'POST',
+		    headers: {
+		      'Accept': 'application/json',
+		      'Content-Type': 'application/json'
+		    },
+		    body: JSON.stringify( dataObject )
+  		}).then( resp => {
+				resolve( resp.json() );
+			})
+		});
 	}
 
   static getREST( endpointCommand: string, queryObject: Object ) {
     let fullURL = Rest._url + endpointCommand + this.objectToQueryString( queryObject );
-    return new Promise( ( resolve ) => {
-      fetch( fullURL ).then((resp)=>{
+    return new Promise( resolve => {
+      fetch( fullURL ).then( resp =>{
         let data = resp.json();
         resolve( data );
-      }).catch((error)=>{
+      }).catch( error => {
         throw( new Error( 'Kinlen Booking System: ' + error.message ) );
       });
     });

@@ -111,7 +111,7 @@ describe( 'The BookingProcessor is in charge of place a booking in the System', 
 			});
 
 			describe( 'around today', ()=>{
-				let realDateNow;
+				let realDateNow: () => number;
 
 				beforeAll(()=>{
 					realDateNow = Date.now.bind(global.Date);
@@ -169,10 +169,23 @@ describe( 'The BookingProcessor is in charge of place a booking in the System', 
 
 		});
 
-		describe( 'collects financial data', async ()=> {
-			xit( 'prepares a paypal payment object', ()=>{
-			})
+//		describe( 'Coupon', ()=>{
+		describe( 'on user press paypal button', ()=> {
 
+			it( 'should insert a temporary booking', async ()=>{
+				let processor = new BookingProcessor( booking );
+				await processor.insertTempBooking();
+				let b = await processor.booking();
+				expect( b.id ).toBeGreaterThan( 0 );
+			});
+
+			xit( 'should fill assignedGuide field', async ()=>{
+				let processor = new BookingProcessor( booking );
+				let b = await processor.insertTempBooking();
+				expect( b.assignedGuide ).toBeTruthy();
+				expect( b.paid ).toBeFalsy();
+				expect( b.paidAmount ).toBe( 0 );
+			})
 		});
 
 		xit( 'should accept booking on a fulfilled payment', ()=> {

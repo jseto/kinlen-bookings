@@ -8,10 +8,10 @@ import { MAX_SEATS_PER_GUIDE } from '../../src/bookings/guide';
 import { BookingFormManager } from '../../src/frontend/booking-form-manager';
 
 describe( 'BookingFormManager is in charge to manage the DOM form elements and their relationships', ()=> {
-	let postIdHtml;
-	let html;
-	let summaryBoxHtml;
-	let paypalContainerHtml;
+	let postIdHtml: string[];
+	let html: string;
+	let summaryBoxHtml: string;
+	let paypalContainerHtml: string;
 	let formManager: BookingFormManager;
 	let dateField: any;
 
@@ -94,7 +94,7 @@ describe( 'BookingFormManager is in charge to manage the DOM form elements and t
 
 		it( 'should set children select option so no more than allowed people can book', async ()=> {
 			let maxPeople = MAX_SEATS_PER_GUIDE;
-			let adults;
+			let adults: number;
 			let select = <HTMLSelectElement>document.getElementById( 'form-field-kl-children' );
 
 			adults = 2;

@@ -6,6 +6,10 @@ export abstract class DatabaseObject {
     this._id = id;
   }
 
+	setId( id: number ) {
+		this._id = id;
+	}
+
 	get id() {
 		return this._id;
 	}
@@ -21,6 +25,6 @@ export abstract class DatabaseObject {
 		return obj;
 	}
 
-  protected abstract _fromObject( p: any );
-  protected abstract _toObject();
+  protected abstract _fromObject( p: any ): void;
+  protected abstract _toObject(): any;
 }

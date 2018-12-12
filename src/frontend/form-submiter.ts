@@ -41,10 +41,7 @@ export class FormSubmiter {
 				paypal.renderButton( this._paypalContainerElement );
 			}
 			else throw new Error( 'Paypal container element not found' );
-
 		}
-
-		this.refillFields( booking );
 
 		paypalContainer.scrollIntoView({
 			behavior: 'smooth',
@@ -52,12 +49,17 @@ export class FormSubmiter {
 			inline: 'nearest'
 		});
 
+		return new Promise( resolve => {
+			setTimeout(()=>{
+				let elementorSuccess: HTMLElement = <HTMLElement>this._formElement.getElementsByClassName( 'elementor-message-success' ).item(0);
+				if ( !validBooking && elementorSuccess) elementorSuccess.style.display = 'none';
+				this.refillFields( booking );
+				resolve();
+			},50);
+		})
 	}
 
   private createErrorHtml( message: string ): string {
-		let elementorSuccess: HTMLElement = <HTMLElement>this._formElement.getElementsByClassName( 'elementor-message-success' ).item(0);
-		if (elementorSuccess) elementorSuccess.style.display = 'none';
-
 		let element: string[] = [];
 		element.push( '<h3>An error occurred while processing you booking</h3>' );
 		element.push( '<p style="color:red;">' + message + '</p>' );

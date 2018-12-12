@@ -23,7 +23,7 @@ export class MockData {
 			'CREATE TABLE IF NOT EXISTS ',
 			this.testDataTable,
 			' ( ',
-			'id int(10), ', // NOT NULL AUTO INCREMENT, ',
+			'id integer primary key, ', // NOT NULL AUTO INCREMENT, ',
 			'name varchar(255), ',
 			'salary int(10) ',
 			');'
@@ -35,13 +35,13 @@ export class MockData {
 			'CREATE TABLE IF NOT EXISTS ',
 			this.bookingsTable,
 			' ( ',
-			'id int(10), ', // NOT NULL AUTO_INCREMENT, ',
+			'id integer primary key, ', // NOT NULL AUTO_INCREMENT, ',
 			'date date, ',
 			'time time, ',
 			'time_length int(10), ',
 			'comment text, ',
-			'restaurant_id int(10), ',
-			'guide_id int(10), ',
+			'restaurant_id integer, ',
+			'guide_id integer, ',
 			'adults int(10), ',
 			'children int(10), ',
 			'coupon varchar(15), ',
@@ -53,8 +53,7 @@ export class MockData {
 			'name varchar(255), ',
 			'email varchar(255), ',
 			'paypalPaymentId varchar(255), ',
-			'trasactionTimeStamp timestamp, ',
-			'PRIMARY KEY (id) ',
+			'trasactionTimeStamp timestamp ',
 			');'
 		]
 		this._db.run( sqlArr.join('') + ';' );
@@ -64,14 +63,13 @@ export class MockData {
 			'CREATE TABLE IF NOT EXISTS ',
 			this.guideTable,
 			' ( ',
-			'id int(10), ', // NOT NULL AUTO INCREMENT, ',
+			'id integer primary key, ', // NOT NULL AUTO INCREMENT, ',
 			'name varchar(255), ',
 			'score int(3), ',
 			'phone varchar(10), ',
 			'email varchar(255), ',
 			'line_id varchar(255), ',
-			'paypal varchar(255), ',
-			'PRIMARY KEY (id) ',
+			'paypal varchar(255) ',
 			');'
 		];
 		this._db.run( sqlArr.join('') );
@@ -81,7 +79,7 @@ export class MockData {
 			'CREATE TABLE IF NOT EXISTS ',
 			this.guideHolidaysTable,
 			' ( ',
-			'id int(10), ', // NOT NULL
+			'id integer, ', // NOT NULL
 			'date date ',
 			');'
 		];
@@ -92,7 +90,7 @@ export class MockData {
 			'CREATE TABLE IF NOT EXISTS ',
 			this.restaurantHolidaysTable,
 			' ( ',
-			'id int(10), ', // NOT NULL
+			'id integer, ', // NOT NULL
 			'date date ',
 			');'
 		];
@@ -103,7 +101,7 @@ export class MockData {
 			'CREATE TABLE IF NOT EXISTS ',
 			this.restaurantTable,
 			' ( ',
-			'id int(10), ', // NOT NULL
+			'id integer primary key, ', // NOT NULL
 			'name varchar(255), ',
 			'adultPrice int(10), ',
 			'childrenPrice int(10), ',
@@ -131,13 +129,13 @@ export class MockData {
 			'CREATE TABLE IF NOT EXISTS ',
 			this.couponTable,
 			' ( ',
-			'id int(10), ', // NOT NULL
+			'id integer primary key, ', // NOT NULL
 			'code varchar(20), ',
 			'validUntil date, ',
 			'value int(10), ',
 			'valueType varchar(10), ', //percent, absolute
 			'commission int(10), ',
-			'commisionistId int(10) ',
+			'commisionistid integer ',
 			');'
 		];
 		this._db.run( sqlArr.join('') );
@@ -171,7 +169,10 @@ export class MockData {
 		let data = [];
 		data.push( dataObject );
 		this.insert( this.tablePrefix + table, data );
-		return 200;
+		let resp = this._db.exec( 'select last_insert_rowid();' );
+		let lastRowId = resp[0].values[0][0];
+		if ( lastRowId ) return this.queryGeneric( this.tablePrefix + table, { id: lastRowId } );
+		else return {};
 	}
 
 	private mockGET( endpoint: string, params: {} ) {
@@ -299,7 +300,6 @@ export class MockData {
 		}
 		fs.writeFileSync( dir + 'filename.sqlite', buffer );
 		fs.writeFileSync( dir + 'filename.sql', this._insertStatement.join('\n') );
-//		console.log('database writen');
 	}
 }
 
