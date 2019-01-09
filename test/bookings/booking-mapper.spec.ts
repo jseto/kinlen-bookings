@@ -221,6 +221,7 @@ describe( 'BookingMapper is a class providing the following services:', ()=> {
 			});
 			it ( 'should report unavailability for web dates also', async()=>{
 				let map = await mapper.getUnavailableDays( new Date( '2018-10-01' ), 2 );
+				console.log(map)
 				expect( map.length ).toBe( 2 );
 				expect( map ).toContainEqual( new Date( '2018-10-01' ) );
 				expect( map ).toContainEqual( new Date( '2018-10-07' ) );

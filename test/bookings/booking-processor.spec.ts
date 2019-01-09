@@ -3,6 +3,7 @@ import { MockData } from './../mock-data/db-sql';
 import { BookingProcessor, RawBooking } from '../../src/bookings/booking-processor';
 import { Coupon } from '../../src/bookings/coupon';
 import { BookingError } from './BookingError';
+import { Booking } from '../../src/bookings/booking';
 
 describe( 'The BookingProcessor is in charge of place a booking in the System', ()=> {
 	let booking: RawBooking;
@@ -29,7 +30,7 @@ describe( 'The BookingProcessor is in charge of place a booking in the System', 
 	describe( 'the booking', ()=>{
 
 		it( 'should accept a booking that can be placed', async ()=> {
-			booking.date = new Date( '2018-10-10' );
+			//booking.date = new Date( '2018-10-10' );
 			let processor = new BookingProcessor( booking );
 			expect( await processor.validateBooking() ).toBeTruthy()
 		});
@@ -169,22 +170,25 @@ describe( 'The BookingProcessor is in charge of place a booking in the System', 
 
 		});
 
-//		describe( 'Coupon', ()=>{
-		describe( 'on user press paypal button', ()=> {
+		xdescribe( 'on user press paypal button', ()=> {
+			let processor: BookingProcessor;
+			let tempBooking: Booking;
 
 			it( 'should insert a temporary booking', async ()=>{
-				let processor = new BookingProcessor( booking );
+				console.log( booking )
+				processor = new BookingProcessor( booking );
+				expect( await processor.validateBooking( true ) ).toBeTruthy();
 				await processor.insertTempBooking();
 				let b = await processor.booking();
 				expect( b.id ).toBeGreaterThan( 0 );
 			});
 
-			xit( 'should fill assignedGuide field', async ()=>{
-				let processor = new BookingProcessor( booking );
-				let b = await processor.insertTempBooking();
-				expect( b.assignedGuide ).toBeTruthy();
-				expect( b.paid ).toBeFalsy();
-				expect( b.paidAmount ).toBe( 0 );
+			it( 'should fill assignedGuide field', async ()=>{
+				processor = new BookingProcessor( booking );
+				tempBooking = await processor.insertTempBooking();
+				expect( tempBooking.assignedGuide ).toBeTruthy();
+				expect( tempBooking.paid ).toBeFalsy();
+				expect( tempBooking.paidAmount ).toBe( 0 );
 			})
 		});
 

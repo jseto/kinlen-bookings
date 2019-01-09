@@ -293,7 +293,7 @@ export class MockData {
 
 	exportDatabase() {
 		let data = this._db.export();
-		let buffer = new Buffer(data);
+		let buffer = Buffer.from(data);
 		let dir = 'out/';
 		if ( !fs.existsSync( dir ) ) {
     	fs.mkdirSync( dir );

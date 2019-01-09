@@ -10,7 +10,8 @@ export class Paypal {
 	}
 
 	async payment( _data: any, actions: any ) {
-		this._bookingProcessor.insertTempBooking();
+		await this._bookingProcessor.insertTempBooking();
+//		return actions.payment.create();
 
 		let obj = await this.getPayment();
 		obj[ 'application_context' ] = {
@@ -24,6 +25,14 @@ export class Paypal {
 							.then( function () {
       					window.alert('Payment Complete!');
     					});
+	}
+
+	cancelled( _data: any, _actions: any ) {
+		throw Error('cancelled not implemented')
+	}
+
+	error( err: string ) {
+		throw Error('error not implemented ' + err )
 	}
 
 	renderButton( anchorElement: string ): Promise< void > {
@@ -47,6 +56,8 @@ export class Paypal {
 			client: this.secrets(),
 			payment: ( data: any, actions: any ) => this.payment( data, actions ),
 			onAuthorize: this.autorized,
+			onCancel: this.cancelled,
+			onError: this.error,
 			onRender: ()=> resolve()
 		}
 	}

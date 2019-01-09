@@ -38,8 +38,17 @@ export class BookingProcessor {
 	}
 
 	async insertTempBooking(): Promise< Booking > {
-		this._booking = await BookingProcessor.insertBooking( await this.booking() );
-		return this._booking;
+		let booking = await this.booking();
+		let mapper = new BookingMapper( booking.restaurant );
+		let available = await mapper.isTimeSlotAvailable( booking.date, booking.time, this.bookedSeats() );
+		if ( available ) {
+			booking.setAssignedGuide( await mapper.assignGuide( booking.date, booking.time ) );
+			this._booking = await BookingProcessor.insertBooking( booking );
+			return this._booking;
+		}
+		else {
+			return null;
+		}
 	}
 
 	async totalToPay(): Promise<number> {
