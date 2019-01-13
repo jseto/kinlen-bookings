@@ -39,7 +39,9 @@ export class BookingProcessor {
 
 	async insertTempBooking(): Promise< Booking > {
 		let booking = await this.booking();
-		let mapper = new BookingMapper( booking.restaurant );
+		booking.setPaid( false );
+		booking.setPaidAmount( 0 );
+		let mapper = new BookingMapper( booking.restaurant ); // ensures getting a fresh copy of mapper
 		let available = await mapper.isTimeSlotAvailable( booking.date, booking.time, this.bookedSeats() );
 		if ( available ) {
 			booking.setAssignedGuide( await mapper.assignGuide( booking.date, booking.time ) );

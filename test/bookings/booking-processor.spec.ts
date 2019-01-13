@@ -7,13 +7,14 @@ import { Booking } from '../../src/bookings/booking';
 
 describe( 'The BookingProcessor is in charge of place a booking in the System', ()=> {
 	let booking: RawBooking;
+	let mockData: MockData;
 
 	beforeAll(()=>{
-		let mockData = new MockData();
-		fetchMock.mock('*', ( url, opts )=>{ return mockData.response( url, opts ) } );
 	});
 
 	beforeEach(()=>{
+		mockData = new MockData();
+		fetchMock.mock('*', ( url, opts )=>{ return mockData.response( url, opts ) } );
 		booking = {
 			restaurant_id: 1,
 			date: new Date( '2018-10-10' ),
@@ -25,6 +26,11 @@ describe( 'The BookingProcessor is in charge of place a booking in the System', 
 			email: 'p.grillo@gmail.com',
 			comment: 'no special requirements',
 		};
+	});
+
+	afterEach(()=>{
+		fetchMock.restore();
+		mockData.close();
 	});
 
 	describe( 'the booking', ()=>{
@@ -170,12 +176,11 @@ describe( 'The BookingProcessor is in charge of place a booking in the System', 
 
 		});
 
-		xdescribe( 'on user press paypal button', ()=> {
+		describe( 'on user press paypal button', ()=> {
 			let processor: BookingProcessor;
 			let tempBooking: Booking;
 
 			it( 'should insert a temporary booking', async ()=>{
-				console.log( booking )
 				processor = new BookingProcessor( booking );
 				expect( await processor.validateBooking( true ) ).toBeTruthy();
 				await processor.insertTempBooking();
@@ -185,6 +190,7 @@ describe( 'The BookingProcessor is in charge of place a booking in the System', 
 
 			it( 'should fill assignedGuide field', async ()=>{
 				processor = new BookingProcessor( booking );
+				expect( await processor.validateBooking( true ) ).toBeTruthy();
 				tempBooking = await processor.insertTempBooking();
 				expect( tempBooking.assignedGuide ).toBeTruthy();
 				expect( tempBooking.paid ).toBeFalsy();

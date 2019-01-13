@@ -45,7 +45,7 @@ export class BookingData {
     });
   }
 
-  getBookings( queryObject ):Promise<Booking[]> {
+  getBookings( queryObject: Object ):Promise<Booking[]> {
     return new Promise( ( resolve ) => {
       Rest.getREST( 'booking/', queryObject ).then( ( data ) => {
 				resolve( <Booking[]>Rest.buildList( data, ()=> { return new Booking(-1) } ) );
