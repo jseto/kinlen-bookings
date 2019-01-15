@@ -9,11 +9,11 @@ export interface BookingSummary {
 
 export class BookingMapper {
   constructor( restaurantId: number ) {
+		this._lastBookingMapDate = new Date( 0 );
 		this._restaurantId = restaurantId;
     this._bookingMap = [];
 		this._restaurantHolidays = [];
 		this._availableGuide = [];
-    this._lastBookingMapDate = new Date( 0 );
 		this._db = new BookingData();
   }
 
@@ -36,7 +36,7 @@ export class BookingMapper {
 	 */
 	async bookingSummary( date: Date, hour: string ):Promise<BookingSummary> {
 		let daySummary = await this.dayBookingSummary( date );
-		return daySummary[ hour ];
+		return daySummary && daySummary[ hour ];
 	}
 
 	/**
@@ -174,7 +174,7 @@ export class BookingMapper {
 	}
 
   private isAvailMapFresh( date: Date ):boolean {
-		return this._lastBookingMapDate.getMonth() === date.getMonth();
+		return this._lastBookingMapDate.getMonth() === date.getMonth() && this._lastBookingMapDate.getFullYear() === date.getFullYear();
   }
 
 	private _restaurantId: number;

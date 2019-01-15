@@ -40,17 +40,29 @@ describe( 'BookingMapper is a class providing the following services:', ()=> {
 				await mapper.bookingSummary( new Date( '2010-02-02' ), '19:00:00' );
 				expect( mapper.buildBookingMapCache ).toHaveBeenCalled();
 				cacheSpy.calls.reset();
-			})
+			});
+
+			it( 'should care about year in same month', async ()=>{
+				let cacheSpy = spyOn( mapper, 'buildBookingMapCache' ).and.callThrough();
+				await mapper.bookingSummary( new Date( '2010-01-02' ), '19:00:00' );
+				expect( mapper.buildBookingMapCache ).toHaveBeenCalled();
+				cacheSpy.calls.reset();
+
+				await mapper.bookingSummary( new Date( '2011-01-02' ), '19:00:00' );
+				expect( mapper.buildBookingMapCache ).toHaveBeenCalled();
+				cacheSpy.calls.reset();
+
+			});
 		});
 
 		describe( 'if there is no booking for the day', ()=> {
 
-			it( 'should return falsy for no day booking', async ()=> {
+			it( 'should return NULL/undefined for no day booking', async ()=> {
 				let booking = await mapper.bookingSummary( new Date( '2018-09-02' ), '19:00:00' );
 				expect( booking ).toBeFalsy();
 			});
 
-			it( 'should return falsy for day booking but not in the time', async ()=> {
+			it( 'should return null/undefined for day booking but not in the time', async ()=> {
 				let booking = await mapper.bookingSummary( new Date( '2018-09-25' ), '10:00:00' );
 				expect( booking ).toBeFalsy();
 			});
