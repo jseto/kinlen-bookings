@@ -41,10 +41,6 @@ describe( 'paypal checkout button', ()=>{
 		await paypal.renderButton( 'paypal-button-container' )
 	});
 
-	// afterEach(()=>{
-	// 	formSubmiter.showPaymentError.mockReset();
-	// });
-
 	it( 'should display button', async ()=>{
 		expect( paypalElement.firstElementChild.classList ).toContain( 'paypal-button' );
 	});
@@ -74,5 +70,6 @@ describe( 'paypal checkout button', ()=>{
 			await paypal.payment( {}, actions );
 			expect( formSubmiter.showPaymentError ).toHaveBeenCalled();
 		});
+		
 	});
 });
