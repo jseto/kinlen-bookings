@@ -59,7 +59,7 @@ export class Booking extends DatabaseObject {
 			childrenPrice: this.childrenPrice,
 			couponValue: this.couponValue,
 			paidAmount: this.paidAmount,
-			paid: this.paid,
+			paid: Number( this.paid ),
 			name: this._name,
 			email: this._email,
 			paypalPaymentId: this._paypalPaymentId,

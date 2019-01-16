@@ -4,7 +4,7 @@ import { Restaurant } from "./restaurant";
 import { Rest } from "../database/rest";
 import { Coupon } from "./coupon";
 import { Utils } from "../utils/utils";
-import { BookingError } from "../../test/bookings/BookingError";
+import { BookingError } from "../../src/bookings/BookingError";
 
 export interface RawBooking {
 	restaurant_id: number,
@@ -38,8 +38,19 @@ export class BookingProcessor {
 	}
 
 	async insertTempBooking(): Promise< Booking > {
-		this._booking = await BookingProcessor.insertBooking( await this.booking() );
-		return this._booking;
+		let booking = await this.booking();
+		booking.setPaid( false );
+		booking.setPaidAmount( 0 );
+		let mapper = new BookingMapper( booking.restaurant ); // ensures getting a fresh copy of mapper
+		let available = await mapper.isTimeSlotAvailable( booking.date, booking.time, this.bookedSeats() );
+		if ( available ) {
+			booking.setAssignedGuide( await mapper.assignGuide( booking.date, booking.time ) );
+			this._booking = await BookingProcessor.insertBooking( booking );
+			return this._booking;
+		}
+		else {
+			return null;
+		}
 	}
 
 	async totalToPay(): Promise<number> {

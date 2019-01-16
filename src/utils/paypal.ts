@@ -1,16 +1,28 @@
 import { Payment, Item } from "paypal-rest-sdk";
 import * as paypal from "paypal-checkout";
 import { BookingProcessor } from "../bookings/booking-processor";
+import { Booking } from "../bookings/booking";
+import { FormSubmiter } from "../frontend/form-submiter";
+
+const _paymentErrors = {
+	BOOKING_NOT_AVAILABLE: 'The selected booking slot is no longer available. Please select another date or time slot or try later.',
+}
 
 export class Paypal {
-	private _bookingProcessor: BookingProcessor;
 
-	constructor( bookingProcessor: BookingProcessor ) {
+	constructor( formSubmiter: FormSubmiter, bookingProcessor: BookingProcessor ) {
 		this._bookingProcessor = bookingProcessor;
+		this._formSubmiter = formSubmiter;
 	}
 
 	async payment( _data: any, actions: any ) {
-		this._bookingProcessor.insertTempBooking();
+		let tempBookingInserted: Booking = null;
+
+		tempBookingInserted = await this._bookingProcessor.insertTempBooking();
+		if ( !tempBookingInserted ) {
+			this._formSubmiter.showPaymentError( _paymentErrors.BOOKING_NOT_AVAILABLE );
+			return false;
+		}
 
 		let obj = await this.getPayment();
 		obj[ 'application_context' ] = {
@@ -24,6 +36,14 @@ export class Paypal {
 							.then( function () {
       					window.alert('Payment Complete!');
     					});
+	}
+
+	cancelled( _data: any, _actions: any ) {
+		throw Error('cancelled not implemented')
+	}
+
+	error( err: string ) {
+		throw Error('error not implemented ' + err )
 	}
 
 	renderButton( anchorElement: string ): Promise< void > {
@@ -47,6 +67,8 @@ export class Paypal {
 			client: this.secrets(),
 			payment: ( data: any, actions: any ) => this.payment( data, actions ),
 			onAuthorize: this.autorized,
+			onCancel: this.cancelled,
+			onError: this.error,
 			onRender: ()=> resolve()
 		}
 	}
@@ -141,4 +163,7 @@ export class Paypal {
 
 		return items;
 	}
+
+	private _bookingProcessor: BookingProcessor;
+	private _formSubmiter: FormSubmiter;
 }

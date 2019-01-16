@@ -65,7 +65,7 @@ export class BookingFormManager extends Observer< FormState > {
 		return this;
 	}
 
-	registerRadioGroup( name, radioButtons: {} ) {
+	registerRadioGroup( name: string, radioButtons: {} ) {
 		let radioGroup = new ObservableRadioGroup( name, '' );
 		for ( let name in radioButtons ) {
 			radioGroup.addRadioButton( new ObservableRadio( name, radioButtons[ name ] ) );

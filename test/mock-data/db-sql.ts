@@ -218,7 +218,8 @@ export class MockData {
 		let resp = [];
 		let currentDate = new Date( params[ 'minDate' ] );
 		let maxDate = new Date( params[ 'maxDate' ] );
-		while ( currentDate <= maxDate ) {
+		maxDate.setDate( maxDate.getDate() + 1 );
+		while ( currentDate < maxDate ) {
 			let dateStr = Utils.dateToString( currentDate );
 			let obj = this.queryFreeGuide( { date: dateStr } )
 			obj.date = dateStr;
@@ -293,7 +294,7 @@ export class MockData {
 
 	exportDatabase() {
 		let data = this._db.export();
-		let buffer = new Buffer(data);
+		let buffer = Buffer.from(data);
 		let dir = 'out/';
 		if ( !fs.existsSync( dir ) ) {
     	fs.mkdirSync( dir );

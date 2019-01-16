@@ -5,7 +5,7 @@ import { MockData } from "../mock-data/db-sql";
 import * as fs from "fs";
 import { setupBookingFormManager } from "../../src";
 import { FormSubmiter } from "../../src/frontend/form-submiter";
-import { BookingError } from "../bookings/BookingError";
+import { BookingError } from "../../src/bookings/BookingError";
 
 describe( 'FormSubmiter', ()=>{
 	let postIdHtml: string[];

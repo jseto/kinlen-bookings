@@ -8,19 +8,12 @@ export interface BookingSummary {
 }
 
 export class BookingMapper {
-	private _restaurantId: number;
-	private _restaurantHolidays: boolean[];    // All bookings for the month
-	private _availableGuide: Guide[];
-	private _bookingMap: BookingSummary[][];  // All bookings for the month by day of the month as 1st array index and time as 2nd array index
-  private _lastBookingMapDate: Date;
-	private _db: BookingData;
-
   constructor( restaurantId: number ) {
+		this._lastBookingMapDate = new Date( 0 );
 		this._restaurantId = restaurantId;
     this._bookingMap = [];
 		this._restaurantHolidays = [];
 		this._availableGuide = [];
-    this._lastBookingMapDate = new Date( 0 );
 		this._db = new BookingData();
   }
 
@@ -43,7 +36,7 @@ export class BookingMapper {
 	 */
 	async bookingSummary( date: Date, hour: string ):Promise<BookingSummary> {
 		let daySummary = await this.dayBookingSummary( date );
-		return daySummary[ hour ];
+		return daySummary && daySummary[ hour ];
 	}
 
 	/**
@@ -70,6 +63,17 @@ export class BookingMapper {
 		else { //there is no bookings for this restaurant
 			let guide = await this.availableGuide( date );				// so look if there is an available guide
 			return guide != null? guide.maxSeats() : 0;
+		}
+	}
+
+	async assignGuide( date: Date, hour: string ): Promise< number > {
+		let booking = await this.bookingSummary( date, hour );
+		if ( booking && ( MAX_SEATS_PER_GUIDE - booking.bookedSeats ) ) {  // there is a guide serving this restaurant with seats available
+			return booking.guideId;  // so check if still have seats available
+		}
+		else { //there is no bookings for this restaurant
+			let guide = await this.availableGuide( date );				// so look if there is an available guide
+			return guide != null? guide.id : -1;
 		}
 	}
 
@@ -170,6 +174,13 @@ export class BookingMapper {
 	}
 
   private isAvailMapFresh( date: Date ):boolean {
-		return this._lastBookingMapDate.getMonth() === date.getMonth();
+		return this._lastBookingMapDate.getMonth() === date.getMonth() && this._lastBookingMapDate.getFullYear() === date.getFullYear();
   }
+
+	private _restaurantId: number;
+	private _restaurantHolidays: boolean[];    // All bookings for the month
+	private _availableGuide: Guide[];
+	private _bookingMap: BookingSummary[][];  // All bookings for the month by day of the month as 1st array index and time as 2nd array index
+  private _lastBookingMapDate: Date;
+	private _db: BookingData;
 }

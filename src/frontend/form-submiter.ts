@@ -33,7 +33,7 @@ export class FormSubmiter {
 		}
 
 		if ( validBooking ) {
-			let paypal = new Paypal( processor );
+			let paypal = new Paypal( this, processor );
 
 			this._summary.innerHTML = await this.createSummaryHtml( processor );
 
@@ -57,6 +57,10 @@ export class FormSubmiter {
 				resolve();
 			},50);
 		})
+	}
+
+	showPaymentError( errorText: string) {
+		this._summary.innerHTML = this.createErrorHtml( errorText );
 	}
 
   private createErrorHtml( message: string ): string {
