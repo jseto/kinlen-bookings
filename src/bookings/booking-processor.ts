@@ -4,7 +4,7 @@ import { Restaurant } from "./restaurant";
 import { Rest } from "../database/rest";
 import { Coupon } from "./coupon";
 import { Utils } from "../utils/utils";
-import { BookingError } from "../../test/bookings/BookingError";
+import { BookingError } from "../../src/bookings/BookingError";
 
 export interface RawBooking {
 	restaurant_id: number,

@@ -2,7 +2,7 @@ import * as fetchMock from 'fetch-mock';
 import { MockData } from './../mock-data/db-sql';
 import { BookingProcessor, RawBooking } from '../../src/bookings/booking-processor';
 import { Coupon } from '../../src/bookings/coupon';
-import { BookingError } from './BookingError';
+import { BookingError } from '../../src/bookings/BookingError';
 import { Booking } from '../../src/bookings/booking';
 
 describe( 'The BookingProcessor is in charge of place a booking in the System', ()=> {
