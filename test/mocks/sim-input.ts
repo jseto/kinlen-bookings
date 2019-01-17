@@ -27,7 +27,7 @@ export class SimInput {
 		return SimInput.delay( timeout_ms );
 	}
 
-	private static delay( timeout_ms: number ): Promise<{}> {
+	static delay( timeout_ms: number ): Promise<{}> {
 		return new Promise(resolve =>{
 			setTimeout( ()=> resolve(), timeout_ms );
 		});

@@ -6,6 +6,8 @@ import * as fs from "fs";
 import { setupBookingFormManager } from "../../src";
 import { FormSubmiter } from "../../src/frontend/form-submiter";
 import { BookingError } from "../../src/bookings/BookingError";
+import { Paypal, PaymentErrors } from '../../src/utils/paypal';
+import { Booking } from '../../src/bookings/booking';
 
 describe( 'FormSubmiter', ()=>{
 	let postIdHtml: string[];
@@ -154,6 +156,24 @@ describe( 'FormSubmiter', ()=>{
 			expect( SimInput.getInputElementById( 'form-field-kl-email' ).value ).toEqual( 'test@test.com' );
 			expect( SimInput.getInputElementById( 'form-field-kl-requirements' ).value ).toEqual( 'requirements test' );
 		});
+	});
+
+	describe( 'on paypal payment', ()=>{
+		let paypal: Paypal;
+		let showNotice: jest.SpyInstance<(errorText: string) => void>;
+		let insertSpy: jest.SpyInstance< () => Promise< Booking > >;
+		let actions: any;
+
+		beforeEach( async ()=>{
+			await SimInput.setValue( 'form-field-kl-children', '3' );
+			await SimInput.setValue( 'form-field-kl-booking-date', '2018-10-15' );
+			await SimInput.setValue( 'form-field-kl-email', 'test@test.com' );
+			actions = {
+				payment: {
+					create: jest.fn()
+				}
+			};
+		})
 
 		describe( 'in case payment succesfull', ()=> {
 
@@ -169,8 +189,26 @@ describe( 'FormSubmiter', ()=>{
 
 		describe( 'in case payment failed', ()=> {
 
-			xit( 'inform the user and persuade to pay again', ()=> {
+			beforeEach( async ()=>{
+				showNotice = jest.spyOn( formSubmiter, 'showPaymentError');
+				paypal = await formSubmiter.formSubmited();
+				insertSpy = jest.spyOn( paypal.bookingProcessor, 'insertTempBooking' );
+				insertSpy.mockImplementation( ()=> new Booking( -1 ) );
+			});
 
+			it( 'should inform the user about insertTempBooking failed', async ()=> {
+				insertSpy.mockImplementation( ()=> null );
+				await paypal.payment( {}, actions );
+
+				expect( showNotice ).toHaveBeenCalledWith( PaymentErrors.BOOKING_NOT_AVAILABLE );
+				expect( document.getElementById( 'kl-summary-box' ).innerHTML ).toContain( PaymentErrors.BOOKING_NOT_AVAILABLE );
+			});
+
+			xit( 'shoud inform about payment cancelled and persuade to pay again', async ()=> {
+				await paypal.payment( {}, actions );
+
+				expect( showNotice ).toHaveBeenCalledWith( PaymentErrors.BOOKING_NOT_AVAILABLE );
+				expect( document.getElementById( 'kl-summary-box' ).innerHTML ).toContain( PaymentErrors.BOOKING_NOT_AVAILABLE );
 			});
 
 			xit( 'store record of failed transaction', ()=> {

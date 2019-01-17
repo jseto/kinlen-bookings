@@ -20,7 +20,8 @@ export class FormSubmiter {
 		this._summary = element;
 	}
 
-	async formSubmited() {
+	async formSubmited(): Promise< Paypal > {
+		let paypal: Paypal;
 		let paypalContainer = document.getElementById( this._paypalContainerElement );
 		let booking = this._formManager.rawBooking();
 		let processor = new BookingProcessor( booking );
@@ -33,11 +34,11 @@ export class FormSubmiter {
 		}
 
 		if ( validBooking ) {
-			let paypal = new Paypal( this, processor );
-
 			this._summary.innerHTML = await this.createSummaryHtml( processor );
 
 			if ( paypalContainer ) {
+				paypal = new Paypal( processor );
+				paypal.onError = ( msg ) => this.showPaymentError( msg );
 				paypal.renderButton( this._paypalContainerElement );
 			}
 			else throw new Error( 'Paypal container element not found' );
@@ -49,12 +50,12 @@ export class FormSubmiter {
 			inline: 'nearest'
 		});
 
-		return new Promise( resolve => {
+		return new Promise< Paypal >( resolve => {
 			setTimeout(()=>{
 				let elementorSuccess: HTMLElement = <HTMLElement>this._formElement.getElementsByClassName( 'elementor-message-success' ).item(0);
 				if ( !validBooking && elementorSuccess) elementorSuccess.style.display = 'none';
 				this.refillFields( booking );
-				resolve();
+				resolve( paypal );
 			},50);
 		})
 	}

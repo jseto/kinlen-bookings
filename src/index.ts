@@ -1,7 +1,7 @@
 import Flatpickr from 'flatpickr'
 import { BookingFormManager, initialState } from "./frontend/booking-form-manager";
 
-declare function flatpickr( element: HTMLElement, config:Flatpickr.Options.Options );
+declare function flatpickr( element: HTMLElement, config:Flatpickr.Options.Options ): any;
 
 document.addEventListener( 'DOMContentLoaded', function () {
 //  document.getElementById( 'bookingButton' ).onclick = ()=> openTab( 'detail-tab', 'Book Now' );

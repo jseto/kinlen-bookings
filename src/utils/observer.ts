@@ -1,5 +1,5 @@
 abstract class ObserverBase {
-	abstract change< T >( propName: string, value: T );
+	abstract change< T >( propName: string, value: T ): void;
 }
 
 type ObservableMap = {
@@ -45,7 +45,7 @@ export class Observer< StateType extends {} > extends ObserverBase{
 
 abstract class ObservableBase {
 	private _observer: ObserverBase;
-	private _name;
+	private _name: string;
 	protected _element: HTMLElement;
 	private _onChange: () => void;
 
@@ -91,10 +91,10 @@ abstract class ObservableBase {
 		this._element.focus();
 	}
 
-	abstract setValue< T >( val: T );
+	abstract setValue< T >( val: T ): void;
 	abstract getValue< T >(): T;
 
-	protected abstract _change();
+	protected abstract _change(): void;
 }
 
 export abstract class Observable< T > extends ObservableBase {
@@ -130,7 +130,6 @@ export abstract class Observable< T > extends ObservableBase {
 
 	protected convert<T>( val: any ): T {
 		if ( typeof(this._value)==='string' ) {
-//		if ( isNaN( val*2 ) && typeof( val )==='string' && val.slice ) {
 			return String( val ) as any as T;
 		}
 		else {

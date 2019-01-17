@@ -1,18 +1,28 @@
-import { Payment, Item } from "paypal-rest-sdk";
+import { Payment, Item, PaymentResponse } from "paypal-rest-sdk";
 import * as paypal from "paypal-checkout";
 import { BookingProcessor } from "../bookings/booking-processor";
 import { Booking } from "../bookings/booking";
-import { FormSubmiter } from "../frontend/form-submiter";
 
-const _paymentErrors = {
+export const PaymentErrors = {
 	BOOKING_NOT_AVAILABLE: 'The selected booking slot is no longer available. Please select another date or time slot or try later.',
 }
 
 export class Paypal {
 
-	constructor( formSubmiter: FormSubmiter, bookingProcessor: BookingProcessor ) {
+	constructor( bookingProcessor: BookingProcessor ) {
 		this._bookingProcessor = bookingProcessor;
-		this._formSubmiter = formSubmiter;
+	}
+
+	set onAuthorize( callBack: ( paymentData: PaymentResponse )=> void ) {
+		this._onAuthorize = callBack;
+	}
+
+	set onError( callBack: ( errorMsg: string )=> void ) {
+		this._onError = callBack;
+	}
+
+	get bookingProcessor() {
+		return this._bookingProcessor;
 	}
 
 	async payment( _data: any, actions: any ) {
@@ -20,7 +30,7 @@ export class Paypal {
 
 		tempBookingInserted = await this._bookingProcessor.insertTempBooking();
 		if ( !tempBookingInserted ) {
-			this._formSubmiter.showPaymentError( _paymentErrors.BOOKING_NOT_AVAILABLE );
+			if ( this._onError ) this._onError( PaymentErrors.BOOKING_NOT_AVAILABLE );
 			return false;
 		}
 
@@ -31,11 +41,11 @@ export class Paypal {
 		return actions.payment.create( obj );
 	}
 
-	autorized( _data: any, actions: any ) {
+	autorized( data: PaymentResponse, actions: any ) {
 		return actions.payment.execute()
-							.then( function () {
-      					window.alert('Payment Complete!');
-    					});
+			.then(()=>{
+				if ( this._onAuthorize ) this._onAuthorize( data )
+			});
 	}
 
 	cancelled( _data: any, _actions: any ) {
@@ -43,7 +53,7 @@ export class Paypal {
 	}
 
 	error( err: string ) {
-		throw Error('error not implemented ' + err )
+		if ( this._onError ) this._onError( err );
 	}
 
 	renderButton( anchorElement: string ): Promise< void > {
@@ -165,5 +175,6 @@ export class Paypal {
 	}
 
 	private _bookingProcessor: BookingProcessor;
-	private _formSubmiter: FormSubmiter;
+	private _onAuthorize: ( paymentData: PaymentResponse ) => void;
+	private _onError: ( errorMsg: string ) => void;
 }

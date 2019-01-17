@@ -1,9 +1,8 @@
 import '../mocks/match-media'
-import { Paypal } from "../../src/utils/paypal";
+import { Paypal, PaymentErrors } from "../../src/utils/paypal";
 import * as fetchMock from 'fetch-mock';
 import { MockData } from './../mock-data/db-sql';
 import { BookingProcessor, RawBooking } from '../../src/bookings/booking-processor';
-import { FormSubmiter } from '../../src/frontend/form-submiter';
 import { Booking } from '../../src/bookings/booking';
 
 describe( 'paypal checkout button', ()=>{
@@ -11,7 +10,6 @@ describe( 'paypal checkout button', ()=>{
 	let paypalElement: HTMLElement;
 	let paypal: Paypal;
 	let bookingProcessor: BookingProcessor;
-	let formSubmiter: { showPaymentError: jest.Mock<{}>; };
 
 	beforeAll(()=>{
 		let mockData = new MockData();
@@ -34,10 +32,7 @@ describe( 'paypal checkout button', ()=>{
 		};
 		bookingProcessor = new BookingProcessor( booking )
 		paypalElement = document.getElementById( 'paypal-button-container' );
-		formSubmiter = {
-			showPaymentError: jest.fn()
-		}
-		paypal = new Paypal( <FormSubmiter><unknown>formSubmiter, bookingProcessor );
+		paypal = new Paypal( bookingProcessor );
 		await paypal.renderButton( 'paypal-button-container' )
 	});
 
@@ -48,6 +43,7 @@ describe( 'paypal checkout button', ()=>{
 	describe( 'on press payment button', ()=>{
 		let actions: any;
 		let insertSpy: jest.SpyInstance< () => Promise< Booking > >;
+		let mockedErrorCallback: jest.Mock<{}>;
 
 		beforeEach(()=>{
  			actions = {
@@ -56,20 +52,22 @@ describe( 'paypal checkout button', ()=>{
 				}
 			};
 			insertSpy = jest.spyOn( bookingProcessor, 'insertTempBooking' );
+			mockedErrorCallback = jest.fn();
+			paypal.onError = mockedErrorCallback;
 		});
 
 		it( 'should create a temp booking', async ()=>{
 			insertSpy.mockImplementation( ()=> new Booking(300) );
 			await paypal.payment( {}, actions );
 			expect( insertSpy ).toHaveBeenCalled();
-			expect( formSubmiter.showPaymentError ).not.toHaveBeenCalled();
+			expect( mockedErrorCallback ).not.toHaveBeenCalled();
 		});
 
 		it( 'should display error message if insertTempBooking fails', async ()=>{
 			insertSpy.mockImplementation( ()=> null );
 			await paypal.payment( {}, actions );
-			expect( formSubmiter.showPaymentError ).toHaveBeenCalled();
+			expect( mockedErrorCallback ).toHaveBeenCalledWith( PaymentErrors.BOOKING_NOT_AVAILABLE );
 		});
-		
+
 	});
 });
