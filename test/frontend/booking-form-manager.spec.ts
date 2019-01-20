@@ -57,6 +57,7 @@ describe( 'BookingFormManager is in charge to manage the DOM form elements and t
 			expect( SimInput.isRadioShown( 'form-field-kl-booking-time-0' ) ).toBeTruthy();
 			await SimInput.setValue( 'form-field-kl-booking-date', '2018-10-05' )
 			expect( SimInput.isRadioShown( 'form-field-kl-booking-time-0' ) ).toBeFalsy();
+			expect( SimInput.isRadioShown( 'form-field-kl-booking-time-1' ) ).toBeTruthy();
 		});
 
 		it( 'shoud be readOnly', ()=>{

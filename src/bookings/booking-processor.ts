@@ -42,8 +42,7 @@ export class BookingProcessor {
 		booking.setPaid( false );
 		booking.setPaidAmount( 0 );
 		let mapper = new BookingMapper( booking.restaurant ); // ensures getting a fresh copy of mapper
-		let available = await mapper.isTimeSlotAvailable( booking.date, booking.time, this.bookedSeats() );
-		if ( available ) {
+		if ( await this.validateBooking() ) {
 			booking.setAssignedGuide( await mapper.assignGuide( booking.date, booking.time ) );
 			this._booking = await BookingProcessor.insertBooking( booking );
 			return this._booking;

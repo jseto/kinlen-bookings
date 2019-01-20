@@ -120,7 +120,7 @@ export class BookingFormManager extends Observer< FormState > {
 	private dateSet( date: Date )  {
 		let first = true;
 		this.radioButtons().forEach( async timeOpt => {
-			let isAvailable = await this._mapper.isTimeSlotAvailable( date, timeOpt.name, this.requiredSeats() );
+			let isAvailable = await this._mapper.isTimeSlotAvailable( date, timeOpt.name + ':00', this.requiredSeats() );
 			isAvailable? timeOpt.show() : timeOpt.hide();
 			if ( first && isAvailable ) {
 				timeOpt.value = true;

@@ -34,10 +34,14 @@ export class Paypal {
 			return false;
 		}
 
-		let obj = await this.getPayment();
-		obj[ 'application_context' ] = {
-			shipping_preference: 'NO_SHIPPING'
-		};
+		let obj = {
+			payment: await this.getPayment(),
+			experience: {
+	 			input_fields: {
+		 			no_shipping: 1
+	 			}
+ 			}
+		}
 		return actions.payment.create( obj );
 	}
 
