@@ -14,7 +14,6 @@ export class BookingMapper {
     this._bookingMap = [];
 		this._restaurantHolidays = [];
 		this._availableGuide = [];
-		this._db = new BookingData();
   }
 
 	get restaurantId(): number {
@@ -142,7 +141,7 @@ export class BookingMapper {
 			this._availableGuide[i] = null;
 		}
 
-		let bookings = await this._db.getMonthBookings( this._restaurantId, date );
+		let bookings = await BookingData.getMonthBookings( this._restaurantId, date );
 		bookings.forEach(( booking )=>{
 			let day = booking.date.getDate();
 			let bday = this._bookingMap[ day ];
@@ -157,13 +156,13 @@ export class BookingMapper {
 			}
 		});
 
-		let holidays = await this._db.getRestaurantMonthHolidays( this._restaurantId, date );
+		let holidays = await BookingData.getRestaurantMonthHolidays( this._restaurantId, date );
 		holidays.forEach(( holiday )=>{
 			let day = holiday.date.getDate();
 			this._restaurantHolidays[ day ] = true;
 		});
 
-		let availableGuides = await this._db.getMonthFreeGuide( date );
+		let availableGuides = await BookingData.getMonthFreeGuide( date );
 		availableGuides.forEach( (guide)=>{
 			if ( guide.date ) {
 				let day = guide.date.getDate();
@@ -182,5 +181,4 @@ export class BookingMapper {
 	private _availableGuide: Guide[];
 	private _bookingMap: BookingSummary[][];  // All bookings for the month by day of the month as 1st array index and time as 2nd array index
   private _lastBookingMapDate: Date;
-	private _db: BookingData;
 }

@@ -16,8 +16,7 @@ describe( 'BookingData', function() {
 	});
 
 	it( 'should return a Booking by id', async ()=> {
-		let db = new BookingData();
-		let booking: Booking = await db.getBooking( 3 );
+		let booking: Booking = await BookingData.getBooking( 3 );
 
 		expect( booking.date ).toEqual( new Date( '2018-09-25' ) );
 		expect( booking.time ).toEqual( '21:00:00' );
@@ -26,8 +25,7 @@ describe( 'BookingData', function() {
 	});
 
 	it( 'should return all bookings for matching the queryObject', async ()=> {
-		let db = new BookingData();
-		let bookings: Booking[] = await db.getBookings( { restaurant_id:1, date:'2018-09-25' } );
+		let bookings: Booking[] = await BookingData.getBookings( { restaurant_id:1, date:'2018-09-25' } );
 
 		expect( bookings.length ).toBe( 3 );
 	});
@@ -35,32 +33,28 @@ describe( 'BookingData', function() {
 	describe( 'getMonthBookings should report all bookings for the restaurant in a natural month', ()=>{
 
 		it( 'with query date in the middle of the month', async ()=>{
-			let db = new BookingData();
-			let bookings: Booking[] = await db.getMonthBookings( 1, new Date( '2009-08-25' ) );
+			let bookings: Booking[] = await BookingData.getMonthBookings( 1, new Date( '2009-08-25' ) );
 
 			expect( bookings.length ).toBe( 4 );
 			expect( bookings[1].id ).not.toBe( bookings[0].id );
 		});
 
 		it( 'with query date in the begining of the month', async ()=>{
-			let db = new BookingData();
-			let bookings: Booking[] = await db.getMonthBookings( 1, new Date( '2009-08-01' ) );
+			let bookings: Booking[] = await BookingData.getMonthBookings( 1, new Date( '2009-08-01' ) );
 
 			expect( bookings.length ).toBe( 4 );
 			expect( bookings[0].restaurant ).toBe( 1 );
 		});
 
 		it( 'with query date in the end of the month', async ()=>{
-			let db = new BookingData();
-			let bookings: Booking[] = await db.getMonthBookings( 1, new Date( '2009-08-31' ) );
+			let bookings: Booking[] = await BookingData.getMonthBookings( 1, new Date( '2009-08-31' ) );
 
 			expect( bookings.length ).toBe( 4 );
 			expect( bookings[0].restaurant ).toBe( 1 );
 		});
 
 		it( 'but NOT with query date out of the end of the month', async ()=>{
-			let db = new BookingData();
-			let bookings: Booking[] = await db.getMonthBookings( 1, new Date( '2009-09-31' ) );
+			let bookings: Booking[] = await BookingData.getMonthBookings( 1, new Date( '2009-09-31' ) );
 
 			expect( bookings.length ).toBe( 0 );
 		});
@@ -69,14 +63,12 @@ describe( 'BookingData', function() {
 
 	describe( 'Holiday tables', ()=>{
 		it( 'shoud return a holiday object if have holiday', async ()=>{
-			let db = new BookingData();
-			let holiday = await db.getGuideHolidays( 1, new Date( '2017-08-04' ) );
+			let holiday = await BookingData.getGuideHolidays( 1, new Date( '2017-08-04' ) );
 			expect( holiday.length ).toBe( 1 );
 
 		})
 		it( 'shoud return a holiday object if NOT have holiday', async ()=>{
-			let db = new BookingData();
-			let holiday = await db.getGuideHolidays( 1, new Date( '2017-08-05' ) );
+			let holiday = await BookingData.getGuideHolidays( 1, new Date( '2017-08-05' ) );
 			expect( holiday.length ).toBe( 0 );
 
 		})

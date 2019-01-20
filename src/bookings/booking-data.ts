@@ -7,7 +7,7 @@ import { Utils } from "../utils/utils";
 export class BookingData {
 
 
-	getFreeGuide( date: Date ):Promise<Guide> {
+	static getFreeGuide( date: Date ):Promise<Guide> {
 		let guide = new Guide(-1);
 		return new Promise( ( resolve ) => {
 			Rest.getREST( 'free_guide/', { date: Utils.dateToString( date ) } ).then( ( data ) => {
@@ -17,7 +17,7 @@ export class BookingData {
 		});
 	}
 
-	getMonthFreeGuide( date: Date ):Promise<FreeGuide[]> {
+	static getMonthFreeGuide( date: Date ):Promise<FreeGuide[]> {
 		return new Promise((resolve)=>{
 			Rest.getMonthPeriod( 'free_guide/', Utils.dateToString( date ), {} ).then( ( data ) => {
 				resolve( <FreeGuide[]>Rest.buildList( data, ()=>{ return new FreeGuide(-1) } ) );
@@ -26,7 +26,7 @@ export class BookingData {
 
 	}
 
-	getMonthBookings( restaurantId: number, date: Date):Promise<Booking[]> {
+static getMonthBookings( restaurantId: number, date: Date):Promise<Booking[]> {
 		return new Promise((resolve)=>{
 			Rest.getMonthPeriod( 'booking_period/', Utils.dateToString( date ), { restaurant_id: restaurantId } ).then( ( data ) => {
 				resolve( <Booking[]>Rest.buildList( data, ()=>{ return new Booking(-1) } ) );
@@ -34,7 +34,7 @@ export class BookingData {
     });
 	}
 
-  getBooking( id: number ):Promise<Booking> {
+  static getBooking( id: number ):Promise<Booking> {
 		// select * from wp_kinlen_booking where id={id}
     let booking = new Booking(-1);
     return new Promise( ( resolve ) => {
@@ -45,7 +45,7 @@ export class BookingData {
     });
   }
 
-  getBookings( queryObject: Object ):Promise<Booking[]> {
+  static getBookings( queryObject: Object ):Promise<Booking[]> {
     return new Promise( ( resolve ) => {
       Rest.getREST( 'booking/', queryObject ).then( ( data ) => {
 				resolve( <Booking[]>Rest.buildList( data, ()=> { return new Booking(-1) } ) );
@@ -53,23 +53,23 @@ export class BookingData {
     });
   }
 
-	setGuideHoliday( guideId: number, date: Date ) {
+	static setGuideHoliday( guideId: number, date: Date ) {
 		return this.setHoliday( 'guide_holiday/', guideId, date );
 	}
 
-	getGuideHolidays( guideId: number, date?: Date ): Promise<Holiday[]> {
+	static getGuideHolidays( guideId: number, date?: Date ): Promise<Holiday[]> {
 		return this.getHolidays( 'guide_holiday/', guideId, date )
 	}
 
-	setRestaurantHoliday( restaurantId: number, date: Date ) {
+	static setRestaurantHoliday( restaurantId: number, date: Date ) {
 		return this.setHoliday( 'restaurant_holiday/', restaurantId, date );
 	}
 
-	getRestaurantHolidays( restaurantId: number, date?: Date ): Promise<Holiday[]> {
+	static getRestaurantHolidays( restaurantId: number, date?: Date ): Promise<Holiday[]> {
 		return this.getHolidays( 'restaurant_holiday/', restaurantId, date )
 	}
 
-	getRestaurantMonthHolidays( restaurantId: number, date: Date ): Promise<Holiday[]> {
+	static getRestaurantMonthHolidays( restaurantId: number, date: Date ): Promise<Holiday[]> {
 		return new Promise((resolve)=>{
 			Rest.getMonthPeriod( 'restaurant_holiday_period/', Utils.dateToString( date ), { id: restaurantId } ).then( ( data ) => {
 				resolve( <Holiday[]>Rest.buildList( data, ()=>{ return new Holiday(-1) } ) );
@@ -77,14 +77,14 @@ export class BookingData {
     });
 	}
 
-	setHoliday( endpoint: string, id: number, date: Date ) {
+	static setHoliday( endpoint: string, id: number, date: Date ) {
 		return Rest.postREST( endpoint, {
 			id: id,
 			date: Utils.dateToString( date )
 		});
 	}
 
-	getHolidays( endpoint: string, id: number, date?: Date ): Promise<Holiday[]> {
+	static getHolidays( endpoint: string, id: number, date?: Date ): Promise<Holiday[]> {
 		let q = { id: id };
 		if ( date != undefined ) {
 			q[ 'date' ] = Utils.dateToString( date );

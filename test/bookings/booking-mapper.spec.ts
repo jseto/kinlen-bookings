@@ -6,7 +6,6 @@ import { BookingData } from '../../src/bookings/booking-data';
 
 
 describe( 'BookingMapper is a class providing the following services:', ()=> {
-	let db = new BookingData();
 	let mapper: BookingMapper;
 	let mockData: MockData;
 
@@ -112,7 +111,7 @@ describe( 'BookingMapper is a class providing the following services:', ()=> {
 
 				it( 'should not have bookings for the day', async()=> {
 					let guide = await mapper.availableGuide( bookingDate );
-					let guideBookings = await db.getBookings({
+					let guideBookings = await BookingData.getBookings({
 						guide_id: guide.id,
 						date: bookingDate
 					});
@@ -122,24 +121,24 @@ describe( 'BookingMapper is a class providing the following services:', ()=> {
 
 				it( 'should not be blocked (holiday, etc.) for the booking day', async ()=> {
 					let guide1 = await mapper.availableGuide( bookingDate );
-					let holiday = await db.getGuideHolidays( guide1.id, bookingDate );
+					let holiday = await BookingData.getGuideHolidays( guide1.id, bookingDate );
 					expect( holiday.length ).toBe( 0 );
 
-					await db.setGuideHoliday( guide1.id, bookingDate );
+					await BookingData.setGuideHoliday( guide1.id, bookingDate );
 					mapper.invalidateCache();
 					let guide2 = await mapper.availableGuide( bookingDate );
 					expect( guide1.id ).not.toEqual( guide2.id );
-					let holiday2 = await db.getGuideHolidays( guide1.id, bookingDate );
+					let holiday2 = await BookingData.getGuideHolidays( guide1.id, bookingDate );
 					expect( holiday2.length ).toBe( 1 );
 				});
 
 				it( 'both conditions above should happen', async ()=>{
 					let guide = await mapper.availableGuide( bookingDate );
-					let bookings = await db.getBookings({
+					let bookings = await BookingData.getBookings({
 						guide_id: guide.id,
 						date: bookingDate
 					});
-					let holidays = await db.getGuideHolidays( guide.id, bookingDate );
+					let holidays = await BookingData.getGuideHolidays( guide.id, bookingDate );
 					expect( bookings.length ).toBe( 0 );
 					expect( holidays.length ).toBe( 0 );
 				});
@@ -155,14 +154,14 @@ describe( 'BookingMapper is a class providing the following services:', ()=> {
 				})
 
 				it( 'should not report seats when blocked for the booking day', async ()=> {
-					await db.setRestaurantHoliday( 1, new Date( '2001-06-04' ) );
+					await BookingData.setRestaurantHoliday( 1, new Date( '2001-06-04' ) );
 					mapper.invalidateCache();
 					let seats = await mapper.availableSeats( new Date( '2001-06-04' ), '19:00:00' );
 					expect( seats ).toBe( 0 );
 				});
 
 				it( 'should not report seats when blocked for the booking day at any time', async ()=> {
-					await db.setRestaurantHoliday( 1, new Date( '2001-06-04' ) );
+					await BookingData.setRestaurantHoliday( 1, new Date( '2001-06-04' ) );
 					mapper.invalidateCache();
 					let seats = await mapper.availableSeats( new Date( '2001-06-04' ), '21:00:00' );
 					expect( seats ).toBe( 0 );
@@ -215,7 +214,7 @@ describe( 'BookingMapper is a class providing the following services:', ()=> {
 		});
 
 		it( 'should report false if restaurant have holiday', async ()=>{
-			await db.setRestaurantHoliday( 1, freeBookingDate );
+			await BookingData.setRestaurantHoliday( 1, freeBookingDate );
 			mapper.invalidateCache();
 			let free = await mapper.isDayAvailable( freeBookingDate, 6 );
 			expect( free ).toBeFalsy();
@@ -251,7 +250,7 @@ describe( 'BookingMapper is a class providing the following services:', ()=> {
 			})
 
 			it ( 'should report UNabailability for last day of month', async ()=>{
-				await db.setRestaurantHoliday( 1, new Date( '2018-02-28' ) );
+				await BookingData.setRestaurantHoliday( 1, new Date( '2018-02-28' ) );
 				mapper.invalidateCache();
 				let map = await mapper.getUnavailableDays( new Date( '2018-02-28' ), 2 );
 				expect( map ).toContainEqual( new Date( '2018-02-28' ) );
