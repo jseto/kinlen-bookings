@@ -30,7 +30,7 @@ export class FormSubmiter {
 		try {
 			validBooking = await processor.validateBooking( true );
 		} catch( e ){
-			this._summary.innerHTML = this.createErrorHtml( e.message );
+			this.paymentError( e.message );
 		}
 
 		if ( validBooking ) {
@@ -38,7 +38,7 @@ export class FormSubmiter {
 
 			if ( paypalContainer ) {
 				paypal = new Paypal( processor );
-				paypal.onError = ( msg ) => this.showPaymentError( msg );
+				paypal.onError = ( msg ) => this.paymentError( msg );
 				paypal.renderButton( this._paypalContainerElement );
 			}
 			else throw new Error( 'Paypal container element not found' );
@@ -60,17 +60,19 @@ export class FormSubmiter {
 		})
 	}
 
-	showPaymentError( errorText: string) {
-		this._summary.innerHTML = this.createErrorHtml( errorText );
+	paymentError( errorText: string ) {
+		this._formManager.refreshBookingMap();
+		this.showPaymentError( errorText );
 	}
 
-  private createErrorHtml( message: string ): string {
+	private showPaymentError( errorText: string) {
 		let element: string[] = [];
 		element.push( '<h3>An error occurred while processing you booking</h3>' );
-		element.push( '<p style="color:red;">' + message + '</p>' );
+		element.push( '<p style="color:red;">' + errorText + '</p>' );
 		element.push( '<h4>Please, review the details of your booking</h4>' );
-    return element.join( '\n' );
-  }
+
+		this._summary.innerHTML = element.join( '\n' );
+	}
 
 	private async createSummaryHtml( p: BookingProcessor ) {
 		let b = await p.booking();

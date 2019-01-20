@@ -8,6 +8,7 @@ import { FormSubmiter } from "../../src/frontend/form-submiter";
 import { BookingError } from "../../src/bookings/BookingError";
 import { Paypal, PaymentErrors } from '../../src/utils/paypal';
 import { Booking } from '../../src/bookings/booking';
+import { BookingFormManager } from '../../src/frontend/booking-form-manager';
 
 describe( 'FormSubmiter', ()=>{
 	let postIdHtml: string[];
@@ -16,6 +17,7 @@ describe( 'FormSubmiter', ()=>{
 	let paypalContainerHtml: string;
 	let formSubmiter: FormSubmiter;
 	let dateField: any;
+	let formManager: BookingFormManager;
 
 	beforeAll(()=>{
 		let mockData = new MockData();
@@ -40,7 +42,7 @@ describe( 'FormSubmiter', ()=>{
 
 		dateField = document.getElementById( 'form-field-kl-booking-date' );
 		dateField['_flatpickr'] = { config:{} };
-		let formManager = await setupBookingFormManager();
+		formManager = await setupBookingFormManager();
 		formSubmiter = new FormSubmiter( formManager, <HTMLFormElement>document.getElementById('kl-booking-form') );
 		formSubmiter.setPaypalContainerElement( 'paypal-button-container' );
 		formSubmiter.setSummaryElement( document.getElementById( 'kl-summary-box') );
@@ -49,6 +51,7 @@ describe( 'FormSubmiter', ()=>{
 	describe( 'on bad booking data on submit button', ()=>{
 		let scrollMock: jest.Mock;
 		let alertMock: jest.Mock;
+		let invalidateSpy: jest.SpyInstance<() => Promise<void>>;
 
 		beforeEach( async ()=>{
 			scrollMock = jest.fn();
@@ -63,6 +66,7 @@ describe( 'FormSubmiter', ()=>{
 			SimInput.getInputElementById( 'form-field-kl-children' ).value = '';
 			SimInput.getInputElementById( 'form-field-kl-booking-date' ).value = '';
 			SimInput.getInputElementById( 'form-field-kl-email' ).value = '';
+			invalidateSpy = jest.spyOn( formManager, 'refreshBookingMap' );
 			await formSubmiter.formSubmited();
 		});
 
@@ -90,6 +94,11 @@ describe( 'FormSubmiter', ()=>{
 			let messageElement = document.getElementById( 'elementor-message-for-test');
 			expect( messageElement.style.display ).toEqual( 'none' );
 		});
+
+		it( 'should reset date field and refreshBookingMap', ()=>{
+			expect( invalidateSpy ).toHaveBeenCalled();
+			expect( SimInput.getInputElementById( 'form-field-kl-booking-date' ).value ).toEqual( '' );
+		})
 	})
 
 	describe( 'on valid button submit event', ()=> {
@@ -190,7 +199,7 @@ describe( 'FormSubmiter', ()=>{
 		describe( 'in case payment failed', ()=> {
 
 			beforeEach( async ()=>{
-				showNotice = jest.spyOn( formSubmiter, 'showPaymentError');
+				showNotice = jest.spyOn( formSubmiter, 'paymentError');
 				paypal = await formSubmiter.formSubmited();
 				insertSpy = jest.spyOn( paypal.bookingProcessor, 'insertTempBooking' );
 				insertSpy.mockImplementation( ()=> new Booking( -1 ) );
@@ -202,6 +211,16 @@ describe( 'FormSubmiter', ()=>{
 
 				expect( showNotice ).toHaveBeenCalledWith( PaymentErrors.BOOKING_NOT_AVAILABLE );
 				expect( document.getElementById( 'kl-summary-box' ).innerHTML ).toContain( PaymentErrors.BOOKING_NOT_AVAILABLE );
+			});
+
+			it( 'should refresh calendar on insertTempBooking failure', async()=>{
+				let invalidateSpy = jest.spyOn( formManager, 'refreshBookingMap' );
+				insertSpy.mockImplementation( ()=> null );
+				await paypal.payment( {}, actions );
+				await SimInput.delay( 1 );
+				
+				expect( invalidateSpy ).toHaveBeenCalled();
+				expect( SimInput.getInputElementById( 'form-field-kl-booking-date' ).value ).toEqual( '' );
 			});
 
 			xit( 'shoud inform about payment cancelled and persuade to pay again', async ()=> {

@@ -48,6 +48,11 @@ export class BookingFormManager extends Observer< FormState > {
 		return this;
 	}
 
+	async refreshBookingMap() {
+		await this._mapper.buildBookingMapCache( new Date() );
+		this.resetDate();
+	}
+
 	registerSelectElements( elements: {}) {
 		for( let name in elements ) {
 			let observable = new ObservableSelect<number>( name, elements[ name ], 0 );
