@@ -2,7 +2,7 @@ import { BookingFormManager } from "./booking-form-manager";
 import { BookingProcessor, RawBooking } from "../bookings/booking-processor";
 import { ObservableRadioGroup } from "../utils/observer";
 import { Utils } from "../utils/utils";
-import { Paypal } from "../utils/paypal";
+import { Paypal, PaymentErrors } from "../utils/paypal";
 
 export class FormSubmiter {
 
@@ -24,21 +24,22 @@ export class FormSubmiter {
 		let paypal: Paypal;
 		let paypalContainer = document.getElementById( this._paypalContainerElement );
 		let booking = this._formManager.rawBooking();
-		let processor = new BookingProcessor( booking );
+		this._processor = new BookingProcessor( booking );
 		let validBooking = false;
 
 		try {
-			validBooking = await processor.validateBooking( true );
+			validBooking = await this._processor.validateBooking( true );
 		} catch( e ){
 			this.paymentError( e.message );
 		}
 
 		if ( validBooking ) {
-			this._summary.innerHTML = await this.createSummaryHtml( processor );
+			await this.showSummary( this._processor );
 
 			if ( paypalContainer ) {
-				paypal = new Paypal( processor );
+				paypal = new Paypal( this._processor );
 				paypal.onError = ( msg ) => this.paymentError( msg );
+				paypal.onCancel = () => this.paymentCancelled();
 				paypal.renderButton( this._paypalContainerElement );
 			}
 			else throw new Error( 'Paypal container element not found' );
@@ -60,7 +61,12 @@ export class FormSubmiter {
 		})
 	}
 
-	paymentError( errorText: string ) {
+  private async paymentCancelled(): Promise< boolean > {
+		this.showPaymentError( PaymentErrors.PAYMENT_CANCELLED );
+		return await this._processor.deleteTempBooking();
+  }
+
+	private paymentError( errorText: string ) {
 		this._formManager.refreshBookingMap();
 		this.showPaymentError( errorText );
 	}
@@ -74,7 +80,7 @@ export class FormSubmiter {
 		this._summary.innerHTML = element.join( '\n' );
 	}
 
-	private async createSummaryHtml( p: BookingProcessor ) {
+	private async showSummary( p: BookingProcessor ) {
 		let b = await p.booking();
 		let restaurant = await p.restaurant()
 		let element: string[] = [];
@@ -89,7 +95,7 @@ export class FormSubmiter {
 			element.push( '	<p id="kl-summary-discount">Discount coupon. Value ฿' + b.couponValue + '</p>');
 		}
 		element.push( '	<h4 id="kl-summary-total-to-pay">Total to pay: ฿' + await p.totalToPay() + '</h4>' )
-		return element.join('\n');
+		this._summary.innerHTML = element.join('\n');
 	}
 
 	private refillFields( booking: RawBooking) {
@@ -107,4 +113,5 @@ export class FormSubmiter {
 	private _paypalContainerElement: string;
 	private _summary: HTMLElement;
 	private _formElement: HTMLFormElement;
+	private _processor: BookingProcessor;
 }

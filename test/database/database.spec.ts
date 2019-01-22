@@ -105,12 +105,12 @@ describe( 'Mock data', ()=>{
 				salary: 2500
 			});
 			let resp2 = await Rest.deleteREST( 'mock_data_test_data/', { id: 3, token: resp[0].token } );
-			expect( resp2 ).toBe(8958);
+			expect( resp2 ).toBeTruthy();
 		});
 
 		it( 'should not allow delete data objects without pass the corresponding token', async ()=>{
 			let resp = await Rest.deleteREST( 'mock_data_test_data/', { id: 1, token: '' } );
-			expect( resp ).toBe( 500 );
+			expect( resp ).toBeFalsy();
 		});
 
 

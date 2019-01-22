@@ -228,16 +228,16 @@ describe( 'FormSubmiter', ()=>{
 				expect( document.getElementById( 'kl-summary-box' ).innerHTML ).toContain( PaymentErrors.PAYMENT_CANCELLED );
 			});
 
-			xit( 'should delete tempBooking on payment cancelled', async ()=> {
+			it( 'should delete tempBooking on payment cancelled', async ()=> {
 				await paypal.payment( {}, actions );
 
 				let tempBooking = await BookingData.getBookings( { comment: 'paypal payment test temp booking' } );
-				expect( tempBooking ).toBeTruthy();
+				expect( tempBooking.length ).toBeTruthy();
 
 				await paypal.cancelled( {}, actions );
 
 				tempBooking = await BookingData.getBookings( { comment: 'paypal payment test temp booking' } );
-				expect( tempBooking ).toBeFalsy();
+				expect( tempBooking.length ).toBeFalsy();
 			});
 
 			xit( 'store record of failed transaction', ()=> {

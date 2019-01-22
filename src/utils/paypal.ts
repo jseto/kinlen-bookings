@@ -5,6 +5,7 @@ import { Booking } from "../bookings/booking";
 
 export const PaymentErrors = {
 	BOOKING_NOT_AVAILABLE: 'The selected booking slot is no longer available. Please select another date or time slot or try later.',
+	PAYMENT_CANCELLED: 'The payment has not been fulfilled. Please try again to guaranty your booking'
 }
 
 export class Paypal {
@@ -13,12 +14,16 @@ export class Paypal {
 		this._bookingProcessor = bookingProcessor;
 	}
 
-	set onAuthorize( callBack: ( paymentData: PaymentResponse )=> void ) {
+	set onAuthorize( callBack: ( paymentData: PaymentResponse ) => Promise<any> ) {
 		this._onAuthorize = callBack;
 	}
 
 	set onError( callBack: ( errorMsg: string )=> void ) {
 		this._onError = callBack;
+	}
+
+	set onCancel( callBack: ()=>Promise<any> ) {
+		this._onCancel = callBack;
 	}
 
 	get bookingProcessor() {
@@ -52,8 +57,8 @@ export class Paypal {
 			});
 	}
 
-	cancelled( _data: any, _actions: any ) {
-		throw Error('cancelled not implemented')
+	async cancelled( _data: any, _actions: any ) {
+		if ( this._onCancel ) this._onCancel();
 	}
 
 	error( err: string ) {
@@ -80,8 +85,8 @@ export class Paypal {
 			commit: true,
 			client: this.secrets(),
 			payment: ( data: any, actions: any ) => this.payment( data, actions ),
-			onAuthorize: this.autorized,
-			onCancel: this.cancelled,
+			onAuthorize: ( data: any, actions: any ) => this.autorized( data, actions ),
+			onCancel: ( data: any, actions: any ) => this.cancelled( data, actions ),
 			onError: this.error,
 			onRender: ()=> resolve()
 		}
@@ -179,6 +184,8 @@ export class Paypal {
 	}
 
 	private _bookingProcessor: BookingProcessor;
-	private _onAuthorize: ( paymentData: PaymentResponse ) => void;
+	private _onAuthorize: ( paymentData: PaymentResponse ) => Promise<any>;
 	private _onError: ( errorMsg: string ) => void;
+	private _onCancel: () => Promise<any>;
+
 }

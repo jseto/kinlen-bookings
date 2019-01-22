@@ -52,11 +52,12 @@ export class BookingProcessor {
 		}
 	}
 
-	async deleteTempBooking() {
+	async deleteTempBooking(): Promise< boolean > {
 		let booking = await this.booking();
 		if ( booking.id >= 0 ) {
-			BookingProcessor.deleteBooking( booking );
+			return await BookingProcessor.deleteBooking( booking );
 		}
+		else return false;
 	}
 
 	async totalToPay(): Promise<number> {
@@ -166,8 +167,8 @@ export class BookingProcessor {
 		});
 	}
 
-	static async deleteBooking( booking: Booking ) {
-		return Rest.deleteREST( 'booking/', { id: booking.id, token: booking.token } );
+	static async deleteBooking( booking: Booking ): Promise< boolean > {
+		return <Promise< boolean > >Rest.deleteREST( 'booking/', { id: booking.id, token: booking.token } );
 	}
 
 	private _rawBooking: RawBooking;

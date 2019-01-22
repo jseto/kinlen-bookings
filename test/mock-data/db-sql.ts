@@ -154,7 +154,7 @@ export class MockData {
 	close() {
     this._db.close();
   }
-
+	
 	response( fullURL: string, opts?: any ) {
 		let urlObj = new URL( fullURL, 'http://localhost' );
 		let p = urlObj.pathname;
@@ -206,16 +206,6 @@ export class MockData {
 		}
 		else return false;
   }
-
-	private deleteRows( table: string, whereArr: string[] ) {
-		let sqlStr = 'DELETE FROM ' + table;
-		if ( whereArr.length ) {
-			sqlStr += ' WHERE ' + whereArr.join( ' AND ' );
-			this._db.run( sqlStr );
-			return true;
-		}
-		else return false;
-	}
 
   private queryFreeGuide( params: {} ) {
 		let sqlArr = [
@@ -323,6 +313,16 @@ export class MockData {
 		let sqlStr = 'INSERT INTO ' + tableName +' ( ' + keys.join(', ') + ' ) ' + 'VALUES ' + elements.join(',') + ';'
 		this._insertStatement.push( sqlStr );
 		this._db.run( sqlStr );
+	}
+
+	private deleteRows( table: string, whereArr: string[] ) {
+		let sqlStr = 'DELETE FROM ' + table;
+		if ( whereArr.length ) {
+			sqlStr += ' WHERE ' + whereArr.join( ' AND ' );
+			this._db.run( sqlStr );
+			return true;
+		}
+		else return false;
 	}
 
 	exportDatabase() {
