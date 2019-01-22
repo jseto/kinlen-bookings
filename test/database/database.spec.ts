@@ -4,7 +4,7 @@ import { Rest } from '../../src/database/rest';
 
 describe( 'Database helpers', ()=>{
 	describe( 'objectToQueryString method:', ()=>{
-		it( 'Should work for unitary objects', ()=>{
+		it( 'should work for unitary objects', ()=>{
 			let obj = {
 				date: '2018-09-25'
 			}
@@ -30,13 +30,13 @@ describe( 'Mock data', ()=>{
 		expect( resp.length ).toBe( 2 );
 	})
 
-	it( 'Should return one element when querying id', ()=>{
+	it( 'should return one element when querying id', ()=>{
 		let resp = mockData.response( '/wp-json/kinlen/mock_data_test_data/?id=1' );
 		expect( resp.length ).toBe( 1 );
 		expect( resp[0].name ).toEqual( 'Pankaj' );
 	});
 
-	it( 'Should return one element when querying id 2 parameters', ()=>{
+	it( 'should return one element when querying id 2 parameters', ()=>{
 		let resp = mockData.response( '/wp-json/kinlen/mock_data_test_data/?id=2&name=David' );
 		expect( resp.length ).toBe( 1 );
 		expect( resp[0].salary ).toBe( 5000 );
@@ -71,7 +71,7 @@ describe( 'Mock data', ()=>{
 
 	describe( 'using fetch', ()=>{
 
-		beforeEach(()=>{
+		beforeAll(()=>{
 			fetchMock.mock('*', ( url, opts )=>{ return mockData.response( url, opts ) } );
 		});
 
@@ -84,6 +84,35 @@ describe( 'Mock data', ()=>{
 			let resp2 = await Rest.getREST( 'mock_data_test_data/', { id: 3 } );
 			expect( resp2[0].name ).toEqual( 'Pepe el 3' );
 		});
+
+		it( 'should retrieve data objects without token field', async ()=>{
+			let resp = await Rest.getREST( 'mock_data_test_data/', { id: 1 } );
+			expect( resp[0].token ).toBeUndefined();
+		});
+
+		it( 'should retrieve token field in an insert statement', async ()=>{
+			let resp = await Rest.postREST('mock_data_test_data/',{
+				name: "Pepe el 3",
+				salary: 2500
+			});
+			expect( resp[0].id ).toBe( 3 );
+			expect( resp[0].token ).toBeDefined();
+		});
+
+		it( 'should delete a data object when passing proper token', async ()=>{
+			let resp = await Rest.postREST('mock_data_test_data/',{
+				name: "Pepe el 3",
+				salary: 2500
+			});
+			let resp2 = await Rest.deleteREST( 'mock_data_test_data/', { id: 3, token: resp[0].token } );
+			expect( resp2 ).toBe(8958);
+		});
+
+		it( 'should not allow delete data objects without pass the corresponding token', async ()=>{
+			let resp = await Rest.deleteREST( 'mock_data_test_data/', { id: 1, token: '' } );
+			expect( resp ).toBe( 500 );
+		});
+
 
 	});
 });

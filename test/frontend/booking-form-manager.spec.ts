@@ -60,7 +60,7 @@ describe( 'BookingFormManager is in charge to manage the DOM form elements and t
 			expect( SimInput.isRadioShown( 'form-field-kl-booking-time-1' ) ).toBeTruthy();
 		});
 
-		it( 'shoud be readOnly', ()=>{
+		it( 'should be readOnly', ()=>{
 			expect( SimInput.getInputElementById('form-field-kl-booking-date').readOnly ).toBeTruthy();
 		})
 
@@ -111,7 +111,7 @@ describe( 'BookingFormManager is in charge to manage the DOM form elements and t
 			expect( select.options.length ).toBe( maxPeople - adults + 1 );
 		});
 
-		it( 'shoud change formManager state', async()=>{
+		it( 'should change formManager state', async()=>{
 			await SimInput.setValue( 'form-field-kl-adults', '5' );
 			expect( formManager.state.adults ).toBe( 5 );
 		})

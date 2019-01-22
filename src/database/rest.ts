@@ -61,4 +61,13 @@ export class Rest {
       });
     });
   }
+
+	static deleteREST( endpointCommand: string, queryObject: Object ) {
+		let fullURL = Rest._url + endpointCommand + this.objectToQueryString( queryObject );
+		return new Promise( resolve => {
+			fetch( fullURL, {
+		    method: 'DELETE',
+  		}).then( resp => resolve( resp.json() ) );
+		});
+	}
 }

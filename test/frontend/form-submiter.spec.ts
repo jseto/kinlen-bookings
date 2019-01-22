@@ -9,6 +9,7 @@ import { BookingError } from "../../src/bookings/BookingError";
 import { Paypal, PaymentErrors } from '../../src/utils/paypal';
 import { Booking } from '../../src/bookings/booking';
 import { BookingFormManager } from '../../src/frontend/booking-form-manager';
+import { BookingData } from '../../src/bookings/booking-data';
 
 describe( 'FormSubmiter', ()=>{
 	let postIdHtml: string[];
@@ -78,14 +79,14 @@ describe( 'FormSubmiter', ()=>{
 			expect( alertMock ).not.toBeCalled();
 		});
 
-		it( 'shoul refill erased fields', async ()=>{
+		it( 'should refill erased fields', async ()=>{
 			expect( SimInput.getInputElementById( 'form-field-kl-adults' ).value ).toEqual( '2' );
 			expect( SimInput.getInputElementById( 'form-field-kl-children' ).value ).toEqual( '3' );
 			expect( SimInput.getInputElementById( 'form-field-kl-booking-date' ).value ).toEqual( '' );
 			expect( SimInput.getInputElementById( 'form-field-kl-email' ).value ).toEqual( 'test@test.com' );
 		});
 
-		it( 'shoud show the user the reason of failure', ()=>{
+		it( 'should show the user the reason of failure', ()=>{
 			let errorText = new BookingError( 'INVALID_DATE' ).message;
 			expect( document.getElementById( 'kl-summary-box' ).innerHTML ).toContain( errorText );
 		})
@@ -154,7 +155,7 @@ describe( 'FormSubmiter', ()=>{
 			expect( scrollMock ).toBeCalled();
 		});
 
-		it( 'shoul refill erased fields', ()=>{
+		it( 'should refill erased fields', ()=>{
 			expect( SimInput.getInputElementById( 'form-field-kl-adults' ).value ).toEqual( '2' );
 			expect( SimInput.getInputElementById( 'form-field-kl-children' ).value ).toEqual( '3' );
 			expect( SimInput.getInputElementById( 'form-field-kl-booking-date' ).value ).toEqual( '2018-10-15' );
@@ -169,14 +170,14 @@ describe( 'FormSubmiter', ()=>{
 
 	describe( 'on paypal payment', ()=>{
 		let paypal: Paypal;
-		let showNotice: jest.SpyInstance<(errorText: string) => void>;
 		let insertSpy: jest.SpyInstance< () => Promise< Booking > >;
 		let actions: any;
 
 		beforeEach( async ()=>{
-			await SimInput.setValue( 'form-field-kl-children', '3' );
+			await SimInput.setValue( 'form-field-kl-adults', '3' );
 			await SimInput.setValue( 'form-field-kl-booking-date', '2018-10-15' );
 			await SimInput.setValue( 'form-field-kl-email', 'test@test.com' );
+			await SimInput.setValue( 'form-field-kl-requirements', 'paypal payment test temp booking' );
 			actions = {
 				payment: {
 					create: jest.fn()
@@ -199,17 +200,14 @@ describe( 'FormSubmiter', ()=>{
 		describe( 'in case payment failed', ()=> {
 
 			beforeEach( async ()=>{
-				showNotice = jest.spyOn( formSubmiter, 'paymentError');
 				paypal = await formSubmiter.formSubmited();
 				insertSpy = jest.spyOn( paypal.bookingProcessor, 'insertTempBooking' );
-				insertSpy.mockImplementation( ()=> new Booking( -1 ) );
 			});
 
 			it( 'should inform the user about insertTempBooking failed', async ()=> {
 				insertSpy.mockImplementation( ()=> null );
 				await paypal.payment( {}, actions );
 
-				expect( showNotice ).toHaveBeenCalledWith( PaymentErrors.BOOKING_NOT_AVAILABLE );
 				expect( document.getElementById( 'kl-summary-box' ).innerHTML ).toContain( PaymentErrors.BOOKING_NOT_AVAILABLE );
 			});
 
@@ -218,16 +216,28 @@ describe( 'FormSubmiter', ()=>{
 				insertSpy.mockImplementation( ()=> null );
 				await paypal.payment( {}, actions );
 				await SimInput.delay( 1 );
-				
+
 				expect( invalidateSpy ).toHaveBeenCalled();
 				expect( SimInput.getInputElementById( 'form-field-kl-booking-date' ).value ).toEqual( '' );
 			});
 
-			xit( 'shoud inform about payment cancelled and persuade to pay again', async ()=> {
+			it( 'should inform about payment cancelled and persuade to pay again', async ()=> {
+				await paypal.payment( {}, actions );
+				await paypal.cancelled( {}, actions );
+
+				expect( document.getElementById( 'kl-summary-box' ).innerHTML ).toContain( PaymentErrors.PAYMENT_CANCELLED );
+			});
+
+			xit( 'should delete tempBooking on payment cancelled', async ()=> {
 				await paypal.payment( {}, actions );
 
-				expect( showNotice ).toHaveBeenCalledWith( PaymentErrors.BOOKING_NOT_AVAILABLE );
-				expect( document.getElementById( 'kl-summary-box' ).innerHTML ).toContain( PaymentErrors.BOOKING_NOT_AVAILABLE );
+				let tempBooking = await BookingData.getBookings( { comment: 'paypal payment test temp booking' } );
+				expect( tempBooking ).toBeTruthy();
+
+				await paypal.cancelled( {}, actions );
+
+				tempBooking = await BookingData.getBookings( { comment: 'paypal payment test temp booking' } );
+				expect( tempBooking ).toBeFalsy();
 			});
 
 			xit( 'store record of failed transaction', ()=> {

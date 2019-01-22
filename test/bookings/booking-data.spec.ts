@@ -62,12 +62,12 @@ describe( 'BookingData', function() {
 	});
 
 	describe( 'Holiday tables', ()=>{
-		it( 'shoud return a holiday object if have holiday', async ()=>{
+		it( 'should return a holiday object if have holiday', async ()=>{
 			let holiday = await BookingData.getGuideHolidays( 1, new Date( '2017-08-04' ) );
 			expect( holiday.length ).toBe( 1 );
 
 		})
-		it( 'shoud return a holiday object if NOT have holiday', async ()=>{
+		it( 'should return a holiday object if NOT have holiday', async ()=>{
 			let holiday = await BookingData.getGuideHolidays( 1, new Date( '2017-08-05' ) );
 			expect( holiday.length ).toBe( 0 );
 

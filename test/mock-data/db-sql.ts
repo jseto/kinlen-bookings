@@ -1,6 +1,7 @@
 import * as Sql from "sql.js";
 import * as jsonData from "./db.json"
 import * as fs from "fs"
+import * as uuid from "uuid"
 import { Utils } from "../../src/utils/utils";
 
 export class MockData {
@@ -25,7 +26,8 @@ export class MockData {
 			' ( ',
 			'id integer primary key, ', // NOT NULL AUTO INCREMENT, ',
 			'name varchar(255), ',
-			'salary int(10) ',
+			'salary int(10), ',
+			'token varchar(255) ',
 			');'
 		];
 		this._db.run( sqlArr.join('') );
@@ -53,7 +55,8 @@ export class MockData {
 			'name varchar(255), ',
 			'email varchar(255), ',
 			'paypalPaymentId varchar(255), ',
-			'trasactionTimeStamp timestamp ',
+			'trasactionTimeStamp timestamp, ',
+			'token varchar(255) ',
 			');'
 		]
 		this._db.run( sqlArr.join('') + ';' );
@@ -69,7 +72,8 @@ export class MockData {
 			'phone varchar(10), ',
 			'email varchar(255), ',
 			'line_id varchar(255), ',
-			'paypal varchar(255) ',
+			'paypal varchar(255), ',
+			'token varchar(255) ',
 			');'
 		];
 		this._db.run( sqlArr.join('') );
@@ -80,7 +84,8 @@ export class MockData {
 			this.guideHolidaysTable,
 			' ( ',
 			'id integer, ', // NOT NULL
-			'date date ',
+			'date date, ',
+			'token varchar(255) ',
 			');'
 		];
 		this._db.run( sqlArr.join('') );
@@ -91,7 +96,8 @@ export class MockData {
 			this.restaurantHolidaysTable,
 			' ( ',
 			'id integer, ', // NOT NULL
-			'date date ',
+			'date date, ',
+			'token varchar(255) ',
 			');'
 		];
 		this._db.run( sqlArr.join('') );
@@ -119,7 +125,8 @@ export class MockData {
 			'address varchar(255), ',
 			'googleMaps varchar(255), ',
 			'images varchar(255), ',
-			'paypal varchar(255) ',
+			'paypal varchar(255), ',
+			'token varchar(255) ',
 			');'
 		];
 		this._db.run( sqlArr.join('') );
@@ -135,7 +142,8 @@ export class MockData {
 			'value int(10), ',
 			'valueType varchar(10), ', //percent, absolute
 			'commission int(10), ',
-			'commisionistid integer ',
+			'commisionistid integer, ',
+			'token varchar(255) ',
 			');'
 		];
 		this._db.run( sqlArr.join('') );
@@ -163,6 +171,10 @@ export class MockData {
 		if ( opts.method === 'POST' ) {
 			return this.mockPOST( table, JSON.parse( opts.body ) );
 		}
+
+		if ( opts.method === 'DELETE' ) {
+			return this.mockDELETE( table, params );
+		}
 	}
 
 	private mockPOST( table: string, dataObject:any ) {
@@ -171,7 +183,7 @@ export class MockData {
 		this.insert( this.tablePrefix + table, data );
 		let resp = this._db.exec( 'select last_insert_rowid();' );
 		let lastRowId = resp[0].values[0][0];
-		if ( lastRowId ) return this.queryGeneric( this.tablePrefix + table, { id: lastRowId } );
+		if ( lastRowId ) return this.query( this.tablePrefix + table, this.buildWhereArray( { id: lastRowId } ), false );
 		else return {};
 	}
 
@@ -184,8 +196,25 @@ export class MockData {
 			case 'free_guide':
 				return this.queryFreeGuidePeriod( params );
 			default:
-				return this.queryGeneric( this.tablePrefix + endpoint, params );
+				return this.query( this.tablePrefix + endpoint, this.buildWhereArray( params ) );
 		}
+	}
+
+	mockDELETE( endpoint: string, params: {} ) {
+		if ( params[ 'token' ] ) {
+    	return this.deleteRows( this.tablePrefix + endpoint, this.buildWhereArray( params ) );
+		}
+		else return false;
+  }
+
+	private deleteRows( table: string, whereArr: string[] ) {
+		let sqlStr = 'DELETE FROM ' + table;
+		if ( whereArr.length ) {
+			sqlStr += ' WHERE ' + whereArr.join( ' AND ' );
+			this._db.run( sqlStr );
+			return true;
+		}
+		else return false;
 	}
 
   private queryFreeGuide( params: {} ) {
@@ -242,16 +271,15 @@ export class MockData {
 		return this.query( table, whereArr );
   }
 
-	private queryGeneric( table: string, params:{} ) {
-		let whereArr = [];
+	private buildWhereArray( params: {} ): string[] {
+		let whereArr: string[] = [];
 		for ( let key in params ) {
 			whereArr.push( key + '= "' + params[ key ] + '"' );
 		}
-
-		return this.query( table, whereArr );
+		return whereArr;
 	}
 
-  private query( table: string, whereArr: string[] ) {
+  private query( table: string, whereArr: string[], removeToken: boolean = true ) {
 		let sqlStr = 'SELECT * FROM ' + table;
 		if ( whereArr.length ) {
 			sqlStr += ' WHERE ' + whereArr.join( ' AND ' );
@@ -263,6 +291,9 @@ export class MockData {
 		  resp.push( s.getAsObject() );
 		}
 		s.free();
+		if ( removeToken ) {
+			resp.forEach((row)=> delete row.token );
+		}
 		return resp;
 	}
 
@@ -284,8 +315,10 @@ export class MockData {
 			keys.forEach( (key)=>{
 				values.push( '"' + element[ key ] + '"' );
 			});
+			values.push( '"' + uuid.v4() + '"' );
 			elements.push( '(' + values.join(',') + ')' );
 		});
+		keys.push( 'token' );
 
 		let sqlStr = 'INSERT INTO ' + tableName +' ( ' + keys.join(', ') + ' ) ' + 'VALUES ' + elements.join(',') + ';'
 		this._insertStatement.push( sqlStr );

@@ -52,6 +52,13 @@ export class BookingProcessor {
 		}
 	}
 
+	async deleteTempBooking() {
+		let booking = await this.booking();
+		if ( booking.id >= 0 ) {
+			BookingProcessor.deleteBooking( booking );
+		}
+	}
+
 	async totalToPay(): Promise<number> {
 		let coupon = await this.coupon();
 		let beforeDiscount = await this.beforeDiscount();
@@ -153,11 +160,14 @@ export class BookingProcessor {
 		delete obj.id;
 		return new Promise< Booking >( resolve => {
 			Rest.postREST( 'booking/', obj ).then( data => {
-				// let retBooking = new Booking( -1 );
 				if ( data[0] )	booking.fromObject( data[0] );
 				resolve( booking );
 			})
 		});
+	}
+
+	static async deleteBooking( booking: Booking ) {
+		return Rest.deleteREST( 'booking/', { id: booking.id, token: booking.token } );
 	}
 
 	private _rawBooking: RawBooking;

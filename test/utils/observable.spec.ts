@@ -179,7 +179,7 @@ describe( 'Observable is Observed by Observer', ()=>{
 			expect( mockOnChange ).toBeCalled();
 		});
 
-		it( 'shoud retrieve the value from a check radioButton', ()=>{
+		it( 'should retrieve the value from a check radioButton', ()=>{
 			radio19.value = false;
 			radio21.value = false;
 			radio23.value = true;
@@ -190,7 +190,7 @@ describe( 'Observable is Observed by Observer', ()=>{
 			expect( group.value ).toEqual( '21:00' );
 		});
 
-		it( 'shoul modify only element\'s checked value of radio button when using checkRadioButton', ()=>{
+		it( 'should modify only element\'s checked value of radio button when using checkRadioButton', ()=>{
 			group.checkRadioButtonElements( '23:00' );
 			expect( (<HTMLInputElement>radio19.element).checked ).toBeFalsy();
 			expect( (<HTMLInputElement>radio21.element).checked ).toBeFalsy();

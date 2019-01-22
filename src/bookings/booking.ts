@@ -63,7 +63,7 @@ export class Booking extends DatabaseObject {
 			name: this._name,
 			email: this._email,
 			paypalPaymentId: this._paypalPaymentId,
-			trasactionTimeStamp: this._trasactionTimeStamp,
+			trasactionTimeStamp: this._trasactionTimeStamp
 		};
   }
 
