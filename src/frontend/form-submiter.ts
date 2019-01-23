@@ -20,6 +20,7 @@ export class FormSubmiter {
 		paymentProvider.onError = ( msg ) => this.paymentError( msg );
 		paymentProvider.onCancel = () => this.paymentCancelled();
 		paymentProvider.onAuthorize = ( data ) => this.paymentAuthorized( data );
+		paymentProvider.onStartPayment = () => this.startPayment();
 		this._paymentProviders.push( paymentProvider );
   }
 
@@ -63,13 +64,25 @@ export class FormSubmiter {
 		})
 	}
 
+	private async startPayment(): Promise<boolean> {
+		let tempBooking = await this._processor.insertTempBooking();
+		if ( !tempBooking ) {
+			this.paymentError( PaymentErrors.BOOKING_NOT_AVAILABLE );
+		}
+		return tempBooking != null;
+	}
+
 	private async paymentAuthorized( data: PaymentData ) {
 
 	}
 
-  private async paymentCancelled(): Promise< boolean > {
+  private async paymentCancelled(): Promise<boolean>  {
 		this.showPaymentError( PaymentErrors.PAYMENT_CANCELLED );
-		return await this._processor.deleteTempBooking();
+		let result = await this._processor.deleteTempBooking();
+		if ( !result ) {
+			throw new Error( 'Unable to delete temp booking' );
+		}
+		return result;
   }
 
 	private paymentError( errorText: string ) {

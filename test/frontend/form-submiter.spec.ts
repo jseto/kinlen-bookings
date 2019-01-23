@@ -224,6 +224,10 @@ describe( 'FormSubmiter', ()=>{
 				insertSpy = jest.spyOn( paypal.bookingProcessor, 'insertTempBooking' );
 			});
 
+			afterEach(()=>{
+				insertSpy.mockClear();
+			})
+
 			it( 'should inform the user about insertTempBooking failed', async ()=> {
 				insertSpy.mockImplementation( ()=> null );
 				await paypal.payment( {}, actions );

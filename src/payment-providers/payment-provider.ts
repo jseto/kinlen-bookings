@@ -20,6 +20,14 @@ export abstract class PaymentProvider {
 
 	abstract renderButton(): Promise< void >;
 
+	set onStartPayment( callBack: () => Promise<boolean> ) {
+		this._onStartPayment = callBack;
+	}
+
+	get onStartPayment() {
+		return this._onStartPayment;
+	}
+
 	set onAuthorize( callBack: ( paymentData: PaymentData ) => Promise<any> ) {
 		this._onAuthorize = callBack;
 	}
@@ -36,7 +44,7 @@ export abstract class PaymentProvider {
 		return this._onError;
 	}
 
-	set onCancel( callBack: ()=>Promise<any> ) {
+	set onCancel( callBack: ()=>Promise<boolean> ) {
 		this._onCancel = callBack;
 	}
 
@@ -59,7 +67,8 @@ export abstract class PaymentProvider {
 
 	protected _anchorElement: string;
 	private _bookingProcessor: BookingProcessor;
+	private _onStartPayment: () => Promise<boolean>;
 	private _onAuthorize: ( paymentData: PaymentData ) => Promise<any>;
 	private _onError: ( errorMsg: string ) => void;
-	private _onCancel: () => Promise<any>;
+	private _onCancel: () => Promise<boolean>;
 }

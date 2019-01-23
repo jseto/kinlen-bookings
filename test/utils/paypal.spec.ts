@@ -2,9 +2,7 @@ import '../mocks/match-media'
 import * as fetchMock from 'fetch-mock';
 import { MockData } from './../mock-data/db-sql';
 import { BookingProcessor, RawBooking } from '../../src/bookings/booking-processor';
-import { Booking } from '../../src/bookings/booking';
 import { Paypal } from '../../src/payment-providers/paypal';
-import { PaymentErrors } from '../../src/payment-providers/payment-provider';
 
 describe( 'paypal checkout button', ()=>{
 	let booking: RawBooking;
@@ -44,7 +42,7 @@ describe( 'paypal checkout button', ()=>{
 
 	describe( 'on press payment button', ()=>{
 		let actions: any;
-		let insertSpy: jest.SpyInstance< () => Promise< Booking > >;
+		let mockedStartPayment: jest.Mock<{}>;
 		let mockedErrorCallback: jest.Mock<{}>;
 
 		beforeEach(()=>{
@@ -53,22 +51,23 @@ describe( 'paypal checkout button', ()=>{
 					create: jest.fn()
 				}
 			};
-			insertSpy = jest.spyOn( bookingProcessor, 'insertTempBooking' );
+			mockedStartPayment = jest.fn();
 			mockedErrorCallback = jest.fn();
 			paypal.onError = mockedErrorCallback;
+			paypal.onStartPayment = mockedStartPayment;
 		});
 
-		it( 'should create a temp booking', async ()=>{
-			insertSpy.mockImplementation( ()=> new Booking(300) );
+		it( 'should call onStartPayment and process the payment if no error', async ()=>{
+			mockedStartPayment.mockImplementation( ()=> true );
 			await paypal.payment( {}, actions );
-			expect( insertSpy ).toHaveBeenCalled();
-			expect( mockedErrorCallback ).not.toHaveBeenCalled();
+			expect( mockedStartPayment ).toHaveBeenCalled();
+			expect( actions.payment.create ).toHaveBeenCalled();
 		});
 
-		it( 'should display error message if insertTempBooking fails', async ()=>{
-			insertSpy.mockImplementation( ()=> null );
+		it( 'should not process payment on error', async ()=>{
+			mockedStartPayment.mockImplementation( ()=> false );
 			await paypal.payment( {}, actions );
-			expect( mockedErrorCallback ).toHaveBeenCalledWith( PaymentErrors.BOOKING_NOT_AVAILABLE );
+			expect( actions.payment.create ).not.toHaveBeenCalled();
 		});
 
 	});

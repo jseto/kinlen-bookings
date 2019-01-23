@@ -1,28 +1,22 @@
 import { Payment, Item } from "paypal-rest-sdk";
 import * as paypal from "paypal-checkout";
 import { PaymentProvider, PaymentErrors, PaymentData } from "./payment-provider";
-import { Booking } from "../bookings/booking";
 
 export class Paypal extends PaymentProvider{
 
 	async payment( _data: any, actions: any ) {
-		let tempBookingInserted: Booking = null;
-
-		tempBookingInserted = await this.bookingProcessor.insertTempBooking();
-		if ( !tempBookingInserted ) {
-			if ( this.onError ) this.onError( PaymentErrors.BOOKING_NOT_AVAILABLE );
-			return false;
-		}
-
-		let obj = {
-			payment: await this.getPayment(),
-			experience: {
-	 			input_fields: {
-		 			no_shipping: 1
+		if ( this.onStartPayment && await this.onStartPayment() ) {
+			let obj = {
+				payment: await this.getPayment(),
+				experience: {
+		 			input_fields: {
+			 			no_shipping: 1
+		 			}
 	 			}
- 			}
+			}
+			return actions.payment.create( obj );
 		}
-		return actions.payment.create( obj );
+		else return false;
 	}
 
 	autorized( _data: any, actions: any ) {
@@ -42,7 +36,13 @@ export class Paypal extends PaymentProvider{
 	}
 
 	async cancelled( _data: any, _actions: any ) {
-		if ( this.onCancel ) this.onCancel();
+		if ( this.onCancel ) {
+			return this.onCancel();
+		}
+		else {
+			return false;
+		}
+
 	}
 
 	error( err: string ) {
