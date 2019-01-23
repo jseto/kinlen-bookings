@@ -2,14 +2,7 @@ import { BookingFormManager } from "./booking-form-manager";
 import { BookingProcessor, RawBooking } from "../bookings/booking-processor";
 import { ObservableRadioGroup } from "../utils/observer";
 import { Utils } from "../utils/utils";
-import { Paypal, PaymentErrors, PaymentProvider } from "../utils/paypal";
-
-export interface PaymentData {
-	paymentId: string,
-	paymentProvider: string,
-	paidAmount: number,
-	currency: string
-}
+import { PaymentProvider, PaymentData, PaymentErrors } from "../payment-providers/payment-provider";
 
 export class FormSubmiter {
 	constructor( formManager: BookingFormManager, formElement: HTMLFormElement ) {
@@ -18,10 +11,6 @@ export class FormSubmiter {
 		this._formElement = formElement;
 		this._formElement.onsubmit = ()=>this.formSubmited();
 	}
-
-	// setPaypalContainerElement(element: string) {
-	// 	this._paypalContainerElement = element;
-	// }
 
 	setSummaryElement( element: HTMLElement) {
 		this._summary = element;
@@ -35,7 +24,6 @@ export class FormSubmiter {
   }
 
 	async formSubmited(): Promise<void> {
-		// let paypal: Paypal;
 		let container = document.getElementById( this._paymentProviders[0].anchorElement );
 		let booking = this._formManager.rawBooking();
 		this._processor = new BookingProcessor( booking );
@@ -55,11 +43,6 @@ export class FormSubmiter {
 					provider.setBookingProcessor( this._processor );
 					provider.renderButton();
 				});
-			// 	paypal = new Paypal( this._processor );
-			// 	paypal.onError = ( msg ) => this.paymentError( msg );
-			// 	paypal.onCancel = () => this.paymentCancelled();
-			// 	paypal.onAuthorize = ( data ) => this.paymentAuthorized( data );
-			// 	paypal.renderButton( this._paypalContainerElement );
 			}
 			else throw new Error( 'Paypal container element not found' );
 		}
@@ -133,7 +116,6 @@ export class FormSubmiter {
 	}
 
 	private _formManager: BookingFormManager;
-	// private _paypalContainerElement: string;
 	private _summary: HTMLElement;
 	private _formElement: HTMLFormElement;
 	private _processor: BookingProcessor;

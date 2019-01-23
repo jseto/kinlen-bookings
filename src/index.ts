@@ -1,6 +1,6 @@
 import Flatpickr from 'flatpickr'
 import { BookingFormManager, initialState } from "./frontend/booking-form-manager";
-import { Paypal } from './utils/paypal';
+import { Paypal } from './payment-providers/paypal';
 
 declare function flatpickr( element: HTMLElement, config:Flatpickr.Options.Options ): any;
 

@@ -6,11 +6,12 @@ import * as fs from "fs";
 import { setupBookingFormManager } from "../../src";
 import { FormSubmiter } from "../../src/frontend/form-submiter";
 import { BookingError } from "../../src/bookings/BookingError";
-import { Paypal, PaymentErrors } from '../../src/utils/paypal';
 import { PaymentResponse } from "paypal-rest-sdk";
 import { Booking } from '../../src/bookings/booking';
 import { BookingFormManager } from '../../src/frontend/booking-form-manager';
 import { BookingData } from '../../src/bookings/booking-data';
+import { Paypal } from '../../src/payment-providers/paypal';
+import { PaymentErrors } from '../../src/payment-providers/payment-provider';
 
 describe( 'FormSubmiter', ()=>{
 	let postIdHtml: string[];

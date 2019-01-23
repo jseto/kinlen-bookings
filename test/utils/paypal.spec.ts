@@ -1,9 +1,10 @@
 import '../mocks/match-media'
-import { Paypal, PaymentErrors } from "../../src/utils/paypal";
 import * as fetchMock from 'fetch-mock';
 import { MockData } from './../mock-data/db-sql';
 import { BookingProcessor, RawBooking } from '../../src/bookings/booking-processor';
 import { Booking } from '../../src/bookings/booking';
+import { Paypal } from '../../src/payment-providers/paypal';
+import { PaymentErrors } from '../../src/payment-providers/payment-provider';
 
 describe( 'paypal checkout button', ()=>{
 	let booking: RawBooking;
