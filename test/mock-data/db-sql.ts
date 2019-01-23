@@ -54,7 +54,9 @@ export class MockData {
 			'paid int(1), ',
 			'name varchar(255), ',
 			'email varchar(255), ',
-			'paypalPaymentId varchar(255), ',
+			'paymentProvider varchar(255), ',
+			'paymentId varchar(255), ',
+			'currency varchar(3), ',
 			'trasactionTimeStamp timestamp, ',
 			'token varchar(255) ',
 			');'
@@ -154,7 +156,7 @@ export class MockData {
 	close() {
     this._db.close();
   }
-	
+
 	response( fullURL: string, opts?: any ) {
 		let urlObj = new URL( fullURL, 'http://localhost' );
 		let p = urlObj.pathname;

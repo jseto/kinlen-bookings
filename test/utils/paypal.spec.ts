@@ -32,8 +32,9 @@ describe( 'paypal checkout button', ()=>{
 		};
 		bookingProcessor = new BookingProcessor( booking )
 		paypalElement = document.getElementById( 'paypal-button-container' );
-		paypal = new Paypal( bookingProcessor );
-		await paypal.renderButton( 'paypal-button-container' )
+		paypal = new Paypal( 'paypal-button-container' );
+		paypal.setBookingProcessor( bookingProcessor );
+		await paypal.renderButton()
 	});
 
 	it( 'should display button', async ()=>{

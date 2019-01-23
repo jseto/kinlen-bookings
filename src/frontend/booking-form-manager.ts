@@ -4,6 +4,7 @@ import { Observer, ObservableField, ObservableRadio, ObservableSelect, Observabl
 import { MAX_SEATS_PER_GUIDE } from '../bookings/guide';
 import { RawBooking } from "../bookings/booking-processor";
 import { FormSubmiter } from "./form-submiter";
+import { PaymentProvider } from "../utils/paypal";
 
 export interface FormState {
 	adults?: number;
@@ -96,10 +97,15 @@ export class BookingFormManager extends Observer< FormState > {
 		return this;
 	}
 
-	setPaypalContainerElement( element: string ) {
-		this._submiter.setPaypalContainerElement( element );
+	// setPaypalContainerElement( element: string ) {
+	// 	this._submiter.setPaypalContainerElement( element );
+	// 	return this;
+	// }
+	registerPaymentProvider( paymentProvider: PaymentProvider ) {
+		this._submiter.registerPaymentProvider( paymentProvider );
 		return this;
 	}
+
 
 	private adultsChanged(): void {
 		let children = (<ObservableSelect<number>>this.observables.children);

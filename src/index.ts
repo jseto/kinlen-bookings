@@ -1,5 +1,6 @@
 import Flatpickr from 'flatpickr'
 import { BookingFormManager, initialState } from "./frontend/booking-form-manager";
+import { Paypal } from './utils/paypal';
 
 declare function flatpickr( element: HTMLElement, config:Flatpickr.Options.Options ): any;
 
@@ -33,7 +34,7 @@ export async function setupBookingFormManager() {
 								})
 								.setCalendar( (<any>document.getElementById( 'form-field-kl-booking-date' ))._flatpickr )
 								.setSummaryElement( 'kl-summary-box' )
-								.setPaypalContainerElement( 'paypal-button-container' )
+								.registerPaymentProvider( new Paypal('paypal-button-container') )
 	return bookingFormManager.setRestaurant( Number( postId ) );
 }
 

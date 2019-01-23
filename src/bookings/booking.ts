@@ -20,7 +20,9 @@ export class Booking extends DatabaseObject {
 	private _paid: boolean;
   private _name: string;
 	private _email: string;
-	private _paypalPaymentId: string;
+	private _paymentProvider: string;
+	private _paymentId: string;
+	private _currency: string;
 	private _trasactionTimeStamp: Date;
 
   protected _fromObject( obj: any ){
@@ -40,7 +42,9 @@ export class Booking extends DatabaseObject {
 		this._paid = Boolean( obj.paid );
  		this._name = obj.name;
  		this._email = obj.email;
- 		this._paypalPaymentId = obj.paypalPaymentId;
+		this._paymentProvider = obj.paymentProvider;
+ 		this._paymentId = obj.paymentId;
+		this._currency = obj.currency;
  		this._trasactionTimeStamp = new Date( obj.trasactionTimeStamp );
   }
 
@@ -62,7 +66,9 @@ export class Booking extends DatabaseObject {
 			paid: Number( this.paid ),
 			name: this._name,
 			email: this._email,
-			paypalPaymentId: this._paypalPaymentId,
+			paymentProvider: this._paymentProvider,
+			paymentId: this._paymentId,
+			currency: this._currency,
 			trasactionTimeStamp: this._trasactionTimeStamp
 		};
   }
@@ -215,13 +221,31 @@ export class Booking extends DatabaseObject {
 		return this._email;
 	}
 
-	setPaypalPaymentId( val: string ) {
-		this._paypalPaymentId = val;
+	setPaymentProvider( val: string ) {
+		this._paymentProvider = val;
 		return this;
 	}
 
-	get paypalPaymentId() {
-		return this._paypalPaymentId;
+	get paymentProvider() {
+		return this._paymentProvider;
+	}
+
+	setPaymentId( val: string ) {
+		this._paymentId = val;
+		return this;
+	}
+
+	get paymentId() {
+		return this._paymentId;
+	}
+
+	setCurrency( val: string ) {
+		this._currency = val;
+		return this;
+	}
+
+	get currency() {
+		return this._currency;
 	}
 
 	setTrasactionTimeStamp( val: Date ) {
@@ -232,4 +256,5 @@ export class Booking extends DatabaseObject {
 	get trasactionTimeStamp() {
 		return this._trasactionTimeStamp;
 	}
+
 }

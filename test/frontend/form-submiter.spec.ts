@@ -7,6 +7,7 @@ import { setupBookingFormManager } from "../../src";
 import { FormSubmiter } from "../../src/frontend/form-submiter";
 import { BookingError } from "../../src/bookings/BookingError";
 import { Paypal, PaymentErrors } from '../../src/utils/paypal';
+import { PaymentResponse } from "paypal-rest-sdk";
 import { Booking } from '../../src/bookings/booking';
 import { BookingFormManager } from '../../src/frontend/booking-form-manager';
 import { BookingData } from '../../src/bookings/booking-data';
@@ -19,6 +20,7 @@ describe( 'FormSubmiter', ()=>{
 	let formSubmiter: FormSubmiter;
 	let dateField: any;
 	let formManager: BookingFormManager;
+	let paypal: Paypal;
 
 	beforeAll(()=>{
 		let mockData = new MockData();
@@ -44,8 +46,9 @@ describe( 'FormSubmiter', ()=>{
 		dateField = document.getElementById( 'form-field-kl-booking-date' );
 		dateField['_flatpickr'] = { config:{} };
 		formManager = await setupBookingFormManager();
+		paypal = new Paypal( 'paypal-button-container' );
 		formSubmiter = new FormSubmiter( formManager, <HTMLFormElement>document.getElementById('kl-booking-form') );
-		formSubmiter.setPaypalContainerElement( 'paypal-button-container' );
+		formSubmiter.registerPaymentProvider( paypal );
 		formSubmiter.setSummaryElement( document.getElementById( 'kl-summary-box') );
 	});
 
@@ -169,7 +172,6 @@ describe( 'FormSubmiter', ()=>{
 	});
 
 	describe( 'on paypal payment', ()=>{
-		let paypal: Paypal;
 		let insertSpy: jest.SpyInstance< () => Promise< Booking > >;
 		let actions: any;
 
@@ -186,9 +188,26 @@ describe( 'FormSubmiter', ()=>{
 		})
 
 		describe( 'in case payment succesfull', ()=> {
+			let paymentResponse: PaymentResponse = {
+				intent: '',
+				transactions: [{
+					amount: {
+						currency: 'THB',
+						total: '23'
+					},
+				}],
+				payer: {
+					payment_method: ''
+				},
+				httpStatusCode: 1
+			};
 
-			xit( 'should perform a booking', ()=> {
+			xit( 'should fill payment fields on tempBooking and update the database', async ()=> {
+				await paypal.payment( {}, actions );
+				await paypal.autorized( paymentResponse, actions );
+				let booking = await BookingData.getBookings( { comment: 'paypal payment test temp booking' } );
 
+				expect( booking[0].paymentId ).toBeTruthy();
 			});
 
 			xit( 'should take user to a thanks page', ()=> {
@@ -200,7 +219,7 @@ describe( 'FormSubmiter', ()=>{
 		describe( 'in case payment failed', ()=> {
 
 			beforeEach( async ()=>{
-				paypal = await formSubmiter.formSubmited();
+				await formSubmiter.formSubmited();
 				insertSpy = jest.spyOn( paypal.bookingProcessor, 'insertTempBooking' );
 			});
 

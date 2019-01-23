@@ -1,41 +1,74 @@
-import { Payment, Item, PaymentResponse } from "paypal-rest-sdk";
+import { Payment, Item } from "paypal-rest-sdk";
 import * as paypal from "paypal-checkout";
 import { BookingProcessor } from "../bookings/booking-processor";
 import { Booking } from "../bookings/booking";
+import { PaymentData } from "../frontend/form-submiter";
 
 export const PaymentErrors = {
 	BOOKING_NOT_AVAILABLE: 'The selected booking slot is no longer available. Please select another date or time slot or try later.',
-	PAYMENT_CANCELLED: 'The payment has not been fulfilled. Please try again to guaranty your booking'
+	PAYMENT_CANCELLED: 'The payment has not been fulfilled. Please try again to guaranty your booking.',
+	PAYMENT_ERROR: 'There has been an error during the payment process. Please try again to guaranty your booking.'
 }
 
-export class Paypal {
-
-	constructor( bookingProcessor: BookingProcessor ) {
-		this._bookingProcessor = bookingProcessor;
+export abstract class PaymentProvider {
+	constructor( anchorElement: string ) {
+		this._anchorElement = anchorElement;
 	}
 
-	set onAuthorize( callBack: ( paymentData: PaymentResponse ) => Promise<any> ) {
+	abstract renderButton(): Promise< void >;
+
+	set onAuthorize( callBack: ( paymentData: PaymentData ) => Promise<any> ) {
 		this._onAuthorize = callBack;
+	}
+
+	get onAuthorize() {
+		return this._onAuthorize;
 	}
 
 	set onError( callBack: ( errorMsg: string )=> void ) {
 		this._onError = callBack;
 	}
 
+	get onError() {
+		return this._onError;
+	}
+
 	set onCancel( callBack: ()=>Promise<any> ) {
 		this._onCancel = callBack;
+	}
+
+	get onCancel() {
+		return this._onCancel;
+	}
+
+	setBookingProcessor( processor: BookingProcessor ) {
+		this._bookingProcessor = processor;
+		return this;
 	}
 
 	get bookingProcessor() {
 		return this._bookingProcessor;
 	}
 
+	get anchorElement() {
+		return this._anchorElement;
+	}
+
+	protected _anchorElement: string;
+	private _bookingProcessor: BookingProcessor;
+	private _onAuthorize: ( paymentData: PaymentData ) => Promise<any>;
+	private _onError: ( errorMsg: string ) => void;
+	private _onCancel: () => Promise<any>;
+}
+
+export class Paypal extends PaymentProvider{
+
 	async payment( _data: any, actions: any ) {
 		let tempBookingInserted: Booking = null;
 
-		tempBookingInserted = await this._bookingProcessor.insertTempBooking();
+		tempBookingInserted = await this.bookingProcessor.insertTempBooking();
 		if ( !tempBookingInserted ) {
-			if ( this._onError ) this._onError( PaymentErrors.BOOKING_NOT_AVAILABLE );
+			if ( this.onError ) this.onError( PaymentErrors.BOOKING_NOT_AVAILABLE );
 			return false;
 		}
 
@@ -50,28 +83,37 @@ export class Paypal {
 		return actions.payment.create( obj );
 	}
 
-	autorized( data: PaymentResponse, actions: any ) {
+	autorized( _data: any, actions: any ) {
 		return actions.payment.execute()
-			.then(()=>{
-				if ( this._onAuthorize ) this._onAuthorize( data )
+			.then( ( data: Payment ) => {
+				if ( data.state === 'approved' && this.onAuthorize ) {
+					let payData: PaymentData = {
+						paymentId: data.id,
+						paymentProvider: data.payer.payment_method,
+						paidAmount: Number( data.transactions[0].amount.total ),
+						currency: data.transactions[0].amount.currency
+					}
+					this.onAuthorize( payData )
+				}
+				if ( data.state !== 'approved' && this.onError ) this.onError( PaymentErrors.PAYMENT_ERROR );
 			});
 	}
 
 	async cancelled( _data: any, _actions: any ) {
-		if ( this._onCancel ) this._onCancel();
+		if ( this.onCancel ) this.onCancel();
 	}
 
 	error( err: string ) {
-		if ( this._onError ) this._onError( err );
+		if ( this.onError ) this.onError( err );
 	}
 
-	renderButton( anchorElement: string ): Promise< void > {
-		let element = document.getElementById( anchorElement );
+	renderButton(): Promise< void > {
+		let element = document.getElementById( this._anchorElement );
 		while ( element.firstChild ) element.removeChild( element.firstChild );
 
 		return new Promise< void >( resolve => {
 			let cfg = this.buttonConfig( resolve )
-			paypal.Button.render( cfg, '#' + anchorElement ).then(()=>resolve() );
+			paypal.Button.render( cfg, '#' + this._anchorElement ).then(()=>resolve() );
 		})
 	}
 
@@ -124,9 +166,9 @@ export class Paypal {
 	}
 
 	private async getPayment(): Promise< Payment > {
-		let total = await this._bookingProcessor.totalToPay();
+		let total = await this.bookingProcessor.totalToPay();
 		let items = await this.getItemList();
-		let restaurant = await this._bookingProcessor.restaurant();
+		let restaurant = await this.bookingProcessor.restaurant();
 
 		return {
 			payer:{
@@ -149,7 +191,7 @@ export class Paypal {
 	}
 
 	private async getItemList(): Promise< Item[] > {
-		let booking = await this._bookingProcessor.booking();
+		let booking = await this.bookingProcessor.booking();
 		let items:Item[] = [];
 		let adultItem: Item = {
 			currency: 'THB',
@@ -182,10 +224,5 @@ export class Paypal {
 
 		return items;
 	}
-
-	private _bookingProcessor: BookingProcessor;
-	private _onAuthorize: ( paymentData: PaymentResponse ) => Promise<any>;
-	private _onError: ( errorMsg: string ) => void;
-	private _onCancel: () => Promise<any>;
 
 }

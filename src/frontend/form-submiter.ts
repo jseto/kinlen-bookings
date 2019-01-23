@@ -2,27 +2,41 @@ import { BookingFormManager } from "./booking-form-manager";
 import { BookingProcessor, RawBooking } from "../bookings/booking-processor";
 import { ObservableRadioGroup } from "../utils/observer";
 import { Utils } from "../utils/utils";
-import { Paypal, PaymentErrors } from "../utils/paypal";
+import { Paypal, PaymentErrors, PaymentProvider } from "../utils/paypal";
+
+export interface PaymentData {
+	paymentId: string,
+	paymentProvider: string,
+	paidAmount: number,
+	currency: string
+}
 
 export class FormSubmiter {
-
 	constructor( formManager: BookingFormManager, formElement: HTMLFormElement ) {
+		this._paymentProviders = [];
 		this._formManager = formManager;
 		this._formElement = formElement;
 		this._formElement.onsubmit = ()=>this.formSubmited();
 	}
 
-	setPaypalContainerElement(element: string) {
-		this._paypalContainerElement = element;
-	}
+	// setPaypalContainerElement(element: string) {
+	// 	this._paypalContainerElement = element;
+	// }
 
 	setSummaryElement( element: HTMLElement) {
 		this._summary = element;
 	}
 
-	async formSubmited(): Promise< Paypal > {
-		let paypal: Paypal;
-		let paypalContainer = document.getElementById( this._paypalContainerElement );
+	registerPaymentProvider(paymentProvider: PaymentProvider): any {
+		paymentProvider.onError = ( msg ) => this.paymentError( msg );
+		paymentProvider.onCancel = () => this.paymentCancelled();
+		paymentProvider.onAuthorize = ( data ) => this.paymentAuthorized( data );
+		this._paymentProviders.push( paymentProvider );
+  }
+
+	async formSubmited(): Promise<void> {
+		// let paypal: Paypal;
+		let container = document.getElementById( this._paymentProviders[0].anchorElement );
 		let booking = this._formManager.rawBooking();
 		this._processor = new BookingProcessor( booking );
 		let validBooking = false;
@@ -36,29 +50,38 @@ export class FormSubmiter {
 		if ( validBooking ) {
 			await this.showSummary( this._processor );
 
-			if ( paypalContainer ) {
-				paypal = new Paypal( this._processor );
-				paypal.onError = ( msg ) => this.paymentError( msg );
-				paypal.onCancel = () => this.paymentCancelled();
-				paypal.renderButton( this._paypalContainerElement );
+			if ( container ) {
+				this._paymentProviders.forEach( ( provider ) => {
+					provider.setBookingProcessor( this._processor );
+					provider.renderButton();
+				});
+			// 	paypal = new Paypal( this._processor );
+			// 	paypal.onError = ( msg ) => this.paymentError( msg );
+			// 	paypal.onCancel = () => this.paymentCancelled();
+			// 	paypal.onAuthorize = ( data ) => this.paymentAuthorized( data );
+			// 	paypal.renderButton( this._paypalContainerElement );
 			}
 			else throw new Error( 'Paypal container element not found' );
 		}
 
-		paypalContainer.scrollIntoView({
+		container.scrollIntoView({
 			behavior: 'smooth',
 			block: 'start',
 			inline: 'nearest'
 		});
 
-		return new Promise< Paypal >( resolve => {
+		return new Promise<void>( resolve => {
 			setTimeout(()=>{
 				let elementorSuccess: HTMLElement = <HTMLElement>this._formElement.getElementsByClassName( 'elementor-message-success' ).item(0);
 				if ( !validBooking && elementorSuccess) elementorSuccess.style.display = 'none';
 				this.refillFields( booking );
-				resolve( paypal );
+				resolve();
 			},50);
 		})
+	}
+
+	private async paymentAuthorized( data: PaymentData ) {
+
 	}
 
   private async paymentCancelled(): Promise< boolean > {
@@ -110,8 +133,9 @@ export class FormSubmiter {
 	}
 
 	private _formManager: BookingFormManager;
-	private _paypalContainerElement: string;
+	// private _paypalContainerElement: string;
 	private _summary: HTMLElement;
 	private _formElement: HTMLFormElement;
 	private _processor: BookingProcessor;
+	private _paymentProviders: PaymentProvider[];
 }
