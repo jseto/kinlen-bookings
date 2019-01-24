@@ -27,6 +27,7 @@ export class MockData {
 			'id integer primary key, ', // NOT NULL AUTO INCREMENT, ',
 			'name varchar(255), ',
 			'salary int(10), ',
+			'paid int(1), ',
 			'token varchar(255) ',
 			');'
 		];
@@ -174,19 +175,39 @@ export class MockData {
 			return this.mockPOST( table, JSON.parse( opts.body ) );
 		}
 
+		if ( opts.method === 'PUT' ) {
+			return this.mockPUT( table, JSON.parse( opts.body ) );
+		}
+
 		if ( opts.method === 'DELETE' ) {
 			return this.mockDELETE( table, params );
 		}
 	}
 
 	private mockPOST( table: string, dataObject:any ) {
-		let data = [];
-		data.push( dataObject );
-		this.insert( this.tablePrefix + table, data );
-		let resp = this._db.exec( 'select last_insert_rowid();' );
-		let lastRowId = resp[0].values[0][0];
-		if ( lastRowId ) return this.query( this.tablePrefix + table, this.buildWhereArray( { id: lastRowId } ), false );
-		else return {};
+		if ( !dataObject.paid ) {
+			let data = [];
+			data.push( dataObject );
+			this.insert( this.tablePrefix + table, data );
+			let resp = this._db.exec( 'select last_insert_rowid();' );
+			let lastRowId = resp[0].values[0][0];
+			if ( lastRowId ) return this.query( this.tablePrefix + table, this.buildWhereArray( { id: lastRowId } ), false );
+			else return [];
+		}
+		else return[];
+	}
+
+	private mockPUT( table: string, dataObject:any ) {
+		if ( dataObject.token ) {
+			let searchObj = {
+				id: dataObject.id,
+				token: dataObject.token
+			}
+			delete dataObject.id;
+			delete dataObject.token;
+			return this.update( this.tablePrefix + table, dataObject, this.buildWhereArray( searchObj ) );
+		}
+		else return false;
 	}
 
 	private mockGET( endpoint: string, params: {} ) {
@@ -315,6 +336,21 @@ export class MockData {
 		let sqlStr = 'INSERT INTO ' + tableName +' ( ' + keys.join(', ') + ' ) ' + 'VALUES ' + elements.join(',') + ';'
 		this._insertStatement.push( sqlStr );
 		this._db.run( sqlStr );
+	}
+
+	private update( table: string, data:{}, whereArr: string[] ) {
+		let sqlStr = 'UPDATE ' + table + ' SET ';
+
+		let sqlCols = []
+		for( let key in data ) {
+			sqlCols.push( key + ' = "' + data[ key ] + '"' );
+		}
+		if ( whereArr.length ) {
+			sqlStr += sqlCols.join(',') + ' WHERE ' + whereArr.join( ' AND ');
+			this._db.run( sqlStr );
+			return true;
+		}
+		else return false;
 	}
 
 	private deleteRows( table: string, whereArr: string[] ) {

@@ -5,6 +5,7 @@ import { Rest } from "../database/rest";
 import { Coupon } from "./coupon";
 import { Utils } from "../utils/utils";
 import { BookingError } from "../../src/bookings/BookingError";
+import { PaymentData } from "../payment-providers/payment-provider";
 
 export interface RawBooking {
 	restaurant_id: number,
@@ -59,6 +60,20 @@ export class BookingProcessor {
 		}
 		else return false;
 	}
+
+	async persistTempBooking( data: PaymentData ): Promise< Booking > {
+		let booking = await this.booking();
+		if ( booking.id >= 0 ) {
+			booking
+				.setPaymentId( data.paymentId )
+				.setPaymentProvider( data.paymentProvider )
+				.setPaidAmount( data.paidAmount )
+				.setCurrency( data.currency )
+				.setPaid( true );
+			return await BookingProcessor.updateBooking( booking );
+		}
+		else return null;
+  }
 
 	async totalToPay(): Promise<number> {
 		let coupon = await this.coupon();
@@ -170,6 +185,16 @@ export class BookingProcessor {
 	static async deleteBooking( booking: Booking ): Promise< boolean > {
 		return <Promise< boolean > >Rest.deleteREST( 'booking/', { id: booking.id, token: booking.token } );
 	}
+
+	static updateBooking( booking: Booking ): Promise<Booking> {
+		let obj = booking.toObject();
+		return new Promise< Booking >( resolve => {
+			Rest.putREST( 'booking/', obj ).then( data => {
+				if ( data[0] )	booking.fromObject( data[0] );
+				resolve( booking );
+			})
+		});
+  }
 
 	private _rawBooking: RawBooking;
   private _restaurant: Restaurant;

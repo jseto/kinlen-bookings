@@ -90,6 +90,15 @@ describe( 'Mock data', ()=>{
 			expect( resp[0].token ).toBeUndefined();
 		});
 
+		it( 'should disallow inserting bookings with paid data', async()=>{
+			let resp = await Rest.postREST('mock_data_test_data/',{
+				name: "Pepe el 3",
+				salary: 2566,
+				paid: 1,
+			});
+			expect( resp.length ).toBe( 0 );
+		});
+
 		it( 'should retrieve token field in an insert statement', async ()=>{
 			let resp = await Rest.postREST('mock_data_test_data/',{
 				name: "Pepe el 3",
@@ -109,10 +118,29 @@ describe( 'Mock data', ()=>{
 		});
 
 		it( 'should not allow delete data objects without pass the corresponding token', async ()=>{
-			let resp = await Rest.deleteREST( 'mock_data_test_data/', { id: 1, token: '' } );
-			expect( resp ).toBeFalsy();
+			await Rest.deleteREST( 'mock_data_test_data/', { id: 1, token: '7' } );
+			let resp = await Rest.getREST( 'mock_data_test_data/', { id: 1 } );
+			expect( resp.length ).toBeTruthy();
 		});
 
+		it( 'should update with token and paid field set', async ()=>{
+			let resp = await Rest.postREST('mock_data_test_data/',{
+				name: "Pepe el 3",
+				salary: 2566
+			});
+			expect( resp[0].id ).toBe( 3 );
+			expect( resp[0].token ).toBeDefined();
+
+			resp['paid'] = 1;
+			let resp2 = await Rest.putREST('mock_data_test_data/', resp[0] );
+			expect( resp2 ).toBeTruthy();
+		})
+
+		it( 'should not allow insert data objects without pass the corresponding token', async ()=>{
+			await Rest.putREST( 'mock_data_test_data/', { id: 1, token: '66', paid: 1 } );
+			let resp = await Rest.getREST( 'mock_data_test_data/', { id: 1 } );
+			expect( resp[0].paid ).toBeFalsy();
+		});
 
 	});
 });

@@ -6,7 +6,7 @@ import * as fs from "fs";
 import { setupBookingFormManager } from "../../src";
 import { FormSubmiter } from "../../src/frontend/form-submiter";
 import { BookingError } from "../../src/bookings/BookingError";
-import { PaymentResponse } from "paypal-rest-sdk";
+import { PaymentResponse, Payment } from "paypal-rest-sdk";
 import { Booking } from '../../src/bookings/booking';
 import { BookingFormManager } from '../../src/frontend/booking-form-manager';
 import { BookingData } from '../../src/bookings/booking-data';
@@ -183,7 +183,21 @@ describe( 'FormSubmiter', ()=>{
 			await SimInput.setValue( 'form-field-kl-requirements', 'paypal payment test temp booking' );
 			actions = {
 				payment: {
-					create: jest.fn()
+					create: jest.fn(),
+					execute: jest.fn(()=> new Promise<Payment>( (resolve) => resolve({
+						id: '345435435',
+						payer: {
+							payment_method: 'paypal'
+						},
+						state: 'approved',
+						intent: '',
+						transactions: [{
+							amount: {
+								total: '5230',
+								currency: 'THB'
+							}
+						}]
+					})))
 				}
 			};
 		})
@@ -203,12 +217,21 @@ describe( 'FormSubmiter', ()=>{
 				httpStatusCode: 1
 			};
 
-			xit( 'should fill payment fields on tempBooking and update the database', async ()=> {
+			beforeEach( async ()=>{
+				await SimInput.setValue( 'form-field-kl-requirements', 'paypal payment test temp paid booking' );
+				await formSubmiter.formSubmited();
+			});
+
+			it( 'should fill payment fields on tempBooking and update the database', async ()=> {
 				await paypal.payment( {}, actions );
 				await paypal.autorized( paymentResponse, actions );
-				let booking = await BookingData.getBookings( { comment: 'paypal payment test temp booking' } );
+				let booking = await BookingData.getBookings( { comment: 'paypal payment test temp paid booking' } );
 
-				expect( booking[0].paymentId ).toBeTruthy();
+				expect( booking[0].paymentId ).toBe( '345435435' );
+				expect( booking[0].paid ).toBeTruthy();
+				expect( booking[0].paymentProvider ).toBe( 'paypal' );
+				expect( booking[0].paidAmount ).toBe( 5230 );
+				expect( booking[0].currency ).toBe( 'THB' );
 			});
 
 			xit( 'should take user to a thanks page', ()=> {

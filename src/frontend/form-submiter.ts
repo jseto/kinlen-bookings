@@ -73,7 +73,11 @@ export class FormSubmiter {
 	}
 
 	private async paymentAuthorized( data: PaymentData ) {
-
+		let booking = await this._processor.persistTempBooking( data );
+		if ( !booking ) {
+			this.paymentError( PaymentErrors.BOOKING_NOT_UPDATED );
+		}
+		return booking != null;
 	}
 
   private async paymentCancelled(): Promise<boolean>  {

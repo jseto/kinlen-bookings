@@ -34,9 +34,22 @@ export class Rest {
 		return list;
 	}
 
+
+  static getREST( endpointCommand: string, queryObject: Object ) {
+    let fullURL = Rest._url + endpointCommand + this.objectToQueryString( queryObject );
+    return new Promise<any[]>( resolve => {
+      fetch( fullURL ).then( resp =>{
+        let data = resp.json();
+        resolve( data );
+      }).catch( error => {
+        throw( new Error( 'Kinlen Booking System: ' + error.message ) );
+      });
+    });
+  }
+
 	static postREST( endpointCommand: string, dataObject: {} ) {
 		let fullURL = Rest._url + endpointCommand;
-		return new Promise( resolve => {
+		return new Promise<any[]>( resolve => {
 			fetch( fullURL, {
 		    method: 'POST',
 		    headers: {
@@ -50,17 +63,21 @@ export class Rest {
 		});
 	}
 
-  static getREST( endpointCommand: string, queryObject: Object ) {
-    let fullURL = Rest._url + endpointCommand + this.objectToQueryString( queryObject );
-    return new Promise( resolve => {
-      fetch( fullURL ).then( resp =>{
-        let data = resp.json();
-        resolve( data );
-      }).catch( error => {
-        throw( new Error( 'Kinlen Booking System: ' + error.message ) );
-      });
-    });
-  }
+	static putREST( endpointCommand: string, dataObject: {} ) {
+		let fullURL = Rest._url + endpointCommand;
+		return new Promise( resolve => {
+			fetch( fullURL, {
+		    method: 'PUT',
+		    headers: {
+		      'Accept': 'application/json',
+		      'Content-Type': 'application/json'
+		    },
+		    body: JSON.stringify( dataObject )
+  		}).then( resp => {
+				resolve( resp.json() );
+			})
+		});
+	}
 
 	static deleteREST( endpointCommand: string, queryObject: Object ) {
 		let fullURL = Rest._url + endpointCommand + this.objectToQueryString( queryObject );

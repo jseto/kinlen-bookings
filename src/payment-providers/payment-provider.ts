@@ -3,14 +3,15 @@ import { BookingProcessor } from "../bookings/booking-processor";
 export const PaymentErrors = {
 	BOOKING_NOT_AVAILABLE: 'The selected booking slot is no longer available. Please select another date or time slot or try later.',
 	PAYMENT_CANCELLED: 'The payment has not been fulfilled. Please try again to guaranty your booking.',
-	PAYMENT_ERROR: 'There has been an error during the payment process. Please try again to guaranty your booking.'
+	PAYMENT_ERROR: 'There has been an error during the payment process. Please try again to guaranty your booking.',
+	BOOKING_NOT_UPDATED: 'We are sorry. At this time we cannot complete the booking process due to technical reason. We will contact you by email to refund your money. Sorry for the inconvenience.'
 }
 
 export interface PaymentData {
 	paymentId: string,
 	paymentProvider: string,
 	paidAmount: number,
-	currency: string
+	currency: string,
 }
 
 export abstract class PaymentProvider {

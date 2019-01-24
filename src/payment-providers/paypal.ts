@@ -1,6 +1,6 @@
 import { Payment, Item } from "paypal-rest-sdk";
 import * as paypal from "paypal-checkout";
-import { PaymentProvider, PaymentErrors, PaymentData } from "./payment-provider";
+import { PaymentProvider, PaymentErrors } from "./payment-provider";
 
 export class Paypal extends PaymentProvider{
 
@@ -21,15 +21,14 @@ export class Paypal extends PaymentProvider{
 
 	autorized( _data: any, actions: any ) {
 		return actions.payment.execute()
-			.then( ( data: Payment ) => {
+			.then( async ( data: Payment ) => {
 				if ( data.state === 'approved' && this.onAuthorize ) {
-					let payData: PaymentData = {
+					await this.onAuthorize({
 						paymentId: data.id,
 						paymentProvider: data.payer.payment_method,
 						paidAmount: Number( data.transactions[0].amount.total ),
 						currency: data.transactions[0].amount.currency
-					}
-					this.onAuthorize( payData )
+					})
 				}
 				if ( data.state !== 'approved' && this.onError ) this.onError( PaymentErrors.PAYMENT_ERROR );
 			});
