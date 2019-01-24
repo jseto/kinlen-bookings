@@ -76,8 +76,10 @@ export class FormSubmiter {
 		let booking = await this._processor.persistTempBooking( data );
 		if ( !booking ) {
 			this.paymentError( PaymentErrors.BOOKING_NOT_UPDATED );
+			return false;
 		}
-		return booking != null;
+		window.location.assign( 'thanks.html/?id=' + booking.id );
+		return true;
 	}
 
   private async paymentCancelled(): Promise<boolean>  {

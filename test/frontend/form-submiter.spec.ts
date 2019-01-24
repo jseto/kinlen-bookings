@@ -203,6 +203,7 @@ describe( 'FormSubmiter', ()=>{
 		})
 
 		describe( 'in case payment succesfull', ()=> {
+			let mockLocationAssign: jest.Mock<{}>;
 			let paymentResponse: PaymentResponse = {
 				intent: '',
 				transactions: [{
@@ -218,6 +219,8 @@ describe( 'FormSubmiter', ()=>{
 			};
 
 			beforeEach( async ()=>{
+				mockLocationAssign = jest.fn();
+				window.location.assign = mockLocationAssign;
 				await SimInput.setValue( 'form-field-kl-requirements', 'paypal payment test temp paid booking' );
 				await formSubmiter.formSubmited();
 			});
@@ -234,8 +237,23 @@ describe( 'FormSubmiter', ()=>{
 				expect( booking[0].currency ).toBe( 'THB' );
 			});
 
-			xit( 'should take user to a thanks page', ()=> {
+			it( 'should inform the user about updateBooking failed', async ()=> {
+				jest.spyOn( paypal.bookingProcessor, 'persistTempBooking' ).mockImplementation( ()=> null );
+				await paypal.payment( {}, actions );
+				await paypal.autorized( paymentResponse, actions );
 
+				expect( document.getElementById( 'kl-summary-box' ).innerHTML ).toContain( PaymentErrors.BOOKING_NOT_UPDATED );
+			});
+
+			it( 'should take user to a thanks page', async ()=> {
+				await SimInput.setValue( 'form-field-kl-requirements', 'paypal payment test temp2 paid booking' );
+				await formSubmiter.formSubmited();
+				await paypal.payment( {}, actions );
+				await paypal.autorized( paymentResponse, actions );
+				let booking = await BookingData.getBookings( { comment: 'paypal payment test temp2 paid booking' } );
+
+				// window.location.assign( 'http://localhost/hola' );
+				expect( mockLocationAssign ).toHaveBeenCalledWith('thanks.html/?id=' + booking[0].id );
 			});
 
 		});

@@ -70,9 +70,11 @@ export class BookingProcessor {
 				.setPaidAmount( data.paidAmount )
 				.setCurrency( data.currency )
 				.setPaid( true );
-			return await BookingProcessor.updateBooking( booking );
+			if ( await BookingProcessor.updateBooking( booking ) ) {
+				return booking;
+			}
 		}
-		else return null;
+		return null;
   }
 
 	async totalToPay(): Promise<number> {
@@ -110,22 +112,6 @@ export class BookingProcessor {
 		let available = await mapper.isTimeSlotAvailable( this._rawBooking.date, this._rawBooking.time, this.bookedSeats() );
 		if ( !available && doThrow ) throw new BookingError( 'BOOKING_NOT_AVAILABLE' );
 		return available;
-	}
-
-	async validatePayment( _doThrow: boolean = false ): Promise<boolean> {
-		return false;
-  }
-
-	async bookingInserted( _doThrow: boolean = false ): Promise<boolean> {
-    return false;
-  }
-
-	async process():Promise<boolean> {
-		let valid: boolean = await this.validateBooking( true )
-								&& await this.validatePayment( true )
-								&& await this.bookingInserted( true );
-
-		return valid;
 	}
 
 	private bookedSeats() {
@@ -186,12 +172,11 @@ export class BookingProcessor {
 		return <Promise< boolean > >Rest.deleteREST( 'booking/', { id: booking.id, token: booking.token } );
 	}
 
-	static updateBooking( booking: Booking ): Promise<Booking> {
+	static updateBooking( booking: Booking ): Promise<boolean> {
 		let obj = booking.toObject();
-		return new Promise< Booking >( resolve => {
+		return new Promise< boolean >( resolve => {
 			Rest.putREST( 'booking/', obj ).then( data => {
-				if ( data[0] )	booking.fromObject( data[0] );
-				resolve( booking );
+				resolve( data != 0 );
 			})
 		});
   }
