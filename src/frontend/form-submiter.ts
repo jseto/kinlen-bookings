@@ -78,7 +78,7 @@ export class FormSubmiter {
 			this.paymentError( PaymentErrors.BOOKING_NOT_UPDATED );
 			return false;
 		}
-		window.location.assign( 'thanks.html/?id=' + booking.id );
+		window.location.assign( '/thanks/?id=' + booking.id );
 		return true;
 	}
 

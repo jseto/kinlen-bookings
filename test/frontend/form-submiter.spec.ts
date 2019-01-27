@@ -253,7 +253,7 @@ describe( 'FormSubmiter', ()=>{
 				let booking = await BookingData.getBookings( { comment: 'paypal payment test temp2 paid booking' } );
 
 				// window.location.assign( 'http://localhost/hola' );
-				expect( mockLocationAssign ).toHaveBeenCalledWith('thanks.html/?id=' + booking[0].id );
+				expect( mockLocationAssign ).toHaveBeenCalledWith('/thanks/?id=' + booking[0].id );
 			});
 
 		});
