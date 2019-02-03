@@ -24,11 +24,14 @@
 			"adults":"2",
 			"children":"0",
 			"coupon":"0",
-			"adultPrice":"0",
+			"adultPrice":"2100",
 			"childrenPrice":"0",
 			"couponValue":"0",
-			"paidAmount":"0",
-			"paid":"0"
+			"paidAmount":"4200",
+			"paid":"1",
+			"name":"Mr. Test Testing",
+			"email":"test@test.com",
+			"comment":"I need to test everything before go live"
 		},
 		{
 			"id":"2",
