@@ -82,6 +82,12 @@ export class BookingMapper {
 	}
 
 	async isDayAvailable( date: Date, requiredSeats: number): Promise<boolean> {
+		let bookingDate = new Date( date );
+		let now = new Date( Date.now() );
+		bookingDate.setHours( 17, 0 );
+		if ( bookingDate <= now ) {
+			return false;
+		}
 		let daySummary = await this.dayBookingSummary( date );
 		let holiday = await this.restaurantHoliday( date );
 		if ( holiday ) {

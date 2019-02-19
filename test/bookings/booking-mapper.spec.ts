@@ -9,6 +9,20 @@ describe( 'BookingMapper is a class providing the following services:', ()=> {
 	let mapper: BookingMapper;
 	let mockData: MockData;
 
+	let realDateNow: () => number;
+	let mockedNow: Date;
+
+	beforeAll(()=>{
+		realDateNow = Date.now.bind(global.Date);
+		mockedNow = new Date( '1018-02-15' );
+		global.Date.now = jest.fn( () => mockedNow );
+	});
+
+	afterAll(()=>{
+		global.Date.now = realDateNow;
+		jest.clearAllMocks();
+	});
+
 	beforeEach(()=>{
 		mockData = new MockData();
 		fetchMock.mock('*', ( url, opts )=>{ return mockData.response( url, opts ) } );
@@ -218,6 +232,49 @@ describe( 'BookingMapper is a class providing the following services:', ()=> {
 			mapper.invalidateCache();
 			let free = await mapper.isDayAvailable( freeBookingDate, 6 );
 			expect( free ).toBeFalsy();
+		});
+
+		describe( 'when booking date around today', ()=>{
+			afterEach(()=>{
+				mockedNow = new Date( '1018-02-15' );
+			});
+
+			it( 'should fake today', async ()=> {
+				mockedNow = new Date( '2018-02-15' );
+				let fakeToday = Date.now();
+				expect( fakeToday ).toEqual( new Date( '2018-02-15' ) );
+			});
+
+			it( 'should report false if booking day before today', async()=>{
+				mockedNow = new Date( '2017-08-06' );
+
+				let free = await mapper.isDayAvailable( seatsLeftDate, 2 );
+				expect( free ).toBeFalsy();
+			});
+
+			it( 'should report true if booking day after today', async()=>{
+				mockedNow = new Date( '2017-08-04' );
+
+				let free = await mapper.isDayAvailable( seatsLeftDate, 2 );
+				expect( free ).toBeTruthy();
+			});
+
+			it( 'should report false if booking day same today after 17:00', async()=>{
+				mockedNow = new Date( seatsLeftDate );
+				mockedNow.setHours( 17, 0 );
+
+				let free = await mapper.isDayAvailable( seatsLeftDate, 2 );
+				expect( free ).toBeFalsy();
+			});
+
+			it( 'should report true if booking day same today before 17:00', async()=>{
+				mockedNow = new Date( seatsLeftDate );
+				mockedNow.setHours( 16, 59 );
+
+				let free = await mapper.isDayAvailable( seatsLeftDate, 2 );
+				expect( free ).toBeTruthy();
+			});
+
 		});
 
 		describe( 'helps to implement the method getUnavailableDays that', ()=>{
