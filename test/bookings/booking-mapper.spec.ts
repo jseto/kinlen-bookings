@@ -259,17 +259,17 @@ describe( 'BookingMapper is a class providing the following services:', ()=> {
 				expect( free ).toBeTruthy();
 			});
 
-			it( 'should report false if booking day same today after 17:00', async()=>{
+			it( 'should report false if booking day same today after 17:00 ICT Time Zone', async()=>{
 				mockedNow = new Date( seatsLeftDate );
-				mockedNow.setHours( 17, 0 );
+				mockedNow.setUTCHours( 10, 0 );
 
 				let free = await mapper.isDayAvailable( seatsLeftDate, 2 );
 				expect( free ).toBeFalsy();
 			});
 
-			it( 'should report true if booking day same today before 17:00', async()=>{
+			it( 'should report true if booking day same today before 17:00 ICT Time Zone', async()=>{
 				mockedNow = new Date( seatsLeftDate );
-				mockedNow.setHours( 16, 59 );
+				mockedNow.setUTCHours( 9, 59 );
 
 				let free = await mapper.isDayAvailable( seatsLeftDate, 2 );
 				expect( free ).toBeTruthy();

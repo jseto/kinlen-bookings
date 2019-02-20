@@ -12,9 +12,8 @@ export class Coupon extends DatabaseObject{
 	isValid(): boolean {
 		if ( this.id < 0 ) return false;
 		if ( Utils.isInvalid( this._validUntil ) ) return true;
-		let  today = new Date( Date.now() );
-		today.setHours( 0 );
-		return this._validUntil >= today;
+		let today = Date.now();
+		return this._validUntil.getTime() >= today;
 	}
 
 	discount( basePrice?: number ): number {
