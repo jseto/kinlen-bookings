@@ -14,7 +14,7 @@ describe( 'BookingMapper is a class providing the following services:', ()=> {
 
 	beforeAll(()=>{
 		realDateNow = Date.now.bind(global.Date);
-		mockedNow = new Date( '1018-02-15' );
+		mockedNow = new Date( '1971-02-15' );
 		global.Date.now = jest.fn( () => mockedNow );
 	});
 

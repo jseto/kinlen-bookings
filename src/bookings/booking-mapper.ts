@@ -82,10 +82,10 @@ export class BookingMapper {
 	}
 
 	async isDayAvailable( date: Date, requiredSeats: number): Promise<boolean> {
+		let now = Date.now();
 		let bookingDate = new Date( date );
-		let now = new Date( Date.now() );
-		bookingDate.setHours( 17, 0 );
-		if ( bookingDate <= now ) {
+		bookingDate.setUTCHours( 10, 0 );
+		if ( bookingDate.getTime() <= now ) {
 			return false;
 		}
 		let daySummary = await this.dayBookingSummary( date );
