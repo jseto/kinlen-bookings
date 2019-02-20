@@ -49,12 +49,12 @@ export class Paypal extends PaymentProvider{
 	}
 
 	renderButton(): Promise< void > {
-		let element = document.getElementById( this._anchorElement );
+		let element = document.getElementById( this._anchorElementId );
 		while ( element.firstChild ) element.removeChild( element.firstChild );
 
 		return new Promise< void >( resolve => {
 			let cfg = this.buttonConfig( resolve )
-			paypal.Button.render( cfg, '#' + this._anchorElement ).then(()=>resolve() );
+			paypal.Button.render( cfg, '#' + this._anchorElementId ).then(()=>resolve() );
 		})
 	}
 

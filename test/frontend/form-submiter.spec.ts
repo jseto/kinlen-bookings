@@ -155,6 +155,7 @@ describe( 'FormSubmiter', ()=>{
 
 		it( 'should show paypal button', ()=> {
 			expect( document.getElementById( 'paypal-button-container').innerHTML ).toContain( 'zoid-paypal-button' );
+			expect( document.getElementById( 'paypal-button-container').style.display ).not.toBe( 'none' );
 		});
 
 		it( 'should scroll into summary view', ()=>{

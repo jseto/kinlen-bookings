@@ -25,8 +25,7 @@ export class FormSubmiter {
   }
 
 	async formSubmited(): Promise<void> {
-		this._summary.style.display = 'none';
-		let container = document.getElementById( this._paymentProviders[0].anchorElement );
+		this.hideInfoPanels();
 		let booking = this._formManager.rawBooking();
 		this._processor = new BookingProcessor( booking );
 		let validBooking = false;
@@ -37,23 +36,26 @@ export class FormSubmiter {
 			this.paymentError( e.message );
 		}
 
+		let payElementContainer: HTMLElement;
+
 		if ( validBooking ) {
 			await this.showSummary( this._processor );
 
-			if ( container ) {
-				this._paymentProviders.forEach( ( provider ) => {
-					provider.setBookingProcessor( this._processor );
-					provider.renderButton();
-				});
-			}
-			else throw new Error( 'Paypal container element not found' );
+			this._paymentProviders.forEach( ( provider ) => {
+				payElementContainer = document.getElementById( provider.anchorElementId );
+				payElementContainer.style.display = 'block';
+				provider.setBookingProcessor( this._processor );
+				provider.renderButton();
+			});
 		}
 
-		container.scrollIntoView({
-			behavior: 'smooth',
-			block: 'start',
-			inline: 'nearest'
-		});
+		if ( payElementContainer ) {
+			payElementContainer.scrollIntoView({
+				behavior: 'smooth',
+				block: 'start',
+				inline: 'nearest'
+			});
+		}
 
 		return new Promise<void>( resolve => {
 			setTimeout(()=>{
@@ -63,6 +65,14 @@ export class FormSubmiter {
 				resolve();
 			},200);
 		})
+	}
+
+	private hideInfoPanels() {
+		this._paymentProviders.forEach(( provider )=> {
+			let anchorElement = document.getElementById( provider.anchorElementId );
+			anchorElement.style.display = 'none';
+		});
+		this._summary.style.display = 'none';
 	}
 
 	private async startPayment(): Promise<boolean> {

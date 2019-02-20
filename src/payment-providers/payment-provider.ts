@@ -15,8 +15,8 @@ export interface PaymentData {
 }
 
 export abstract class PaymentProvider {
-	constructor( anchorElement: string ) {
-		this._anchorElement = anchorElement;
+	constructor( anchorElementId: string ) {
+		this._anchorElementId = anchorElementId;
 	}
 
 	abstract renderButton(): Promise< void >;
@@ -62,11 +62,11 @@ export abstract class PaymentProvider {
 		return this._bookingProcessor;
 	}
 
-	get anchorElement() {
-		return this._anchorElement;
+	get anchorElementId() {
+		return this._anchorElementId;
 	}
 
-	protected _anchorElement: string;
+	protected _anchorElementId: string;
 	private _bookingProcessor: BookingProcessor;
 	private _onStartPayment: () => Promise<boolean>;
 	private _onAuthorize: ( paymentData: PaymentData ) => Promise<any>;
