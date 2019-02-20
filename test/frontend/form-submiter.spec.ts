@@ -93,6 +93,7 @@ describe( 'FormSubmiter', ()=>{
 		it( 'should show the user the reason of failure', ()=>{
 			let errorText = new BookingError( 'INVALID_DATE' ).message;
 			expect( document.getElementById( 'kl-summary-box' ).innerHTML ).toContain( errorText );
+			expect( document.getElementById( 'kl-summary-box' ).style.display ).not.toBe( 'none' );
 		})
 
 		it( 'should make invisible elementor-message-success', ()=>{
@@ -140,6 +141,7 @@ describe( 'FormSubmiter', ()=>{
 			let couponData = document.getElementById( 'kl-summary-discount' ).innerHTML;
 			let totalData = document.getElementById( 'kl-summary-total-to-pay' ).innerHTML;
 
+			expect( document.getElementById( 'kl-summary-box' ).style.display ).not.toBe( 'none' );
 			expect( genericData ).toContain( (new Date('2018-10-15')).toDateString() );
 			expect( genericData ).toContain( ' 19:00 ' );
 			expect( emailData ).toContain( 'test@test.com' );
@@ -274,7 +276,8 @@ describe( 'FormSubmiter', ()=>{
 				await paypal.payment( {}, actions );
 
 				expect( document.getElementById( 'kl-summary-box' ).innerHTML ).toContain( PaymentErrors.BOOKING_NOT_AVAILABLE );
-			});
+				expect( document.getElementById( 'kl-summary-box' ).style.display ).not.toBe( 'none' );
+		});
 
 			it( 'should refresh calendar on insertTempBooking failure', async()=>{
 				let invalidateSpy = jest.spyOn( formManager, 'refreshBookingMap' );

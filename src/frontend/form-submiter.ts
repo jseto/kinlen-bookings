@@ -25,6 +25,7 @@ export class FormSubmiter {
   }
 
 	async formSubmited(): Promise<void> {
+		this._summary.style.display = 'none';
 		let container = document.getElementById( this._paymentProviders[0].anchorElement );
 		let booking = this._formManager.rawBooking();
 		this._processor = new BookingProcessor( booking );
@@ -60,7 +61,7 @@ export class FormSubmiter {
 				if ( !validBooking && elementorSuccess) elementorSuccess.style.display = 'none';
 				this.refillFields( booking );
 				resolve();
-			},50);
+			},200);
 		})
 	}
 
@@ -103,6 +104,7 @@ export class FormSubmiter {
 		element.push( '<h4>Please, review the details of your booking</h4>' );
 
 		this._summary.innerHTML = element.join( '\n' );
+		this._summary.style.display = 'block';
 	}
 
 	private async showSummary( p: BookingProcessor ) {
@@ -110,8 +112,8 @@ export class FormSubmiter {
 		let restaurant = await p.restaurant()
 		let element: string[] = [];
 		element.push( '	<h3>Please, review the details of your booking</h3>' );
-		element.push( '		<p id="kl-summary-generic-data">You will book on ' + b.date.toDateString() + ' at ' + b.time.slice( 0, 5 ) + ' in restaurant ' + restaurant.name + '</p>' );
-		element.push( '		<p id="kl-summary-email">In case we need to contact you, we will send an email to: ' + b.email + '</p>' );
+		element.push( '		<p id="kl-summary-generic-data">You are booking for ' + b.date.toDateString() + ' at ' + b.time.slice( 0, 5 ) + ' in restaurant ' + restaurant.name + '</p>' );
+		element.push( '		<p id="kl-summary-email">We will send the pick-up point address and booking details to to: ' + b.email + '</p>' );
 		element.push( '		<p id="kl-summary-adults">' + b.adults + ' adults at ฿' + b.adultPrice + ' each</p>' );
 		if ( b.children ) {
 			element.push( '	<p id="kl-summary-children">' + b.children + ' children at ฿' + b.childrenPrice + ' each</p>' );
@@ -121,6 +123,7 @@ export class FormSubmiter {
 		}
 		element.push( '	<h4 id="kl-summary-total-to-pay">Total to pay: ฿' + await p.totalToPay() + '</h4>' )
 		this._summary.innerHTML = element.join('\n');
+		this._summary.style.display = 'block';
 	}
 
 	private refillFields( booking: RawBooking) {
