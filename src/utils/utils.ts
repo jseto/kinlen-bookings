@@ -18,4 +18,8 @@ export class Utils {
 		return isNaN( date.getMilliseconds() );
 	}
 
+	static forceUTC( date: Date, hour: number, min:number ): number {
+		return Date.UTC( date.getFullYear(), date.getMonth(), date.getDate(), hour, min );
+	}
+
 }

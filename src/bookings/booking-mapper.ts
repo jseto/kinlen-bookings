@@ -1,6 +1,7 @@
 import {BookingData} from "./booking-data";
 import {MAX_SEATS_PER_GUIDE, Guide} from "./guide"
 import { BOOKABLE_TIMES } from "./booking";
+import { Utils } from "../utils/utils";
 
 export interface BookingSummary {
 	guideId: number;
@@ -83,9 +84,7 @@ export class BookingMapper {
 
 	async isDayAvailable( date: Date, requiredSeats: number): Promise<boolean> {
 		let now = Date.now();
-		let bookingDate = new Date( date );
-		bookingDate.setUTCHours( 10, 0 );
-		if ( bookingDate.getTime() <= now ) {
+		if ( Utils.forceUTC( date, 10, 0 ) <= now ) {
 			return false;
 		}
 		let daySummary = await this.dayBookingSummary( date );

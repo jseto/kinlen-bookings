@@ -13,7 +13,7 @@ export class Coupon extends DatabaseObject{
 		if ( this.id < 0 ) return false;
 		if ( Utils.isInvalid( this._validUntil ) ) return true;
 		let today = Date.now();
-		return this._validUntil.getTime() >= today;
+		return Utils.forceUTC( this._validUntil, 17, 0 ) >= today;
 	}
 
 	discount( basePrice?: number ): number {
