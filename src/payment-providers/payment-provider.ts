@@ -1,4 +1,5 @@
 import { BookingProcessor } from "../bookings/booking-processor";
+import { BookingError } from "../bookings/BookingError";
 
 export const PaymentErrors = {
 	BOOKING_NOT_AVAILABLE: 'The selected booking slot is no longer available. Please select another date or time slot or try later.',
@@ -37,7 +38,7 @@ export abstract class PaymentProvider {
 		return this._onAuthorize;
 	}
 
-	set onError( callBack: ( errorMsg: string )=> void ) {
+	set onError( callBack: ( error: BookingError )=> void ) {
 		this._onError = callBack;
 	}
 
@@ -70,6 +71,6 @@ export abstract class PaymentProvider {
 	private _bookingProcessor: BookingProcessor;
 	private _onStartPayment: () => Promise<boolean>;
 	private _onAuthorize: ( paymentData: PaymentData ) => Promise<any>;
-	private _onError: ( errorMsg: string ) => void;
+	private _onError: ( error: BookingError ) => void;
 	private _onCancel: () => Promise<boolean>;
 }

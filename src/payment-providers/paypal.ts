@@ -1,6 +1,7 @@
 import { Payment, Item } from "paypal-rest-sdk";
 import * as paypal from "paypal-checkout";
 import { PaymentProvider, PaymentErrors } from "./payment-provider";
+import { BookingError } from "../bookings/BookingError";
 
 export class Paypal extends PaymentProvider{
 
@@ -30,7 +31,7 @@ export class Paypal extends PaymentProvider{
 						currency: data.transactions[0].amount.currency
 					})
 				}
-				if ( data.state !== 'approved' && this.onError ) this.onError( PaymentErrors.PAYMENT_ERROR );
+				if ( data.state !== 'approved' && this.onError ) this.onError( new BookingError( PaymentErrors.PAYMENT_ERROR ) );
 			});
 	}
 
@@ -44,7 +45,7 @@ export class Paypal extends PaymentProvider{
 
 	}
 
-	error( err: string ) {
+	error( err: BookingError ) {
 		if ( this.onError ) this.onError( err );
 	}
 

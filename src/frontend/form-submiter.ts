@@ -3,6 +3,7 @@ import { BookingProcessor, RawBooking } from "../bookings/booking-processor";
 import { ObservableRadioGroup } from "../utils/observer";
 import { Utils } from "../utils/utils";
 import { PaymentProvider, PaymentData, PaymentErrors } from "../payment-providers/payment-provider";
+import { BookingError } from "../bookings/BookingError";
 
 export class FormSubmiter {
 	constructor( formManager: BookingFormManager, formElement: HTMLFormElement ) {
@@ -17,7 +18,7 @@ export class FormSubmiter {
 	}
 
 	registerPaymentProvider(paymentProvider: PaymentProvider): any {
-		paymentProvider.onError = ( msg ) => this.paymentError( msg );
+		paymentProvider.onError = ( error ) => this.paymentError( error );
 		paymentProvider.onCancel = () => this.paymentCancelled();
 		paymentProvider.onAuthorize = ( data ) => this.paymentAuthorized( data );
 		paymentProvider.onStartPayment = () => this.startPayment();
@@ -33,10 +34,10 @@ export class FormSubmiter {
 		try {
 			validBooking = await this._processor.validateBooking( true );
 		} catch( e ){
-			this.paymentError( e.message );
+			this.paymentError( e );
 		}
 
-		let payElementContainer: HTMLElement;
+		let payElementContainer: HTMLElement;// = document.getElementById( this._paymentProviders[0].anchorElementId );
 
 		if ( validBooking ) {
 			await this.showSummary( this._processor );
@@ -49,8 +50,9 @@ export class FormSubmiter {
 			});
 		}
 
-		if ( payElementContainer ) {
-			payElementContainer.scrollIntoView({
+		let container = payElementContainer || this._summary;
+		if ( container ) {
+			container.scrollIntoView({
 				behavior: 'smooth',
 				block: 'start',
 				inline: 'nearest'
@@ -63,7 +65,7 @@ export class FormSubmiter {
 				if ( !validBooking && elementorSuccess) elementorSuccess.style.display = 'none';
 				this.refillFields( booking );
 				resolve();
-			},200);
+			},50);
 		})
 	}
 
@@ -78,7 +80,7 @@ export class FormSubmiter {
 	private async startPayment(): Promise<boolean> {
 		let tempBooking = await this._processor.insertTempBooking();
 		if ( !tempBooking ) {
-			this.paymentError( PaymentErrors.BOOKING_NOT_AVAILABLE );
+			this.paymentError( new BookingError( PaymentErrors.BOOKING_NOT_AVAILABLE ) );
 		}
 		return tempBooking != null;
 	}
@@ -86,7 +88,7 @@ export class FormSubmiter {
 	private async paymentAuthorized( data: PaymentData ) {
 		let booking = await this._processor.persistTempBooking( data );
 		if ( !booking ) {
-			this.paymentError( PaymentErrors.BOOKING_NOT_UPDATED );
+			this.paymentError( new BookingError(PaymentErrors.BOOKING_NOT_UPDATED) );
 			return false;
 		}
 		window.location.assign( '/thanks/?id=' + booking.id );
@@ -102,9 +104,11 @@ export class FormSubmiter {
 		return result;
   }
 
-	private paymentError( errorText: string ) {
-		this._formManager.refreshBookingMap();
-		this.showPaymentError( errorText );
+	private paymentError( error: BookingError ) {
+		if ( error.code != 'INVALID_COUPON' ) {
+			this._formManager.refreshBookingMap();
+		}
+		this.showPaymentError( error.message );
 	}
 
 	private showPaymentError( errorText: string) {
@@ -129,7 +133,7 @@ export class FormSubmiter {
 			element.push( '	<p id="kl-summary-children">' + b.children + ' children at ฿' + b.childrenPrice + ' each</p>' );
 		}
 		if (b.couponValue ) {
-			element.push( '	<p id="kl-summary-discount">Discount coupon. Value ฿' + b.couponValue + '</p>');
+			element.push( '	<p id="kl-summary-discount">Discount coupon value: ฿' + b.couponValue + '</p>');
 		}
 		element.push( '	<h4 id="kl-summary-total-to-pay">Total to pay: ฿' + await p.totalToPay() + '</h4>' )
 		this._summary.innerHTML = element.join('\n');
@@ -139,12 +143,12 @@ export class FormSubmiter {
 	private refillFields( booking: RawBooking) {
 		(<HTMLInputElement>this._formManager.observables.adults.element).value = String( booking.adults );
 		(<HTMLInputElement>this._formManager.observables.children.element).value = String( booking.children );
-		(<HTMLInputElement>this._formManager.observables.date.element).value = String( Utils.isInvalid( booking.date)? '' : booking.date.toISOString().slice( 0, 10 ) );
-		(<ObservableRadioGroup>this._formManager.observables.time).checkRadioButtonElements( booking.time.slice( 0, 5 ) );
 		(<HTMLInputElement>this._formManager.observables.name.element).value = booking.name;
 		(<HTMLInputElement>this._formManager.observables.email.element).value = booking.email;
 		(<HTMLInputElement>this._formManager.observables.coupon.element).value = booking.coupon;
 		(<HTMLInputElement>this._formManager.observables.comment.element).value = booking.comment;
+		(<HTMLInputElement>this._formManager.observables.date.element).value = String( Utils.isInvalid( booking.date)? '' : booking.date.toISOString().slice( 0, 10 ) );
+		(<ObservableRadioGroup>this._formManager.observables.time).checkRadioButtonElements( booking.time.slice( 0, 5 ) );
 	}
 
 	private _formManager: BookingFormManager;

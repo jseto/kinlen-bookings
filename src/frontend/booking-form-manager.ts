@@ -102,7 +102,6 @@ export class BookingFormManager extends Observer< FormState > {
 		return this;
 	}
 
-
 	private adultsChanged(): void {
 		let children = (<ObservableSelect<number>>this.observables.children);
 		let options: string[] = [];
@@ -138,9 +137,9 @@ export class BookingFormManager extends Observer< FormState > {
 	}
 
 	private resetDate() {
-		this.setState({date: ''})
-		this.radioButtons().forEach( timeOpt => timeOpt.show() );
-		this.radioButtons()[0].value = true;
+			this.setState({date: ''})
+			this.radioButtons().forEach( timeOpt => timeOpt.show() );
+			this.radioButtons()[0].value = true;
 	}
 
 	private requiredSeats(): number {
