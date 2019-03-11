@@ -61,7 +61,7 @@ export class Paypal extends PaymentProvider{
 
 	buttonConfig( resolve: () => void ) {
 		return {
-			env: 'sandbox', // sandbox | production
+			env: 'production', // sandbox | production
 			locale: 'en_US',
 			style: this.buttonStyle(),
 			funding: this.funding(),
