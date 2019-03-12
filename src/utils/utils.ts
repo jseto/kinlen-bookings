@@ -22,4 +22,21 @@ export class Utils {
 		return Date.UTC( date.getFullYear(), date.getMonth(), date.getDate(), hour, min );
 	}
 
+	/**
+	 * Converts a Key-Value string to an object.
+	 * @param  str a string with key value pair separated by the equal sing and every
+	 * 							entry separated by a semicolon. This is a sample String
+	 * 							'key=value;name=Peter;surname=Sellers'
+	 * @return     an object with key and values parsed
+	 */
+	static keyValueStringToObj( str: String ):{} {
+		let arr = str.split(';');
+		let obj = {};
+		arr.forEach((value)=>{
+			let equalSignPos = value.indexOf('=');
+			obj[ value.slice( 0, equalSignPos ).trim() ] = value.slice( equalSignPos + 1 ).trim();
+		});
+		return obj;
+	}
+
 }

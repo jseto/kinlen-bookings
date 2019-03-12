@@ -1,11 +1,13 @@
 import Flatpickr from 'flatpickr'
 import { BookingFormManager, initialState } from "./frontend/booking-form-manager";
 import { Paypal } from './payment-providers/paypal';
+import { Affiliate } from './affiliate/affiliate';
 
 declare function flatpickr( element: HTMLElement, config:Flatpickr.Options.Options ): any;
 
 document.addEventListener( 'DOMContentLoaded', function () {
 //  document.getElementById( 'bookingButton' ).onclick = ()=> openTab( 'detail-tab', 'Book Now' );
+	Affiliate.set( new URL( window.location.href ) );
 	let bookingForm = document.getElementById('kl-booking-form');
 	if ( bookingForm ) {
 		flatpickr( document.getElementById( 'form-field-kl-booking-date' ), { disableMobile: true } );

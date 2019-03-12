@@ -6,6 +6,7 @@ import { Coupon } from "./coupon";
 import { Utils } from "../utils/utils";
 import { BookingError } from "../../src/bookings/BookingError";
 import { PaymentData } from "../payment-providers/payment-provider";
+import { Affiliate } from "../affiliate/affiliate";
 
 export interface RawBooking {
 	restaurant_id: number,
@@ -44,7 +45,9 @@ export class BookingProcessor {
 		booking.setPaidAmount( 0 );
 		let mapper = new BookingMapper( booking.restaurant ); // ensures getting a fresh copy of mapper
 		if ( await this.validateBooking() ) {
-			booking.setAssignedGuide( await mapper.assignGuide( booking.date, booking.time ) );
+			booking
+				.setAssignedGuide( await mapper.assignGuide( booking.date, booking.time ) )
+				.setAffiliateId( Affiliate.get() );
 			this._booking = await BookingProcessor.insertBooking( booking );
 			return this._booking;
 		}

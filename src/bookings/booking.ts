@@ -23,6 +23,7 @@ export class Booking extends DatabaseObject {
 	private _paymentProvider: string;
 	private _paymentId: string;
 	private _currency: string;
+	private _affiliateId: string;
 	private _trasactionTimeStamp: Date;
 
   protected _fromObject( obj: any ){
@@ -45,6 +46,7 @@ export class Booking extends DatabaseObject {
 		this._paymentProvider = obj.paymentProvider;
  		this._paymentId = obj.paymentId;
 		this._currency = obj.currency;
+		this._affiliateId = obj.affiliateId;
  		this._trasactionTimeStamp = new Date( obj.trasactionTimeStamp );
   }
 
@@ -69,6 +71,7 @@ export class Booking extends DatabaseObject {
 			paymentProvider: this._paymentProvider,
 			paymentId: this._paymentId,
 			currency: this._currency,
+			affiliateId: this._affiliateId,
 			trasactionTimeStamp: this._trasactionTimeStamp
 		};
   }
@@ -246,6 +249,15 @@ export class Booking extends DatabaseObject {
 
 	get currency() {
 		return this._currency;
+	}
+
+	setAffiliateId( val: string ) {
+		this._affiliateId = val;
+		return this;
+	}
+
+	get affiliateId() {
+		return this._affiliateId;
 	}
 
 	setTrasactionTimeStamp( val: Date ) {
