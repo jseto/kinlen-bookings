@@ -1,7 +1,7 @@
 import * as Sql from "sql.js";
 import * as jsonData from "./db.json"
 import * as fs from "fs"
-import * as uuid from "uuid"
+import * as uuid from "uuid/v4"
 import { Utils } from "../../src/utils/utils";
 
 export class MockData {
@@ -329,7 +329,7 @@ export class MockData {
 			keys.forEach( (key)=>{
 				values.push( '"' + element[ key ] + '"' );
 			});
-			values.push( '"' + uuid.v4() + '"' );
+			values.push( '"' + uuid() + '"' );
 			elements.push( '(' + values.join(',') + ')' );
 		});
 		keys.push( 'token' );
